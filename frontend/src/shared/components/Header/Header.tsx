@@ -16,7 +16,7 @@ export const Header = () => {
           to="/favorites" 
           className={({ isActive }) => isActive ? styles.activeLink : styles.link}
         >
-          Wishlists
+          Wishlist
         </NavLink>
       </nav>
     </header>
