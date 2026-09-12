@@ -41,6 +41,11 @@ All commands must be executed from within the `frontend` directory.
 
 ## 📂 Folder Structure
 
+* `public/` — static assets (favicons, manifest, base HTML) that bypass the bundler pipeline.
+* `src/api/` — centralized folder for backend communication, API routes, and external network requests.
 * `src/modules/` — isolated components and logic for specific pages (e.g., HomePage, ProfilePage).
 * `src/shared/` — shared components (Header, Footer, UI elements) used across the entire application.
+* `src/store/` — Redux Toolkit setup, including the main store configuration, root reducer, and custom typed hooks for React components. (Global state management configuration)
 * `src/styles/` — global SCSS styles and variables.
+* `src/shared/hooks/` — reusable custom React hooks (e.g., debounce, click-outside) to encapsulate UI logic.
+* `src/shared/types/` — Global TypeScript definitions and interfaces to keep component files clean.
