@@ -1,0 +1,48 @@
+@use '../../../styles/mixins' as *;
+
+.header {
+  position: sticky;
+  z-index: 100;
+  top: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  height: 108px;
+  padding: 0 64px;
+  border-bottom: 1px solid #000;
+
+  background-color: #fff;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 105px;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.logo {
+  position: relative;
+
+  display: inline-block;
+
+  width: 80px;
+  height: 28px;
+
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.wishlistIcon {
+  @include icon-mask('/icons/Favourites.svg', 28px);
+}

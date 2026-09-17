@@ -1,24 +1,42 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import styles from './Header.module.scss';
 
 export const Header = () => {
   return (
     <header className={styles.header}>
-      <h1 className={styles.logo}>Header</h1>
-      <nav className={styles.navigation}>
-        <NavLink 
-          to="/" 
-          className={({ isActive }) => isActive ? styles.activeLink : styles.link}
+      <div className={styles.leftSection}>
+        <Link to="/" className={styles.logo}>
+          <img src='./icons/logo.svg' className={styles.logoImg} alt='Giftly logo' />
+        </Link>
+      </div>
+
+      <div className={styles.rightSection}>
+        <nav className={styles.nav}>
+          <ul className={styles.navList}>
+            <li>
+              <a href="#home">Home</a>
+            </li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#howItWorks">How it Works</a>
+            </li>
+            <li>
+              <a href="#faq">FAQ</a>
+            </li>
+          </ul>
+        </nav>
+
+        <NavLink
+          to="/wishlist"
+          aria-label="Wishlist"
         >
-          Home
+          <div className={styles.iconWrapper}>
+            <span className={styles.wishlistIcon} aria-label="Wishlist" />
+          </div>
         </NavLink>
-        <NavLink 
-          to="/favorites" 
-          className={({ isActive }) => isActive ? styles.activeLink : styles.link}
-        >
-          Wishlist
-        </NavLink>
-      </nav>
+      </div>
     </header>
   );
 };

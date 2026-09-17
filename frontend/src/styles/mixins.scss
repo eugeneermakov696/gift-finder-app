@@ -1,12 +1,14 @@
 @mixin icon-mask($url, $size: 16px) {
   display: inline-block;
-
   width: $size;
   height: $size;
-
-  background-color: var(--text-main);
-
+  background-color: black;
   transition: background-color 0.3s ease;
+
+  -webkit-mask-image: url($url);
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
 
   mask-image: url($url);
   mask-position: center;
