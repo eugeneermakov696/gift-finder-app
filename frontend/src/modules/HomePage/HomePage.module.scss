@@ -1,0 +1,43 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+
+.heroSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 152px;
+}
+
+.animationWrapper {
+  width: 100%;
+  max-width: 1000px;
+  height: 200px;
+  position: relative;
+  overflow: hidden; 
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.primaryBtn, .secondaryBtn {
+  border-radius: 8px;
+  font-weight: 600;
+  height: 44px;
+}
+
+.primaryBtn {
+  background-color: var(--text-main);
+  color: var(--bg-main);
+}
+
+.secondaryBtn {
+  background-color: var(--color-elements);
+  color: var(--text-main);
+}
