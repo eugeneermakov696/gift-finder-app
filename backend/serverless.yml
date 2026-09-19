@@ -73,7 +73,10 @@ Action:
 Resource:
 - !GetAtt OrderProcessingQueue.Arn 
 
-functions:
+functions: 
+
+### --- Item Management Handlers ---
+
 addGiftItem:
 handler: src/handlers/items.add
 events:
@@ -89,6 +92,26 @@ events:
 - http:
 path: lists/items/reserve
 method: patch
+cors:
+origin: ${self:custom.config.CORS_ALLOWED_ORIGINS} 
+
+### --- Registry List Management Handlers ---
+
+createGiftList:
+handler: src/handlers/lists.create
+events:
+- http:
+path: lists
+method: post
+cors:
+origin: ${self:custom.config.CORS_ALLOWED_ORIGINS} 
+
+getGiftList:
+handler: src/handlers/lists.get
+events:
+- http:
+path: lists/{listId}
+method: get
 cors:
 origin: ${self:custom.config.CORS_ALLOWED_ORIGINS} 
 
