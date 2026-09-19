@@ -1,0 +1,12 @@
+{
+  "STAGE": "prod",
+  "AWS_REGION": "us-east-1",
+  "LOG_LEVEL": "warn",
+  "ENABLE_MOCK_FALLBACK": false,
+  "CORS_ALLOWED_ORIGINS": "https://yourdomain.com",
+  "MESSAGING": {
+    "SQS_DELAY_SECONDS": 0,
+    "SNS_OPTIMIZE_DELIVERY": true
+  },
+  "API_CACHE_TTL_SECONDS": 300
+}
