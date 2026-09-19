@@ -1,17 +1,17 @@
 const amazonApi = require('../services/amazonApi');
 const dbService = require('../services/dbService');
+const notification = require('../services/notification');
 const { successResponse, errorResponse } = require('../utils/httpResponses'); 
 
 /** 
 
 * POST /lists/items
-* Adds a new item to a gift list by looking up its details using the Amazon ASIN.
+* Resolves a product via the Amazon PA-API using an ASIN and appends it to the DynamoDB registry.
 */
 module.exports.add = async (event) => {
 try {
-console.log('Received event for adding item:', JSON.stringify(event)); 
+console.log('Received payload for adding an item:', JSON.stringify(event)); 
 
-// 1. Parse and validate the request body
 if (!event.body) {
 return errorResponse(400, 'Missing request body');
 }
@@ -22,17 +22,16 @@ if (!listId || !asin) {
 return errorResponse(400, 'Missing required parameters: listId and asin are required.');
 }
 
-// 2. Resolve real-time item specifications from Amazon PA-API
+// 1. Resolve real-time item specifications from Amazon PA-API
 console.log(Fetching product details from Amazon for ASIN: ${asin});
 const productDetails = await amazonApi.getProductByAsin(asin);
 
-// 3. Persist the fetched item specifications into the DynamoDB list
+// 2. Persist the fetched item specifications into the DynamoDB list
 console.log(Appending product to DynamoDB list: ${listId});
 const updatedAttributes = await dbService.addItemToList(listId, productDetails);
 
-// 4. Return successful HTTP structure
 return successResponse(201, {
-message: 'Product successfully discovered and added to registry.',
+message: 'Product successfully added to registry.',
 product: productDetails,
 updatedItemsCount: updatedAttributes.items?.length || 0
 });
@@ -40,7 +39,6 @@ updatedItemsCount: updatedAttributes.items?.length || 0
 } catch (error) {
 console.error('Error handling item additions:', error); 
 
-// Differentiate downstream business validation issues from system faults
 if (error.message.includes('not found') || error.message.includes('credentials')) {
 return errorResponse(422, error.message);
 }
@@ -53,11 +51,11 @@ return errorResponse(500, 'Internal Server Error processing your request.');
 /** 
 
 * PATCH /lists/items/reserve
-* Safely claims/reserves an item in a list without exposing the buyer identity to the owner.
+* Atomically reserves an item in a list and triggers asynchronous notifications.
 */
 module.exports.reserve = async (event) => {
 try {
-console.log('Received event for reserving item:', JSON.stringify(event)); 
+console.log('Received payload for reserving an item:', JSON.stringify(event)); 
 
 if (!event.body) {
 return errorResponse(400, 'Missing request body');
@@ -69,20 +67,56 @@ if (!listId || !itemId || !claimedBy) {
 return errorResponse(400, 'Missing required parameters: listId, itemId, and claimedBy are required.');
 }
 
-// Atomic conditional execution inside the DB service layer
-const result = await dbService.reserveItem(listId, itemId, claimedBy);
+// 1. Fetch the list state to extract structural data needed for notifications
+const list = await dbService.getGiftListById(listId);
+if (!list) {
+return errorResponse(404, 'Gift list not found');
+}
 
-return successResponse(200, result);
+const targetedItem = list.items?.find(item => item.item_id === itemId);
+if (!targetedItem) {
+return errorResponse(404, 'Item not found within the specified gift list');
+}
+
+// 2. Perform conditional atomic update on the database layer
+const dbResult = await dbService.reserveItem(listId, itemId, claimedBy);
+
+// 3. Fire-and-forget downstream notifications asynchronously without blocking HTTP runtime performance
+try {
+// In a production app, the owner email would be fetched dynamically from the user profile data
+const ownerEmailPlaceholder = "[registry-owner@example.com](mailto:registry-owner@example.com)";
+ await Promise.all([
+     notification.sendClaimedAlertNotification({
+         listId,
+         itemName: targetedItem.name,
+         listOwnerEmail: ownerEmailPlaceholder
+     }),
+     notification.queueTransactionForProcessing({
+         action: "ITEM_RESERVATION_RECORD",
+         listId,
+         itemId,
+         claimedBy,
+         price: targetedItem.price,
+         currency: targetedItem.currency
+     })
+ ]);
+
+} catch (notificationError) {
+// Log notification framework errors but do not disrupt a successful core DB transaction response loop
+console.error('Non-blocking secondary notification dispatch failed:', notificationError);
+}
+
+return successResponse(200, {
+...dbResult,
+itemId,
+status: "reserved"
+});
 
 } catch (error) {
 console.error('Error handling item reservation:', error); 
 
 if (error.message.includes('Concurrency Conflict') || error.message.includes('already reserved')) {
-return errorResponse(409, error.message); // Conflict status code
-}
-
-if (error.message.includes('not found')) {
-return errorResponse(404, error.message);
+return errorResponse(409, error.message);
 }
 
 return errorResponse(500, 'Internal Server Error processing your reservation.');
