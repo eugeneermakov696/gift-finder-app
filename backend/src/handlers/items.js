@@ -133,3 +133,45 @@ module.exports.reserve = async (event) => {
     return errorResponse(500, 'Internal Server Error processing your reservation.');
   }
 };
+
+/**
+ * DELETE /lists/{listId}/items/{itemId}
+ * Safely removes a product variant item from a user's gift registry list.
+ */
+module.exports.delete = async (event) => {
+    try {
+        const logger = require('../utils/logger'); // Ensure utility is loaded
+        logger.info('Received request payload for deleting a registry item', {
+            pathParameters: event.pathParameters
+        });
+
+        const listId = event.pathParameters?.listId;
+        const itemId = event.pathParameters?.itemId;
+
+        if (!listId || !itemId) {
+            return errorResponse(400, 'Missing path parameters: listId and itemId are required.');
+        }
+
+        // Execute target database pruning routine
+        const updatedAttributes = await dbService.removeItemFromList(listId, itemId);
+
+        return successResponse(200, {
+            message: 'Item successfully pruned from registry.',
+            itemId,
+            remainingItemsCount: updatedAttributes.items?.length || 0
+        });
+
+    } catch (error) {
+        const logger = require('../utils/logger');
+        logger.error('Error handling item deletion operations', error);
+
+        if (error.message.includes('not found')) {
+            return errorResponse(404, error.message);
+        }
+        if (error.message.includes('purchased')) {
+            return errorResponse(409, error.message); // Conflict error code
+        }
+
+        return errorResponse(500, 'Internal Server Error processing your deletion request.');
+    }
+};

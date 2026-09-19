@@ -92,6 +92,15 @@ functions:
           cors:
             origin: ${self:custom.config.CORS_ALLOWED_ORIGINS}
 
+  deleteGiftItem:
+    handler: src/handlers/items.delete
+    events:
+      - http:
+          path: lists/{listId}/items/{itemId}
+          method: delete
+          cors:
+            origin: ${self:custom.config.CORS_ALLOWED_ORIGINS}
+
   ### --- Registry List Management Handlers ---
 
   createGiftList:
