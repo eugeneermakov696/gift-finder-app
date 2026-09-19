@@ -4,3 +4,45 @@
 "devDependencies": {
   "jest": "^29.5.0"
 }
+{
+"name": "amazon-gift-backend",
+"version": "1.0.0",
+"description": "Serverless backend for Amazon Gift Registry platform.",
+"main": "src/handlers/items.js",
+"scripts": {
+"test": "jest --passWithNoTests",
+"test:watch": "jest --watch",
+"test:coverage": "jest --coverage",
+"lint": "eslint src/**/*.js",
+"start:local": "serverless offline start"
+},
+"keywords": [
+"serverless",
+"aws",
+"lambda",
+"dynamodb",
+"amazon-api"
+],
+"author": "Engineering Team",
+"license": "ISC",
+"dependencies": {
+"@aws-sdk/client-dynamodb": "^3.500.0",
+"@aws-sdk/client-sns": "^3.500.0",
+"@aws-sdk/client-sqs": "^3.500.0",
+"@aws-sdk/lib-dynamodb": "^3.500.0"
+},
+"devDependencies": {
+"eslint": "^8.56.0",
+"jest": "^29.7.0",
+"serverless": "^3.38.0",
+"serverless-offline": "^13.3.3"
+},
+"jest": {
+"testEnvironment": "node",
+"verbose": true,
+"collectCoverageFrom": [
+"src/**/*.js",
+"!src/utils/httpResponses.js"
+]
+}
+}

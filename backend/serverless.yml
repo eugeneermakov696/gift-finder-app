@@ -7,9 +7,13 @@ stage: ${opt:stage, 'dev'}
 region: us-east-1
 environment:
 GIFT_LISTS_TABLE: self:service-gift-lists-{self:provider.stage}
+USERS_TABLE: self:service-users-{self:provider.stage}
 AMAZON_PA_API_KEY: ssm:/amazon-gift/{self:provider.stage}/pa-api-key} 
 
-functions:
+functions: 
+
+### 1. Product Registry Handlers
+
 addGiftItem:
 handler: src/handlers/items.add
 events:
@@ -19,8 +23,29 @@ method: post
 cors: true
 authorizer: awsApiKey # Securing the endpoint 
 
+reserveGiftItem:
+handler: src/handlers/items.reserve
+events:
+- http:
+path: lists/items/reserve
+method: patch
+cors: true 
+
+### 2. Authentication Cognito Hook Handler
+
+cognitoPostConfirmation:
+handler: src/handlers/auth.postConfirmation
+events:
+- cognitoUserPool:
+pool: MyUserPoolName
+trigger: PostConfirmation
+existing: true # Hooks into your existing Cognito User Pool 
+
 resources:
-Resources:
+Resources: 
+
+### DynamoDB Resource: Gift Lists Storage
+
 GiftListsTable:
 Type: AWS::DynamoDB::Table
 Properties:
@@ -30,5 +55,19 @@ AttributeDefinitions:
 AttributeType: S
 KeySchema:
 - AttributeName: list_id
+KeyType: HASH
+BillingMode: PAY_PER_REQUEST 
+
+### DynamoDB Resource: Users Profile Registry
+
+UsersTable:
+Type: AWS::DynamoDB::Table
+Properties:
+TableName: ${self:provider.environment.USERS_TABLE}
+AttributeDefinitions:
+- AttributeName: user_id
+AttributeType: S
+KeySchema:
+- AttributeName: user_id
 KeyType: HASH
 BillingMode: PAY_PER_REQUEST
