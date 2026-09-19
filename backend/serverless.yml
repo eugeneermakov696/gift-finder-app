@@ -1,27 +1,68 @@
 service: amazon-gift-backend 
 
+plugins: 
+
+* serverless-dynamodb-local # Spins up a local Java/Docker DynamoDB GUI/instance
+* serverless-offline        # Emulates AWS Lambda and API Gateway locally
+
+custom: 
+
+### Configuration block for local database mocking
+
+dynamodb:
+stages:
+- dev
+start:
+port: 8000
+inMemory: true
+migrate: true # Automatically creates your tables (GiftLists, Users) on startup
+seed: true    # Optional: permits inserting mock json arrays on boot 
+
 provider:
 name: aws
 runtime: nodejs18.x
 stage: ${opt:stage, 'dev'}
-region: us-east-1
+region: us-east-1 
+
 environment:
-GIFT_LISTS_TABLE: self:service-gift-lists-{self:provider.stage}
-USERS_TABLE: self:service-users-{self:provider.stage}
-AMAZON_PA_API_KEY: ssm:/amazon-gift/{self:provider.stage}/pa-api-key} 
+GIFT_LISTS_TABLE: ${self:service}-gift-lists-${self:provider.stage}
+USERS_TABLE: ${self:service}-users-${self:provider.stage}
+AMAZON_PA_API_KEY: ssm:/amazon-gift/${self:provider.stage}/pa-api-key
+ITEM_CLAIMED_SNS_TOPIC_ARN: !Ref ItemClaimedTopic
+ORDER_PROCESSING_SQS_QUEUE_URL: !Ref OrderProcessingQueue
+# Dynamic flag to let code know it's running inside the offline simulator
+IS_OFFLINE: ${env:IS_OFFLINE, 'false'} 
 
-functions: 
+iamRoleStatements:
+- Effect: Allow
+Action:
+- dynamodb:GetItem
+- dynamodb:PutItem
+- dynamodb:UpdateItem
+- dynamodb:Query
+- dynamodb:Scan
+Resource:
+- !GetAtt GiftListsTable.Arn
+- !GetAtt UsersTable.Arn
+- Effect: Allow
+Action:
+- sns:Publish
+Resource:
+- !Ref ItemClaimedTopic
+- Effect: Allow
+Action:
+- sqs:SendMessage
+Resource:
+- !GetAtt OrderProcessingQueue.Arn 
 
-### 1. Product Registry Handlers
-
+functions:
 addGiftItem:
 handler: src/handlers/items.add
 events:
 - http:
 path: lists/items
 method: post
-cors: true
-authorizer: awsApiKey # Securing the endpoint 
+cors: true 
 
 reserveGiftItem:
 handler: src/handlers/items.reserve
@@ -31,21 +72,8 @@ path: lists/items/reserve
 method: patch
 cors: true 
 
-### 2. Authentication Cognito Hook Handler
-
-cognitoPostConfirmation:
-handler: src/handlers/auth.postConfirmation
-events:
-- cognitoUserPool:
-pool: MyUserPoolName
-trigger: PostConfirmation
-existing: true # Hooks into your existing Cognito User Pool 
-
 resources:
-Resources: 
-
-### DynamoDB Resource: Gift Lists Storage
-
+Resources:
 GiftListsTable:
 Type: AWS::DynamoDB::Table
 Properties:
@@ -58,8 +86,6 @@ KeySchema:
 KeyType: HASH
 BillingMode: PAY_PER_REQUEST 
 
-### DynamoDB Resource: Users Profile Registry
-
 UsersTable:
 Type: AWS::DynamoDB::Table
 Properties:
@@ -71,3 +97,13 @@ KeySchema:
 - AttributeName: user_id
 KeyType: HASH
 BillingMode: PAY_PER_REQUEST
+
+ItemClaimedTopic:
+Type: AWS::SNS::Topic
+Properties:
+TopicName: ${self:service}-item-claimed-${self:provider.stage}
+
+OrderProcessingQueue:
+Type: AWS::SQS::Queue
+Properties:
+QueueName: ${self:service}-order-queue-${self:provider.stage}

@@ -6,8 +6,24 @@ PutCommand,
 UpdateCommand
 } = require("@aws-sdk/lib-dynamodb"); 
 
-// Initialize standard client and wrap with DocumentClient for native JS types
-const client = new DynamoDBClient({ region: process.env.AWS_REGION || "us-east-1" });
+// 1. Local Environment Configuration Routing Engine
+const isOffline = process.env.IS_OFFLINE === "true" || process.env.AWS_SAM_LOCAL === "true"; 
+
+const clientOptions = {
+region: process.env.AWS_REGION || "us-east-1"
+}; 
+
+if (isOffline) {
+console.log("🛠️ App running in local offline mode. Re-routing DynamoDB to http://localhost:8000");
+clientOptions.endpoint = "http://localhost:8000";
+clientOptions.credentials = {
+accessKeyId: "MockAccessKeyId",
+secretAccessKey: "MockSecretAccessKey"
+};
+} 
+
+// 2. Client Initialization
+const client = new DynamoDBClient(clientOptions);
 const docClient = DynamoDBDocumentClient.from(client); 
 
 const TABLE_NAME = process.env.GIFT_LISTS_TABLE; 
