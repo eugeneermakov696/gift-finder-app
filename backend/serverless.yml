@@ -7,7 +7,7 @@ plugins: 
 
 custom: 
 
-### Configuration block for local database mocking
+### Configuration block for local database mocking and seeding
 
 dynamodb:
 stages:
@@ -15,8 +15,15 @@ stages:
 start:
 port: 8000
 inMemory: true
-migrate: true # Automatically creates your tables (GiftLists, Users) on startup
-seed: true    # Optional: permits inserting mock json arrays on boot 
+migrate: true # Automatically creates tables on startup
+seed: true    # Explicitly enables the local seed engine
+seed:
+dev:
+sources:
+- table: ${self:provider.environment.GIFT_LISTS_TABLE}
+sources: [./tests/seeds/giftListsSeed.json]
+- table: ${self:provider.environment.USERS_TABLE}
+sources: [./tests/seeds/usersSeed.json] 
 
 provider:
 name: aws
