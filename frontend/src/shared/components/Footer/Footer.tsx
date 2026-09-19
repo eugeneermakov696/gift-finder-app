@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styles from './Footer.module.scss';
 
 export const Footer = () => {
@@ -17,9 +17,9 @@ export const Footer = () => {
             <li>
               <a href="#howItWorks">How it Works</a>
             </li>
-            <NavLink to="/rights" aria-label="Rights">
-              <a href="#home">Privacy policy</a>
-            </NavLink>
+            <Link to="/privacy-policy" aria-label="Rights">
+              <p>Privacy policy</p>
+            </Link>
           </ul>
         </nav>
       </div>

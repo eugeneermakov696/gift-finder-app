@@ -1,9 +1,68 @@
+@use '../../styles/mixins' as *;
+
+/* --- Global --- */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 32px 80px;
 }
 
+.title {
+  font-family: var(--font-secondary);
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 72px;
+}
+
+.subtitle {
+  font-family: var(--font-secondary);
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.primaryBtn, .secondaryBtn {
+  border-radius: 8px;
+  font-weight: 600;
+  height: 44px;
+  padding: 0 32px;
+  cursor: pointer;
+  border: none;
+}
+
+.primaryBtn {
+  background-color: var(--text-main);
+  color: var(--bg-main);
+}
+
+.secondaryBtn {
+  background-color: var(--color-elements);
+  color: var(--text-main);
+}
+
+.button {
+  height: 44px;
+  padding: 0 24px;
+  border-radius: 8px;
+  border: 1px solid var(--text-main);
+  background-color: transparent;
+  color: var(--text-main);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.howWorksSection, .faqSection, .learnMoreSection, .favSection {
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- HERO SECTION --- */
 .heroSection {
   display: flex;
   flex-direction: column;
@@ -26,18 +85,164 @@
   margin-top: 32px;
 }
 
-.primaryBtn, .secondaryBtn {
+/* --- ABOUT SECTION --- */
+.aboutSection {
+  margin-top: 200px;
+}
+
+/* --- HOW IT WORKS SECTION --- */
+.info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background-color: var(--bg-surface);
   border-radius: 8px;
+  height: 200px;
+}
+
+/* --- FAQ SECTION --- */
+.faqItem {}
+
+.divider {
+  border: none;
+  border-top: 1px solid black;
+  margin: 32px 0;
+}
+
+.faqQuestion {
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.downArrowIcon {
+  @include icon-mask('/icons/downArrow.svg', 24px);
+  transition: transform 0.3s ease;
+
+  &.rotated {
+    transform: rotate(180deg);
+  }
+}
+
+.faqAnswer {
+  padding-top: 12px;
+  color: var(--text-primary);
+}
+
+/* --- LEARN MORE SECTION --- */
+.masonryGrid {
+  column-count: 3;
+  column-gap: 24px;
+  width: 100%;
+}
+
+.gridCard {
+  break-inside: avoid;
+  margin-bottom: 24px;
+  background-color: var(--bg-surface);
+  padding: 24px;
+  border-radius: 8px;
+}
+
+.recSubtitle {
+  font-size: 20px;
   font-weight: 600;
-  height: 44px;
+  margin-bottom: 16px;
+  margin-top: 24px;
 }
 
-.primaryBtn {
-  background-color: var(--text-main);
-  color: var(--bg-main);
+.actionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.secondaryBtn {
-  background-color: var(--color-elements);
-  color: var(--text-main);
+.actionText {
+  max-width: 70%;
+}
+
+/* --- FAVOURITES SECTION --- */
+.favGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.favCard {
+  display: flex;
+  background-color: var(--text-muted);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cardImagePlaceholder {
+  width: 200px;
+  background-color: #e5e5e5;
+  flex-shrink: 0;
+}
+
+.cardContent {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; 
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cardDesc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardActions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.amazonBtn {
+  height: 40px;
+  background-color: #555;
+  color: white;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.detailsLink {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px;
 }
