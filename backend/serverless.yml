@@ -2,10 +2,15 @@ service: amazon-gift-backend 
 
 plugins: 
 
-* serverless-dynamodb-local # Spins up a local Java/Docker DynamoDB GUI/instance
+* serverless-dynamodb-local # Emulates a local DynamoDB instance
 * serverless-offline        # Emulates AWS Lambda and API Gateway locally
 
-custom: 
+custom:
+stage: ${opt:stage, 'dev'} 
+
+### Automatically resolves environment configuration profiles dynamically
+
+config: ${file(./config/${self:custom.stage}.json)} 
 
 ### Configuration block for local database mocking and seeding
 
@@ -15,8 +20,8 @@ stages:
 start:
 port: 8000
 inMemory: true
-migrate: true # Automatically creates tables on startup
-seed: true    # Explicitly enables the local seed engine
+migrate: true # Automatically provisions local tables on startup
+seed: true    # Seeds data automatically on initialization
 seed:
 dev:
 sources:
@@ -28,17 +33,23 @@ sources: [./tests/seeds/usersSeed.json] 
 provider:
 name: aws
 runtime: nodejs18.x
-stage: ${opt:stage, 'dev'}
-region: us-east-1 
+stage: ${self:custom.stage}
+region: ${self:custom.config.AWS_REGION} 
+
+### Global environment context variables loaded dynamically from configs and resource mappings
 
 environment:
+STAGE: ${self:custom.config.STAGE}
+LOG_LEVEL: ${self:custom.config.LOG_LEVEL}
+ENABLE_MOCK_FALLBACK: ${self:custom.config.ENABLE_MOCK_FALLBACK}
 GIFT_LISTS_TABLE: ${self:service}-gift-lists-${self:provider.stage}
 USERS_TABLE: ${self:service}-users-${self:provider.stage}
 AMAZON_PA_API_KEY: ssm:/amazon-gift/${self:provider.stage}/pa-api-key
 ITEM_CLAIMED_SNS_TOPIC_ARN: !Ref ItemClaimedTopic
 ORDER_PROCESSING_SQS_QUEUE_URL: !Ref OrderProcessingQueue
-# Dynamic flag to let code know it's running inside the offline simulator
 IS_OFFLINE: ${env:IS_OFFLINE, 'false'} 
+
+### Enforced Identity Access Management Principle of Least Privilege
 
 iamRoleStatements:
 - Effect: Allow
@@ -69,7 +80,8 @@ events:
 - http:
 path: lists/items
 method: post
-cors: true 
+cors:
+origin: ${self:custom.config.CORS_ALLOWED_ORIGINS} 
 
 reserveGiftItem:
 handler: src/handlers/items.reserve
@@ -77,7 +89,8 @@ events:
 - http:
 path: lists/items/reserve
 method: patch
-cors: true 
+cors:
+origin: ${self:custom.config.CORS_ALLOWED_ORIGINS} 
 
 resources:
 Resources:

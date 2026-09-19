@@ -1,0 +1,12 @@
+{
+"STAGE": "dev",
+"AWS_REGION": "us-east-1",
+"LOG_LEVEL": "debug",
+"ENABLE_MOCK_FALLBACK": true,
+"CORS_ALLOWED_ORIGINS": "*",
+"MESSAGING": {
+"SQS_DELAY_SECONDS": 5,
+"SNS_OPTIMIZE_DELIVERY": false
+},
+"API_CACHE_TTL_SECONDS": 60
+}
