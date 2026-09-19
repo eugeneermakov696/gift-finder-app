@@ -9,6 +9,7 @@ import { NotFoundPage } from './modules/NotFoundPage';
 import { FiltersPage } from './modules/FiltersPage';
 import { CatalogPage } from './modules/CatalogPage.tsx';
 import { RightsPage } from './modules/RightsPage/RightsPage.tsx';
+import { FiltersWindow } from './modules/FiltersWindow/FiltersWindow.tsx';
 
 export const App = () => {
   return (
@@ -17,10 +18,11 @@ export const App = () => {
         <Route index element={<HomePage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="wishlist" element={<WishlistPage />} />
-        <Route path="wishlist" element={<FiltersPage />} />
-        <Route path="wishlist" element={<CatalogPage />} />
+        <Route path="find-a-gift" element={<FiltersPage />} />
+        <Route path="ready-ideas" element={<FiltersWindow />} />
+        <Route path="catalog" element={<CatalogPage />} />
         <Route path="product/:productId" element={<ProductDetailsPage />} />
-        <Route path="wishlist" element={<RightsPage />} />
+        <Route path="privacy-policy" element={<RightsPage />} />
         
         <Route path="*" element={<NotFoundPage />} />
       </Route>
