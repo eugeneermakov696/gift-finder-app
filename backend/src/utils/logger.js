@@ -40,11 +40,31 @@ function log(level, message, context = {}) {
   }
 }
 
-// Helper to normalize context data and handle embedded Error instances
+/**
+ * Helper to normalize context data and deeply inspect nested or standalone Error instances
+ */
 function formatContext(ctx) {
+  if (!ctx) return {};
+
   if (ctx instanceof Error) {
     return { errorName: ctx.name, errorMessage: ctx.message, stack: ctx.stack };
   }
+
+  // Extract hidden properties if an Error is nested inside a container object
+  if (typeof ctx === 'object') {
+    const formatted = { ...ctx };
+    for (const key in formatted) {
+      if (formatted[key] instanceof Error) {
+        formatted[key] = {
+          errorName: formatted[key].name,
+          errorMessage: formatted[key].message,
+          stack: formatted[key].stack
+        };
+      }
+    }
+    return formatted;
+  }
+
   return ctx;
 }
 
