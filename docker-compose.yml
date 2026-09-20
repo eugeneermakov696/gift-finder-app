@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+
+  ### 1. Serverless Gateway Proxy and Mock Database Engine
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+      - "8000:8000"
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - IS_OFFLINE=true
+      - AWS_REGION=us-east-1
+      - LOG_LEVEL=debug
+      - GIFT_LISTS_TABLE=amazon-gift-backend-gift-lists-dev
+      - USERS_TABLE=amazon-gift-backend-users-dev
+    networks:
+      - gift-finder-network
+
+  ### 2. Frontend Client Application Layout
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      # Corrected: serverless-offline maps routes to root domain by default
+      - VITE_API_BASE_URL=http://localhost:3000
+    networks:
+      - gift-finder-network
+    depends_on:
+      - backend
+
+networks:
+  gift-finder-network:
+    driver: bridge
