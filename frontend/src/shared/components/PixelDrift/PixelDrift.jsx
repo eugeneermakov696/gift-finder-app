@@ -391,9 +391,9 @@ export default function PixelDrift() {
      const config = {
       "text": "FIND A PERFECT GIFT",
       "colors": [
-        "#f3e7d9",
-        "#654f4a",
-        "#f3e7d9"
+        "#2f2a2c",
+        "#9a6674",
+        "#7a4e59"
       ],
       "mode": "onEnter",
       "replay": true,

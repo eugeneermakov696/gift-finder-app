@@ -1,33 +1,34 @@
 .footer {
   height: 200px;
   flex-shrink: 0;
-  padding: 0 64px;
+  padding: 0 80px;
 }
 
 .topSection {
-  height: 100px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 64px;
-  border-bottom: 1px solid black;
+  padding: 0 160px 0 80px;
+  border-bottom: 1px solid var(--text-muted);
 }
 
 .bottomSection {
-  height: 100px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .logo {
-  position: relative;
-
-  display: inline-block;
-
-  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  max-width: 120px;
+  width: 100%;
   height: 28px;
-
+  
   transition: transform 0.3s ease;
 
   &:hover {
@@ -43,11 +44,21 @@
 .navList {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 72px;
+}
+
+.link {
+  font-size: 16px;
+  font-weight: 400;
+  font-family: var(--font-main);
+  text-align: center;
+  line-height: 100%;
 }
 
 .footerText {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
+  font-family: var(--font-main);
+  color: var(--text-main);
   text-align: center;
 }
