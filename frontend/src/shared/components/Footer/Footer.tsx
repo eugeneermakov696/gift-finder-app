@@ -14,11 +14,11 @@ export const Footer = () => {
       <div className={styles.rightSection}>
         <nav className={styles.nav}>
           <ul className={styles.navList}>
-            <li>
-              <a href="#howItWorks">How it Works</a>
-            </li>
-            <Link to="/privacy-policy" aria-label="Rights">
-              <p>Privacy policy</p>
+            <Link to="/privacy-policy" aria-label="Terms & Conditions">
+              <p className={styles.link}>Terms & Conditions</p>
+            </Link>
+            <Link to="/privacy-policy" aria-label="Privacy Policy">
+              <p className={styles.link}>Privacy Policy</p>
             </Link>
           </ul>
         </nav>

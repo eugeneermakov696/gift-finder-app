@@ -5,35 +5,44 @@ export const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.leftSection}>
-        <Link to="/" className={styles.logo}>
-          <img src='./icons/logo.svg' className={styles.logoImg} alt='Giftly logo' />
-        </Link>
-      </div>
-
-      <div className={styles.rightSection}>
         <nav className={styles.nav}>
           <ul className={styles.navList}>
             <li>
-              <a href="#home">Home</a>
+              <a href="#home" className={styles.link}>Home</a>
             </li>
             <li>
-              <a href="#about">About</a>
+              <a href="#about" className={styles.link}>About</a>
             </li>
             <li>
-              <a href="#howItWorks">How it Works</a>
+              <a href="#howItWorks" className={styles.link}>How it Works</a>
             </li>
             <li>
-              <a href="#faq">FAQ</a>
+              <a href="#faq" className={styles.link}>FAQ</a>
             </li>
           </ul>
         </nav>
+      </div>
 
+      <Link to="/" className={styles.logo}>
+        <img src='./icons/logo.svg' className={styles.logoImg} alt='Giftly logo' />
+      </Link>
+
+      <div className={styles.rightSection}>
         <NavLink
           to="/wishlist"
           aria-label="Wishlist"
         >
           <div className={styles.iconWrapper}>
             <span className={styles.wishlistIcon} aria-label="Wishlist" />
+          </div>
+        </NavLink>
+
+        <NavLink
+          to="/profile"
+          aria-label="Profile"
+        >
+          <div className={styles.iconWrapper}>
+            <span className={styles.profileIcon} aria-label="Wishlist" />
           </div>
         </NavLink>
       </div>

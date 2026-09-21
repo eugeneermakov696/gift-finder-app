@@ -5,36 +5,41 @@ import styles from './HomePage.module.scss';
 export const HomePage = () => {
   return (
     <div className={styles.container}>
+      
       <section className={styles.heroSection}>
         <div className={styles.animationWrapper}>
-          <PixelDrift />
+          <PixelDrift /> 
         </div>
-        <div className={styles.buttons}>
-          <Link to="/find-a-gift">
-            <button className={styles.primaryBtn}>Find a gift</button>
-          </Link>
-          <Link to="/ready-ideas">
-          <button className={styles.secondaryBtn}>Ready ideas</button>
-          </Link>
+        
+        <div className={styles.heroContent}>
+          <h2 className={styles.heroSubtitle}>
+            Find a Gift They'll Actually Love — In Under 2 Minutes
+          </h2>
+          
+          <div className={styles.buttons}>
+            <Link to="/find-a-gift">
+              <button className={styles.primaryBtn}>Start Gift Search</button>
+            </Link>
+            <Link to="/ready-ideas">
+              <button className={styles.secondaryBtn}>Explore Ready Ideas</button>
+            </Link>
+          </div>
+
+          <ul className={styles.heroFeatures}>
+            <li>• Curated products with a 4.5★+ rating on Amazon</li>
+            <li>• 100% free gift discovery tool</li>
+          </ul>
         </div>
       </section>
 
       <section className={styles.aboutSection} id="about">
         <h2 className={styles.title}>About</h2>
-        <h3 className={styles.subtitle}>We help you find the right gift.</h3>
+        <h3 className={styles.subtitle}>
+          Why Giftly Is the Smarter Way to Discover Personalized Gifts
+        </h3>
         <p className={styles.description}>
-          — makes gift searching easier with filters based on recipient, occasion, budget, and interests.
-          We don’t sell products directly. When you choose a gift, you’ll be redirected to (Amazon or another retailer) to complete the purchase.
-          Our goal is simple: help you find the right gift faster and with less stress.
+          Instead of browsing through endless sponsored listings, our discovery engine filters authentic customer feedback, pricing, and interests to deliver curated Amazon gifts you can give with confidence.
         </p>
-
-        <h3 className={styles.subtitle}>Who’s behind?</h3>
-        <p className={styles.description}>
-          is created by a collaborative team of Project Manager, Frontend Developer, Backend Developer, QA Engineer, Data Analyst, UI/UX Designer, Marketing Specialist,
-          DevOps Engineer. working together to make gift discovery simple and useful.
-        </p>
-
-        <p>Still have questions? Contact us at [email address].</p>
       </section>
 
       <section className={styles.howWorksSection} id="howItWorks">
@@ -69,7 +74,7 @@ export const HomePage = () => {
           <summary className={styles.faqQuestion}>
             How does it work?
 
-            <div className={styles.downArrowIcon} />
+            <div className={styles.upArrowIcon} />
           </summary>
           <div className={styles.faqAnswer}>
             Choose who the gift is for, the occasion, budget, and interests. We'll show gift ideas that match your preferences.
@@ -82,7 +87,7 @@ export const HomePage = () => {
           <summary className={styles.faqQuestion}>
             How long does it take?
 
-            <div className={styles.downArrowIcon} />
+            <div className={styles.upArrowIcon} />
           </summary>
           <div className={styles.faqAnswer}>
             Finding a gift takes only a few minutes. Use filters and categories to quickly narrow down the options.
@@ -95,7 +100,7 @@ export const HomePage = () => {
           <summary className={styles.faqQuestion}>
             Where can I buy the gift?
 
-            <div className={styles.downArrowIcon} />
+            <div className={styles.upArrowIcon} />
           </summary>
           <div className={styles.faqAnswer}>
             When you select a gift, you’ll be redirected to (Amazon or another retailer) where you can view the product and complete your purchase.
@@ -108,7 +113,7 @@ export const HomePage = () => {
           <summary className={styles.faqQuestion}>
             What about delivery?
 
-            <div className={styles.downArrowIcon} />
+            <div className={styles.upArrowIcon} />
           </summary>
           <div className={styles.faqAnswer}>
             Delivery options and shipping times depend on the retailer. You can check the details directly on the store’s website before purchasing.
@@ -121,7 +126,7 @@ export const HomePage = () => {
           <summary className={styles.faqQuestion}>
             Can I return a gift?
 
-            <div className={styles.downArrowIcon} />
+            <div className={styles.upArrowIcon} />
           </summary>
           <div className={styles.faqAnswer}>
             Returns are handled by the retailer you purchase from. Return policies may vary depending on the store.
@@ -134,7 +139,7 @@ export const HomePage = () => {
           <summary className={styles.faqQuestion}>
             Is — free to use?
 
-            <div className={styles.downArrowIcon} />
+            <div className={styles.upArrowIcon} />
           </summary>
           <div className={styles.faqAnswer}>
             Yes. Using — is free. You only pay for the product you choose to purchase from the retailer.
