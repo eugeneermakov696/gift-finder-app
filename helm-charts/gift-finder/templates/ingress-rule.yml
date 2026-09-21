@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: {{ .Release.Name }}-ingress
+    namespace: {{ .Values.namespace }}
+spec:
+    ingressClassName: nginx
+    rules:
+        - http:
+            paths:
+                - pathType: Prefix
+                  path: /gift-finder-app
+                  backend:
+                    service:
+                        name: {{ .Values.namespace }}-frontend-service
+                        port:
+                            number: {{ .Values.frontend.deployment.port }}

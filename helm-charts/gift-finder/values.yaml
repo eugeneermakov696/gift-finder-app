@@ -1,0 +1,15 @@
+namespace: gift-finder
+
+frontend:
+  deployment:
+    replicas: 2
+    label: frontend
+    image: eug696/frontend:latest
+    port: 3000
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
