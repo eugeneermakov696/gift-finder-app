@@ -127,5 +127,4 @@ jobs:
               with:
                   context: ./frontend
                   push: true
-                  tags: ${{ secrets.DOCKER_USERNAME }}/frontend:${{ github.sha }}
-
+                  tags: ${{ secrets.DOCKER_USERNAME }}/frontend:latest
