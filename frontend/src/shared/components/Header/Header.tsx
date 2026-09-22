@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
 import styles from './Header.module.scss';
 
 export const Header = () => {
@@ -8,16 +9,22 @@ export const Header = () => {
         <nav className={styles.nav}>
           <ul className={styles.navList}>
             <li>
-              <a href="#home" className={styles.link}>Home</a>
+              <Link
+                to="/"
+                className={styles.link}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                Home
+              </Link>
             </li>
             <li>
-              <a href="#about" className={styles.link}>About</a>
+              <HashLink className={styles.link} to="/#about">About</HashLink>
             </li>
             <li>
-              <a href="#howItWorks" className={styles.link}>How it Works</a>
+              <HashLink className={styles.link} to="/#howItWorks">How it works</HashLink>
             </li>
             <li>
-              <a href="#faq" className={styles.link}>FAQ</a>
+              <HashLink className={styles.link} to="/#faq">FAQ</HashLink>
             </li>
           </ul>
         </nav>
@@ -42,7 +49,7 @@ export const Header = () => {
           aria-label="Profile"
         >
           <div className={styles.iconWrapper}>
-            <span className={styles.profileIcon} aria-label="Wishlist" />
+            <span className={styles.profileIcon} aria-label="Profile" />
           </div>
         </NavLink>
       </div>

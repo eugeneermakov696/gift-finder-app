@@ -10,6 +10,8 @@ import { FiltersPage } from './modules/FiltersPage';
 import { CatalogPage } from './modules/CatalogPage.tsx';
 import { RightsPage } from './modules/RightsPage/RightsPage.tsx';
 import { FiltersWindow } from './modules/FiltersWindow/FiltersWindow.tsx';
+import { ConditionsPage } from './modules/ConditionsPage/ConditionsPage.tsx';
+import { ContactsPage } from './modules/ContactsPage/ContactsPage.tsx';
 
 export const App = () => {
   return (
@@ -23,6 +25,8 @@ export const App = () => {
         <Route path="catalog" element={<CatalogPage />} />
         <Route path="product/:productId" element={<ProductDetailsPage />} />
         <Route path="privacy-policy" element={<RightsPage />} />
+        <Route path="terms&conditions" element={<ConditionsPage />} />
+        <Route path="contact-us" element={<ContactsPage />} />
         
         <Route path="*" element={<NotFoundPage />} />
       </Route>

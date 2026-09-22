@@ -14,7 +14,7 @@ export const Footer = () => {
       <div className={styles.rightSection}>
         <nav className={styles.nav}>
           <ul className={styles.navList}>
-            <Link to="/privacy-policy" aria-label="Terms & Conditions">
+            <Link to="/terms&conditions" aria-label="Terms & Conditions">
               <p className={styles.link}>Terms & Conditions</p>
             </Link>
             <Link to="/privacy-policy" aria-label="Privacy Policy">
