@@ -37,7 +37,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'gift_of_presents.urls'
+
 
 TEMPLATES = [
     {

@@ -1,0 +1,2 @@
+[console_scripts]
+atm = automium:main
