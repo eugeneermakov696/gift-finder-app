@@ -100,3 +100,30 @@ class GiftFinderAPITestCase(TestCase):
         self.present.refresh_from_db()
         self.assertEqual(float(self.present.original_price), 49.99)
         self.assertTrue(float(self.present.price) < 49.99)
+
+    def test_add_item_missing_token_returns_401(self):
+        """Verifies that making requests without token metadata fields yields an explicit 401 response."""
+        payload = {"present_id": self.present.id, "action": "add"}
+        response = self.client.post(
+            reverse('wishlist-detail', kwargs={'pk': self.wishlist.id}),
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_add_item_wrong_user_token_returns_403(self):
+        """Verifies that an authenticated user trying to edit someone else's wishlist triggers a 403 response."""
+        from rest_framework.authtoken.models import Token
+
+        # Instantiate a separate rogue user context setup
+        rogue_user = User.objects.create_user(username="rogue_hacker", password="password123")
+        rogue_token, _ = Token.objects.get_or_create(user=rogue_user)
+
+        payload = {"present_id": self.present.id, "action": "add"}
+        response = self.client.post(
+            reverse('wishlist-detail', kwargs={'pk': self.wishlist.id}),
+            data=json.dumps(payload),
+            content_type='application/json',
+            HTTP_AUTHORIZATION=f"Token {rogue_token.key}"  # Passing an unauthorized token key
+        )
+        self.assertEqual(response.status_code, 403)
