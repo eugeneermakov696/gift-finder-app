@@ -15,18 +15,20 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "backend"]
 
 # Application definition
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
 
     # Third-Party Apps
-    "corsheaders",
+    'corsheaders',
+    'rest_framework',  # <-- Add this for authentication architecture
+    'rest_framework.authtoken',  # <-- Add this to enable native database token strings
 
     # Local Apps
-    "presents",
+    'presents',
 ]
 
 MIDDLEWARE = [

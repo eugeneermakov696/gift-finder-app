@@ -1,27 +1,62 @@
-### GET Request: View all available gifts
-GET http://localhost:8000/api/gifts/
+### 1. Execute the automated scraper (Will auto-save into DB!)
+POST http://localhost:8000/api/gifts/scrape/
+Content-Type: application/json
+
+{
+  "amazon_url": "https://amazon.com"
+}
+
+### 2. View all wishlists in the system
+GET http://localhost:8000/api/wishlists/
 Accept: application/json
 
-### POST Request: Create a brand new gift item
-POST http://localhost:8000/api/gifts/
+### 3. Initialize a new Wishlist container (Assuming user_id 1 is your admin)
+POST http://localhost:8000/api/wishlists/
 Content-Type: application/json
 
 {
-  "title": "Amazon Echo Dot Smart Speaker",
-  "asin": "B09B8V1VHC",
-  "amazon_url": "https://amazon.com",
-  "price": 49.99,
-  "category": "Electronics"
+  "user_id": 1,
+  "name": "Holiday Shopping Ideas"
 }
 
-### PUT Request: Modify the price of the gift you just created (Assuming ID is 1)
-PUT http://localhost:8000/api/gifts/1/
+### 4. Append the scraped product to the Wishlist container (Assuming list ID 1 and present ID 1)
+POST http://localhost:8000/api/wishlists/1/
 Content-Type: application/json
 
 {
-  "price": 39.99,
-  "category": "Smart Home"
+  "present_id": 1,
+  "action": "add"
 }
 
-### DELETE Request: Erase the gift from the database
-DELETE http://localhost:8000/api/gifts/1/
+### 5. View the final contents inside that specific Wishlist
+GET http://localhost:8000/api/wishlists/1/
+Accept: application/json
+### Register a new separate developer user account
+POST http://localhost:8000/api/auth/register/
+Content-Type: application/json
+
+{
+  "username": "alex_gift_finder",
+  "password": "super_secret_password_123"
+}
+
+### Login with that account to fetch your token string
+POST http://localhost:8000/api/auth/login/
+Content-Type: application/json
+
+{
+  "username": "alex_gift_finder",
+  "password": "super_secret_password_123"
+}
+
+### GET Request: Download your wishlist directly as a clean CSV table file
+# (Open this link in your browser to verify the instant file download)
+GET http://localhost:8000/api/wishlists/1/export/csv/
+
+### GET Request: Stream out a clean, structured JSON format of your wishlist data
+GET http://localhost:8000/api/wishlists/1/export/json/
+Accept: application/json
+
+### POST Request: Simulate running the price drop automation on a present (Assuming present ID is 1)
+POST http://localhost:8000/api/gifts/1/price-check/
+Content-Type: application/json
