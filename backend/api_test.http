@@ -1,0 +1,27 @@
+### GET Request: View all available gifts
+GET http://localhost:8000/api/gifts/
+Accept: application/json
+
+### POST Request: Create a brand new gift item
+POST http://localhost:8000/api/gifts/
+Content-Type: application/json
+
+{
+  "title": "Amazon Echo Dot Smart Speaker",
+  "asin": "B09B8V1VHC",
+  "amazon_url": "https://amazon.com",
+  "price": 49.99,
+  "category": "Electronics"
+}
+
+### PUT Request: Modify the price of the gift you just created (Assuming ID is 1)
+PUT http://localhost:8000/api/gifts/1/
+Content-Type: application/json
+
+{
+  "price": 39.99,
+  "category": "Smart Home"
+}
+
+### DELETE Request: Erase the gift from the database
+DELETE http://localhost:8000/api/gifts/1/
