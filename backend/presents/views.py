@@ -1,36 +1,102 @@
+import json
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 from presents.models import Present
 
 
+@csrf_exempt
 def product_gift_list(request):
     """
-    Fetches real present records from the PostgreSQL database
-    and serializes them into a JSON payload for the frontend.
+    GET: List & filter products from the database.
+    POST: Insert a new gift into the database.
     """
-    # Fetch active records from the database
-    gifts_queryset = Present.objects.filter(is_available=True)
+    if request.method == "GET":
+        queryset = Present.objects.filter(is_available=True)
 
-    # Structure the records into a dictionary list
-    presents_list = []
-    for gift in gifts_queryset:
-        presents_list.append({
-            "id": gift.id,
-            "title": gift.title,
-            "asin": gift.asin,
-            "amazon_url": gift.amazon_url,
-            "image_url": gift.image_url if gift.image_url else "",
-            "price": float(gift.price),  # Convert Decimal to float for JSON validation
-            "original_price": float(gift.original_price) if gift.original_price else None,
-            "rating": float(gift.rating) if gift.rating else None,
-            "reviews_count": gift.reviews_count,
-            "category": gift.category if gift.category else "Uncategorized"
+        # Filters
+        category_query = request.GET.get("category")
+        if category_query:
+            queryset = queryset.filter(category__iexact=category_query)
+
+        max_price = request.GET.get("max_price")
+        if max_price:
+            try:
+                queryset = queryset.filter(price__lte=float(max_price))
+            except ValueError:
+                return JsonResponse({"status": "error", "message": "Invalid max_price value"}, status=400)
+
+        search_query = request.GET.get("search")
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) | Q(asin__icontains=search_query)
+            )
+
+        presents_list = []
+        for gift in queryset:
+            presents_list.append({
+                "id": gift.id, "title": gift.title, "asin": gift.asin,
+                "amazon_url": gift.amazon_url, "image_url": gift.image_url,
+                "price": float(gift.price), "category": gift.category
+            })
+        return JsonResponse({"status": "success", "results_count": len(presents_list), "presents": presents_list})
+
+    elif request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            new_gift = Present.objects.create(
+                title=data["title"],
+                asin=data["asin"],
+                amazon_url=data["amazon_url"],
+                price=data["price"],
+                image_url=data.get("image_url", ""),
+                category=data.get("category", "Uncategorized")
+            )
+            return JsonResponse({
+                "status": "created",
+                "message": f"Gift {new_gift.id} added successfully!",
+                "id": new_gift.id
+            }, status=201)
+        except KeyError as e:
+            return JsonResponse({"status": "error", "message": f"Missing required field: {str(e)}"}, status=400)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+
+@csrf_exempt
+def product_gift_detail(request, pk):
+    """
+    GET: Retrieve a single product record.
+    PUT: Modify fields on an existing product record.
+    DELETE: Remove a product record from the ecosystem.
+    """
+    try:
+        gift = Present.objects.get(pk=pk)
+    except Present.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Product record not found"}, status=404)
+
+    if request.method == "GET":
+        return JsonResponse({
+            "status": "success",
+            "present": {
+                "id": gift.id, "title": gift.title, "asin": gift.asin,
+                "amazon_url": gift.amazon_url, "price": float(gift.price),
+                "category": gift.category
+            }
         })
 
-    response_data = {
-        "status": "success",
-        "count": len(presents_list),
-        "message": "Dynamic Gift Selection Engine Live",
-        "presents": presents_list
-    }
+    elif request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+            gift.title = data.get("title", gift.title)
+            gift.asin = data.get("asin", gift.asin)
+            gift.price = data.get("price", gift.price)
+            gift.category = data.get("category", gift.category)
+            gift.save()
+            return JsonResponse({"status": "updated", "message": f"Gift {gift.id} modified successfully."})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
 
-    return JsonResponse(response_data)
+    elif request.method == "DELETE":
+        gift.delete()
+        return JsonResponse({"status": "deleted", "message": f"Gift {pk} removed completely from database."}, status=200)
