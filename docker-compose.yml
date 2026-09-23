@@ -1,45 +1,39 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: django_postgres_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=gift_of_presents
+      - POSTGRES_USER=postgres_user
+      - POSTGRES_PASSWORD=secure_dev_password_2026
+    ports:
+      - "5432:5432"
 
-  ### 1. Serverless Gateway Proxy and Mock Database Engine
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: django_backend
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
     ports:
-      - "3000:3000"
       - "8000:8000"
-    volumes:
-      - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
     environment:
-      - IS_OFFLINE=true
-      - AWS_REGION=us-east-1
-      - LOG_LEVEL=debug
-      - GIFT_LISTS_TABLE=amazon-gift-backend-gift-lists-dev
-      - USERS_TABLE=amazon-gift-backend-users-dev
-    networks:
-      - gift-finder-network
-
-  ### 2. Frontend Client Application Layout
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/usr/src/app
-      - /usr/src/app/node_modules
-    environment:
-      # Corrected: serverless-offline maps routes to root domain by default
-      - VITE_API_BASE_URL=http://localhost:3000
-    networks:
-      - gift-finder-network
+      - DB_HOST=db
+      - DB_NAME=gift_of_presents
+      - DB_USER=postgres_user
+      - DB_PASSWORD=secure_dev_password_2026
+      - DB_PORT=5432
+      - CORS_ALLOWED_ORIGINS=http://localhost:3000
     depends_on:
-      - backend
+      - db
 
-networks:
-  gift-finder-network:
-    driver: bridge
+volumes:
+  postgres_data:

@@ -1,24 +1,26 @@
-FROM node:18-alpine
+FROM python:3.11-slim
 
-# Install Java runtime (required to run serverless-dynamodb-local binaries)
-RUN apk update && apk add --no-cache openjdk11-jre bash
+# Prevent Python from writing .pyc files and buffer output
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package*.json ./
+# Install system dependencies (useful if you ever need standard psycopg2 or tools)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Ensure development dependencies are fully available for the serverless CLI layer
-RUN npm ci
+# Install python dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Leverage Docker Caching: Download & install the standalone DynamoDB Local binaries
-# BEFORE copying application files. This avoids re-downloading on code changes.
-RUN npx serverless dynamodb install
+# Copy backend source tree
+COPY . /app/
 
-# Copy the rest of the application files
-COPY . .
-
-# Expose API Gateway Emulation (3000) and DynamoDB Local (8000) ports
-EXPOSE 3000
 EXPOSE 8000
 
-CMD ["npm", "run", "start:local"]
+# The actual start command is handled by docker-compose.yml,
+# but this acts as a safe fallback.
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
