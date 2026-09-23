@@ -1,7 +1,6 @@
 import json
 import csv
 import re
-import random
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
@@ -10,7 +9,6 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
 from presents.models import Present, Wishlist
-from presents.services import mock_amazon_scrape
 
 
 # --- GIFTS / PRODUCTS CRUD ENDPOINTS ---
@@ -24,39 +22,39 @@ def product_gift_list(request):
     GET: List, filter, sort, and paginate products from the database dynamically.
     POST: Insert a new gift into the database.
     """
-    if request.method == 'GET':
+    if request.method == "GET":
         queryset = Present.objects.filter(is_available=True)
 
         # 1. Apply existing filtering rules
-        category_query = request.GET.get('category')
+        category_query = request.GET.get("category")
         if category_query:
             queryset = queryset.filter(category__iexact=category_query)
 
-        max_price = request.GET.get('max_price')
+        max_price = request.GET.get("max_price")
         if max_price:
             try:
                 queryset = queryset.filter(price__lte=float(max_price))
             except ValueError:
                 return JsonResponse({"status": "error", "message": "Invalid max_price value"}, status=400)
 
-        search_query = request.GET.get('search')
+        search_query = request.GET.get("search")
         if search_query:
             queryset = queryset.filter(Q(title__icontains=search_query) | Q(asin__icontains=search_query))
 
         # 2. Dynamic Ordering Utility
-        sort_by = request.GET.get('sort_by', 'created_at')
-        if sort_by == 'price_low':
-            queryset = queryset.order_by('price')
-        elif sort_by == 'price_high':
-            queryset = queryset.order_by('-price')
-        elif sort_by == 'rating':
-            queryset = queryset.order_by('-rating')
+        sort_by = request.GET.get("sort_by", "created_at")
+        if sort_by == "price_low":
+            queryset = queryset.order_by("price")
+        elif sort_by == "price_high":
+            queryset = queryset.order_by("-price")
+        elif sort_by == "rating":
+            queryset = queryset.order_by("-rating")
         else:
-            queryset = queryset.order_by('-created_at')
+            queryset = queryset.order_by("-created_at")
 
         # 3. CHUNKED PAGINATION GENERATOR UTILITY
-        page = request.GET.get('page', 1)
-        items_per_page = request.GET.get('items_per_page', 10)  # Default chunks of 10 items
+        page = request.GET.get("page", 1)
+        items_per_page = request.GET.get("items_per_page", 10)  # Default chunks of 10 items
 
         paginator = Paginator(queryset, items_per_page)
         try:
@@ -95,12 +93,12 @@ def product_gift_list(request):
         try:
             data = json.loads(request.body)
             new_gift = Present.objects.create(
-                title=data['title'],
-                asin=data['asin'],
-                amazon_url=data['amazon_url'],
+                title=data["title"],
+                asin=data["asin"],
+                amazon_url=data["amazon_url"],
                 price=data['price'],
-                image_url=data.get('image_url', ''),
-                category=data.get('category', 'Uncategorized')
+                image_url=data.get("image_url", ""),
+                category=data.get("category", "Uncategorized")
             )
             return JsonResponse({
                 "status": "created",
@@ -125,7 +123,7 @@ def product_gift_detail(request, pk):
     except Present.DoesNotExist:
         return JsonResponse({"status": "error", "message": "Product record not found"}, status=404)
 
-    if request.method == 'GET':
+    if request.method == "GET":
         return JsonResponse({
             "status": "success",
             "present": {
@@ -135,19 +133,19 @@ def product_gift_detail(request, pk):
             }
         })
 
-    elif request.method == 'PUT':
+    elif request.method == "PUT":
         try:
             data = json.loads(request.body)
-            gift.title = data.get('title', gift.title)
-            gift.asin = data.get('asin', gift.asin)
-            gift.price = data.get('price', gift.price)
-            gift.category = data.get('category', gift.category)
+            gift.title = data.get("title", gift.title)
+            gift.asin = data.get("asin", gift.asin)
+            gift.price = data.get("price", gift.price)
+            gift.category = data.get("category", gift.category)
             gift.save()
             return JsonResponse({"status": "updated", "message": f"Gift {gift.id} modified successfully."})
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=400)
 
-    elif request.method == 'DELETE':
+    elif request.method == "DELETE":
         gift.delete()
         return JsonResponse({"status": "deleted", "message": f"Gift {pk} removed completely from database."},
                             status=200)
@@ -161,12 +159,12 @@ def scrape_amazon_item(request):
     POST: Receives an amazon_url, runs the mock scraper engine,
     and automatically saves or updates the record in PostgreSQL.
     """
-    if request.method != 'POST':
+    if request.method != "POST":
         return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
 
     try:
         data = json.loads(request.body)
-        amazon_url = data.get('amazon_url', '')
+        amazon_url = data.get("amazon_url", "")
 
         # Direct verification layer target parsing fallback logic
         asin_match = re.search(r'(?:dp|product)/([A-Z0-9]{10})', amazon_url)
@@ -224,7 +222,7 @@ def trigger_price_check(request, pk):
 @csrf_exempt
 def wishlist_list(request):
     """GET: List wishlists. POST: Create a wishlist container."""
-    if request.method == 'GET':
+    if request.method == "GET":
         wishlists = Wishlist.objects.all()
         data = [{"id": w.id, "owner": w.user.username, "name": w.name, "items_count": w.items.count()} for w in
                 wishlists]
@@ -235,7 +233,7 @@ def wishlist_list(request):
             body = json.loads(request.body)
             user_id = body.get('user_id', 1)
             user = User.objects.get(pk=user_id)
-            new_list = Wishlist.objects.create(user=user, name=body.get('name', 'My Wishlist'))
+            new_list = Wishlist.objects.create(user=user, name=body.get("name", "My Wishlist"))
             return JsonResponse({"status": "created", "wishlist_id": new_list.id}, status=201)
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=400)
@@ -262,9 +260,9 @@ def wishlist_detail(request, pk):
             "presents": presents
         })
 
-    elif request.method == 'POST':
+    elif request.method == "POST":
         # --- CUSTOM API TOKEN VALIDATION LAYER ---
-        auth_header = request.headers.get('Authorization')
+        auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith('Token '):
             return JsonResponse({"status": "error", "message": "Authentication required. Missing token header."},
                                 status=401)
@@ -282,8 +280,8 @@ def wishlist_detail(request, pk):
 
         try:
             body = json.loads(request.body)
-            present = Present.objects.get(pk=body.get('present_id'))
-            action = body.get('action')
+            present = Present.objects.get(pk=body.get("present_id"))
+            action = body.get("action")
 
             if action == "add":
                 # Enforce database protection ceiling limit check
@@ -314,7 +312,7 @@ def wishlist_detail(request, pk):
 @csrf_exempt
 def user_register(request):
     """POST: Register a user."""
-    if request.method != 'POST':
+    if request.method != "POST":
         return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
     try:
         data = json.loads(request.body)
@@ -330,11 +328,11 @@ def user_register(request):
 @csrf_exempt
 def user_login(request):
     """POST: Login a user."""
-    if request.method != 'POST':
+    if request.method != "POST":
         return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
     try:
         data = json.loads(request.body)
-        user = authenticate(username=data['username'], password=data['password'])
+        user = authenticate(username=data["username"], password=data["password"])
         if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
             return JsonResponse({"status": "success", "token": token.key})
@@ -350,11 +348,11 @@ def export_wishlist_csv(request, pk):
     except Wishlist.DoesNotExist:
         return JsonResponse({"status": "error", "message": "Wishlist not found."}, status=404)
 
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="{wishlist.name}_export.csv"'
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = f'attachment; filename="{wishlist.name}_export.csv'
 
     writer = csv.writer(response)
-    writer.writerow(['ID', 'Title', 'ASIN', 'URL', 'Price', 'Category'])
+    writer.writerow(["ID", "Title", "ASIN", "URL", "Price", "Category"])
     for item in wishlist.items.all():
         writer.writerow([item.id, item.title, item.asin, item.amazon_url, item.price, item.category])
     return response
@@ -369,4 +367,3 @@ def export_wishlist_json(request, pk):
 
     items = [{"id": i.id, "title": i.title, "asin": i.asin, "price": float(i.price)} for i in wishlist.items.all()]
     return JsonResponse({"wishlist": wishlist.name, "presents": items})
-

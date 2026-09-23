@@ -1,5 +1,4 @@
 import re
-import random
 
 
 def extract_asin_from_url(url):

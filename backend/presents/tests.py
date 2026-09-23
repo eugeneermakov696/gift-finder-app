@@ -55,14 +55,14 @@ class GiftFinderAPITestCase(TestCase):
         # Standardized path matching structure to ensure regex capture rules pass cleanly
         payload = {"amazon_url": "https://amazon.com"}
         response = self.client.post(
-            reverse('gift-scrape'),
+            reverse("gift-scrape"),
             data=json.dumps(payload),
-            content_type='application/json'
+            content_type="application/json"
         )
         print("\n[SERVER RESPONSE LOG]:", response.content.decode())
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['status'], 'success')
+        self.assertEqual(data["status"], "success")
         self.assertTrue(Present.objects.filter(asin="B07ZPKZSSC").exists())
 
     def test_add_item_to_wishlist(self):
@@ -79,17 +79,16 @@ class GiftFinderAPITestCase(TestCase):
 
         # 2. Add the custom Authorization Token inside the HTTP header parameters
         response = self.client.post(
-            reverse('wishlist-detail', kwargs={'pk': self.wishlist.id}),
+            reverse("wishlist-detail", kwargs={"pk": self.wishlist.id}),
             data=json.dumps(payload),
-            content_type='application/json',
+            content_type="application/json",
             HTTP_AUTHORIZATION=f"Token {token.key}"  # <-- Crucial security header inject!
         )
 
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['status'], 'success')
+        self.assertEqual(data["status"], "success")
         self.assertTrue(self.wishlist.items.filter(id=self.present.id).exists())
-
 
     def test_trigger_price_tracker_calculation(self):
         """Validates that running a price check modifies pricing properties cleanly."""
@@ -105,9 +104,9 @@ class GiftFinderAPITestCase(TestCase):
         """Verifies that making requests without token metadata fields yields an explicit 401 response."""
         payload = {"present_id": self.present.id, "action": "add"}
         response = self.client.post(
-            reverse('wishlist-detail', kwargs={'pk': self.wishlist.id}),
+            reverse("wishlist-detail", kwargs={"pk": self.wishlist.id}),
             data=json.dumps(payload),
-            content_type='application/json'
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 401)
 
@@ -121,9 +120,9 @@ class GiftFinderAPITestCase(TestCase):
 
         payload = {"present_id": self.present.id, "action": "add"}
         response = self.client.post(
-            reverse('wishlist-detail', kwargs={'pk': self.wishlist.id}),
+            reverse("wishlist-detail", kwargs={"pk": self.wishlist.id}),
             data=json.dumps(payload),
-            content_type='application/json',
+            content_type="application/json",
             HTTP_AUTHORIZATION=f"Token {rogue_token.key}"  # Passing an unauthorized token key
         )
         self.assertEqual(response.status_code, 403)
@@ -146,14 +145,14 @@ class GiftFinderAPITestCase(TestCase):
         # Try adding the 51st item (our reference present instantiated in setUp)
         payload = {"present_id": self.present.id, "action": "add"}
         response = self.client.post(
-            reverse('wishlist-detail', kwargs={'pk': self.wishlist.id}),
+            reverse("wishlist-detail", kwargs={"pk": self.wishlist.id}),
             data=json.dumps(payload),
-            content_type='application/json',
+            content_type="application/json",
             HTTP_AUTHORIZATION=f"Token {token.key}"
         )
 
         # The engine must throw a 400 Bad Request
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.content)
-        self.assertEqual(data['status'], 'error')
-        self.assertIn("Maximum capacity is 50 items", data['message'])
+        self.assertEqual(data["status"], "error")
+        self.assertIn("Maximum capacity is 50 items", data["message"])

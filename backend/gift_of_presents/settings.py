@@ -13,10 +13,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # 3. Pull configuration values safely from the env engine
-SECRET_KEY = env('SECRET_KEY', default='django-insecure-dev-key-change-this-in-production')
-DEBUG = env('DEBUG', default=True)
+SECRET_KEY = env("SECRET_KEY", default="django-insecure-dev-key-change-this-in-production")
+DEBUG = env("DEBUG", default=True)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'backend']
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "backend"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -28,12 +28,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third-Party Apps
-    'corsheaders',
-    'rest_framework',            # For token authentication architecture
-    'rest_framework.authtoken',  # Enables native database token strings
+    "corsheaders",
+    "rest_framework",            # For token authentication architecture
+    "rest_framework.authtoken",  # Enables native database token strings
 
     # Local Apps
-    'presents',
+    "presents",
 ]
 
 MIDDLEWARE = [
@@ -71,12 +71,18 @@ WSGI_APPLICATION = "gift_of_presents.wsgi.application"
 DATABASES = {
     'default': env.db(
         'DATABASE_URL',
-        default=f"postgres://{env('DB_USER', default='postgres_user')}:{env('DB_PASSWORD', default='secure_dev_password_2026')}@{env('DB_HOST', default='db')}:{env('DB_PORT', default='5432')}/{env('DB_NAME', default='gift_of_presents')}"
+        default=(
+            f"postgres://{env('DB_USER', default='postgres_user')}:"
+            f"{env('DB_PASSWORD', default='secure_dev_password_2026')}@"
+            f"{env('DB_HOST', default='db')}:"
+            f"{env('DB_PORT', default='5432')}/"
+            f"{env('DB_NAME', default='gift_of_presents')}"
+        )
     )
 }
 
 # 5. Cross-Origin Resource Sharing (CORS) rules parsed from your environment setup
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=['http://localhost:3000'])
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://localhost:3000"])
 CORS_ALLOW_CREDENTIALS = True
 
 # Password validation
