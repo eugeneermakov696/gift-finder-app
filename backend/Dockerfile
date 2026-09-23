@@ -6,13 +6,17 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies AND C-compilation build tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install python dependencies
+# Upgrade core package managers inside the environment
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install python project dependencies
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
