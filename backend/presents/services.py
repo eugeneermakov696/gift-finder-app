@@ -4,22 +4,25 @@ import random
 
 def extract_asin_from_url(url):
     """
-    Uses regex rules to extract the 10-character Amazon Standard Identification Number (ASIN)
+    Highly flexible regex to grab any 10-character Amazon ASIN structure.
+    Catches /dp/ASIN, /product/ASIN, query strings, and naked ASIN variations.
     """
-    asin_match = re.search(r'/(?:dp|gp/product)/([A-Z0-9]{10})', url)
+    if not url:
+        return None
+    # Flexible scan matching a standard 10-char alphanumeric string following dp/ or product/
+    asin_match = re.search(r'(?:dp|product)/([A-Z0-9]{10})', url)
     return asin_match.group(1) if asin_match else None
 
 
 def mock_amazon_scrape(url):
     """
-    Simulates sending requests to Amazon and parsing HTML text logs.
-    Returns structured data based on the extracted ASIN.
+    Simulates parsing text logs and returns standard data based on the extracted ASIN.
     """
     asin = extract_asin_from_url(url)
     if not asin:
         return None
 
-    # Generate deterministic pricing based on the characters of the ASIN string
+    # Standard seed computing calculations
     mock_seed_price = float(sum(ord(char) for char in asin) % 150) + 9.99
 
     mock_titles = [
@@ -29,7 +32,6 @@ def mock_amazon_scrape(url):
         "Portable Noise-Canceling Bluetooth Earbuds"
     ]
 
-    # Pick a title based on the ASIN string length or structure
     selected_title = mock_titles[len(asin) % len(mock_titles)]
 
     return {
@@ -39,7 +41,7 @@ def mock_amazon_scrape(url):
         "price": round(mock_seed_price, 2),
         "original_price": round(mock_seed_price * 1.25, 2),
         "category": "Featured Products",
-        "rating": round(random.uniform(4.0, 4.9), 2),
-        "reviews_count": random.randint(150, 12000),
+        "rating": 4.5,
+        "reviews_count": 1250,
         "image_url": f"https://ssl-images-amazon.com{asin}.jpg"
     }

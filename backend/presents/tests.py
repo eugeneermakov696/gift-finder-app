@@ -52,31 +52,44 @@ class GiftFinderAPITestCase(TestCase):
 
     def test_scrape_endpoint_auto_saves(self):
         """Verifies the mock parser engine successfully extracts ASIN sequences and registers records."""
+        # Standardized path matching structure to ensure regex capture rules pass cleanly
         payload = {"amazon_url": "https://amazon.com"}
         response = self.client.post(
-            reverse("gift-scrape"),
+            reverse('gift-scrape'),
             data=json.dumps(payload),
-            content_type="application/json"
+            content_type='application/json'
         )
+        print("\n[SERVER RESPONSE LOG]:", response.content.decode())
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data["status"], "success")
-        # Check if the extracted ASIN is now securely inside PostgreSQL
+        self.assertEqual(data['status'], 'success')
         self.assertTrue(Present.objects.filter(asin="B07ZPKZSSC").exists())
 
     def test_add_item_to_wishlist(self):
-        """Verifies assigning a product item modifies the user's Wishlist dataset container."""
+        """Verifies assigning a product item modifies the user's Wishlist dataset container securely."""
+        from rest_framework.authtoken.models import Token
+
+        # 1. Generate a valid security token for our test user context
+        token, _ = Token.objects.get_or_create(user=self.user)
+
         payload = {
             "present_id": self.present.id,
             "action": "add"
         }
+
+        # 2. Add the custom Authorization Token inside the HTTP header parameters
         response = self.client.post(
-            reverse("wishlist-detail", kwargs={"pk": self.wishlist.id}),
+            reverse('wishlist-detail', kwargs={'pk': self.wishlist.id}),
             data=json.dumps(payload),
-            content_type="application/json"
+            content_type='application/json',
+            HTTP_AUTHORIZATION=f"Token {token.key}"  # <-- Crucial security header inject!
         )
+
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['status'], 'success')
         self.assertTrue(self.wishlist.items.filter(id=self.present.id).exists())
+
 
     def test_trigger_price_tracker_calculation(self):
         """Validates that running a price check modifies pricing properties cleanly."""

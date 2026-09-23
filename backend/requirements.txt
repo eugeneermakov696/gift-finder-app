@@ -1,11 +1,14 @@
 # Core Framework
 Django>=4.2,<5.1
 
-# Database Connectivity (PostgreSQL Pre-compiled Driver)
+# Database Connectivity
 psycopg2-binary>=2.9.9
 
 # Cross-Origin Resource Sharing (CORS) Security
 django-cors-headers>=4.3.1
 
-# Configuration management (useful for clean environment variable routing)
+# Configuration management
 django-environ>=0.11.2
+
+# Django REST Framework (Needed for your Token Auth system)
+djangorestframework>=3.14.0
