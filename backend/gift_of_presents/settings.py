@@ -23,7 +23,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third-Party Apps
-    'corsheaders',  # Enables CORS handling for frontend requests
+    'corsheaders',
+
+    # Local Apps
+    'presents',
 ]
 
 MIDDLEWARE = [
