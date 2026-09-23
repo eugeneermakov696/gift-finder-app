@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Present(models.Model):
@@ -35,3 +36,16 @@ class Present(models.Model):
 
     def __str__(self):
         return self.title
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlists', help_text="The owner of this wishlist")
+    name = models.CharField(max_length=100, default="My Wishlist", help_text="Name of the gift list (e.g., Christmas Ideas)")
+    items = models.ManyToManyField(Present, blank=True, related_name="in_wishlists", help_text="Presents saved to this list")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return f"{self.user.username}'s List - {self.name}"
