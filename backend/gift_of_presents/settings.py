@@ -1,17 +1,22 @@
 import os
 from pathlib import Path
+import environ
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# 1. Initialize environment variable parser
+env = environ.Env(
+    DEBUG=(bool, False)  # Sets default fallback cast type
+)
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key-change-this-in-production")
+# 2. Read the .env file if it exists
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# 3. Pull configuration values safely from the env engine
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-dev-key-change-this-in-production')
+DEBUG = env('DEBUG', default=True)
 
-# Allow connections to your Django container from your host machine
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "backend"]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'backend']
 
 # Application definition
 INSTALLED_APPS = [
@@ -24,8 +29,8 @@ INSTALLED_APPS = [
 
     # Third-Party Apps
     'corsheaders',
-    'rest_framework',  # <-- Add this for authentication architecture
-    'rest_framework.authtoken',  # <-- Add this to enable native database token strings
+    'rest_framework',            # For token authentication architecture
+    'rest_framework.authtoken',  # Enables native database token strings
 
     # Local Apps
     'presents',
@@ -42,9 +47,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-
 ROOT_URLCONF = "gift_of_presents.urls"
-
 
 TEMPLATES = [
     {
@@ -64,18 +67,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "gift_of_presents.wsgi.application"
 
-# Database Configuration
-# Connects to the 'db' container service name inside the Docker compose network
+# 4. Database Configuration dynamically built from your environment variables
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", "gift_of_presents"),
-        "USER": os.environ.get("DB_USER", "postgres_user"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "secure_dev_password_2026"),
-        "HOST": os.environ.get("DB_HOST", "db"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
-    }
+    'default': env.db(
+        'DATABASE_URL',
+        default=f"postgres://{env('DB_USER', default='postgres_user')}:{env('DB_PASSWORD', default='secure_dev_password_2026')}@{env('DB_HOST', default='db')}:{env('DB_PORT', default='5432')}/{env('DB_NAME', default='gift_of_presents')}"
+    )
 }
+
+# 5. Cross-Origin Resource Sharing (CORS) rules parsed from your environment setup
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=['http://localhost:3000'])
+CORS_ALLOW_CREDENTIALS = True
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -94,11 +96,3 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# Cross-Origin Resource Sharing (CORS) Rules
-# Lets the frontend application sitting at port 3000 talk to your API safely
-CORS_ALLOWED_ORIGINS = [
-    os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000"),
-]
-
-CORS_ALLOW_CREDENTIALS = True

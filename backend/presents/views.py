@@ -15,10 +15,13 @@ from presents.services import mock_amazon_scrape
 
 # --- GIFTS / PRODUCTS CRUD ENDPOINTS ---
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+
 @csrf_exempt
 def product_gift_list(request):
     """
-    GET: List, filter, and sort products from the database dynamically.
+    GET: List, filter, sort, and paginate products from the database dynamically.
     POST: Insert a new gift into the database.
     """
     if request.method == 'GET':
@@ -48,9 +51,23 @@ def product_gift_list(request):
             queryset = queryset.order_by('-price')
         elif sort_by == 'rating':
             queryset = queryset.order_by('-rating')
+        else:
+            queryset = queryset.order_by('-created_at')
+
+        # 3. CHUNKED PAGINATION GENERATOR UTILITY
+        page = request.GET.get('page', 1)
+        items_per_page = request.GET.get('items_per_page', 10)  # Default chunks of 10 items
+
+        paginator = Paginator(queryset, items_per_page)
+        try:
+            paginated_queryset = paginator.page(page)
+        except PageNotAnInteger:
+            paginated_queryset = paginator.page(1)
+        except EmptyPage:
+            paginated_queryset = paginator.page(paginator.num_pages)
 
         presents_list = []
-        for gift in queryset:
+        for gift in paginated_queryset:
             presents_list.append({
                 "id": gift.id,
                 "title": gift.title,
@@ -61,7 +78,18 @@ def product_gift_list(request):
                 "rating": float(gift.rating) if gift.rating else 0.0,
                 "category": gift.category
             })
-        return JsonResponse({"status": "success", "results_count": len(presents_list), "presents": presents_list})
+
+        return JsonResponse({
+            "status": "success",
+            "pagination_meta": {
+                "total_items": paginator.count,
+                "total_pages": paginator.num_pages,
+                "current_page": paginated_queryset.number,
+                "has_next": paginated_queryset.has_next(),
+                "has_previous": paginated_queryset.has_previous(),
+            },
+            "presents": presents_list
+        })
 
     elif request.method == 'POST':
         try:

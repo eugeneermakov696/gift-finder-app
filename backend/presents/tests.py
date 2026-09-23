@@ -127,3 +127,33 @@ class GiftFinderAPITestCase(TestCase):
             HTTP_AUTHORIZATION=f"Token {rogue_token.key}"  # Passing an unauthorized token key
         )
         self.assertEqual(response.status_code, 403)
+
+    def test_wishlist_max_capacity_limit(self):
+        """Verifies that trying to add a 51st item to a wishlist is blocked by a 400 error."""
+        from rest_framework.authtoken.models import Token
+        token, _ = Token.objects.get_or_create(user=self.user)
+
+        # Simulates padding out the database relationship straight to its 50 limit ceiling
+        for i in range(50):
+            mock_gift = Present.objects.create(
+                title=f"Bulk Present Item {i}",
+                asin=f"MOCKASIN{i:02d}",
+                amazon_url="https://amazon.com",
+                price=10.00
+            )
+            self.wishlist.items.add(mock_gift)
+
+        # Try adding the 51st item (our reference present instantiated in setUp)
+        payload = {"present_id": self.present.id, "action": "add"}
+        response = self.client.post(
+            reverse('wishlist-detail', kwargs={'pk': self.wishlist.id}),
+            data=json.dumps(payload),
+            content_type='application/json',
+            HTTP_AUTHORIZATION=f"Token {token.key}"
+        )
+
+        # The engine must throw a 400 Bad Request
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content)
+        self.assertEqual(data['status'], 'error')
+        self.assertIn("Maximum capacity is 50 items", data['message'])

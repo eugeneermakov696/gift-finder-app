@@ -60,3 +60,12 @@ Accept: application/json
 ### POST Request: Simulate running the price drop automation on a present (Assuming present ID is 1)
 POST http://localhost:8000/api/gifts/1/price-check/
 Content-Type: application/json
+
+### GET Request: View the first page containing only 2 items
+GET http://localhost:8000/api/gifts/?page=1&items_per_page=2
+Accept: application/json
+
+### GET Request: View the second page of data chunks
+GET http://localhost:8000/api/gifts/?page=2&items_per_page=2
+Accept: application/json
+
