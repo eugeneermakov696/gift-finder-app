@@ -1,8 +1,9 @@
-import json
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from presents.models import Present
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+from presents.services import mock_amazon_scrape
 
 
 @csrf_exempt
@@ -100,3 +101,36 @@ def product_gift_detail(request, pk):
     elif request.method == "DELETE":
         gift.delete()
         return JsonResponse({"status": "deleted", "message": f"Gift {pk} removed completely from database."}, status=200)
+
+@csrf_exempt
+def scrape_amazon_item(request):
+    """
+    POST: Receives an amazon_url payload, extracts the ASIN, simulates
+    a scraping script run, and returns the metadata instantly.
+    """
+    if request.method != 'POST':
+        return JsonResponse({"status": "error", "message": "Method not allowed. Use POST."}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        amazon_url = data.get('amazon_url')
+
+        if not amazon_url:
+            return JsonResponse({"status": "error", "message": "Missing required field: amazon_url"}, status=400)
+
+        scraped_data = mock_amazon_scrape(amazon_url)
+
+        if not scraped_data:
+            return JsonResponse({
+                "status": "error",
+                "message": "Could not identify a valid 10-digit Amazon ASIN within the provided URL format."
+            }, status=422)
+
+        return JsonResponse({
+            "status": "success",
+            "message": "Data retrieved from mock Amazon parser engine.",
+            "data": scraped_data
+        })
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=400)
