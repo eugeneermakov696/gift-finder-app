@@ -24,8 +24,23 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
-      // additional rules
     },
   },
-  eslintConfigPrettier
+  eslintConfigPrettier,
+  {
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      'max-len': [
+        'error',
+        {
+          code: 100,
+          tabWidth: 2,
+          ignoreUrls: true,
+          ignoreStrings: true,
+          ignoreTemplateLiterals: true,
+          ignoreComments: false,
+        },
+      ],
+    },
+  },
 )

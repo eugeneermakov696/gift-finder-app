@@ -2,6 +2,8 @@ import { useState } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import styles from './FiltersPage.module.scss';
+import { Link, useNavigate } from 'react-router-dom';
+import { LoadingScreen } from '../../shared/components/LoadingScreen';
 
 const AGE_OPTIONS = [
   '0-2 years',
@@ -76,6 +78,13 @@ export const FiltersPage = () => {
 
   const [budget, setBudget] = useState(450);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleGenerate = () => {
+    setIsLoading(true);
+  };
+
   const toggleSelection = (
     value: string,
     currentList: string[],
@@ -91,15 +100,15 @@ export const FiltersPage = () => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <p className={styles.backLink}>
-          Back <span>→</span>
-        </p>
-        <h1 className={styles.pageTitle}>Find a gift</h1>
+        <h1 className={styles.pageTitle}>Gift search</h1>
+        <Link to="/" className={styles.backLink}>
+          Back <span className={styles.arrowIcon} aria-label="Right arrow" />
+        </Link>
       </header>
 
       <section className={styles.filterSection}>
         <h3 className={styles.sectionTitle}>
-          What is the age of the person you are buying a gift for?
+          How old are they?
         </h3>
         <div className={styles.grid}>
           {AGE_OPTIONS.map((option) => (
@@ -120,7 +129,7 @@ export const FiltersPage = () => {
 
       <section className={styles.filterSection}>
         <h3 className={styles.sectionTitle}>
-          What is the gender of the person you are buying a gift for?
+          Gender
         </h3>
         <div className={styles.grid}>
           {GENDER_OPTIONS.map((option) => (
@@ -140,7 +149,7 @@ export const FiltersPage = () => {
       </section>
 
       <section className={styles.filterSection}>
-        <h3 className={styles.sectionTitle}>What is your relationship to this person?</h3>
+        <h3 className={styles.sectionTitle}>Who is this person to you?</h3>
         <div className={styles.grid}>
           {RELATIONSHIP_OPTIONS.map((option) => (
             <label key={option} className={styles.customLabel}>
@@ -159,7 +168,7 @@ export const FiltersPage = () => {
       </section>
 
       <section className={styles.filterSection}>
-        <h3 className={styles.sectionTitle}>What are their interests?</h3>
+        <h3 className={styles.sectionTitle}>What are their main interests?</h3>
         <div className={styles.grid}>
           {INTEREST_OPTIONS.map((option) => (
             <label key={option} className={styles.customLabel}>
@@ -176,7 +185,7 @@ export const FiltersPage = () => {
       </section>
 
       <section className={styles.filterSection}>
-        <h3 className={styles.sectionTitle}>What kind of gift do you want to give?</h3>
+        <h3 className={styles.sectionTitle}>What’s the vibe of the gift?</h3>
         <div className={styles.grid}>
           {GIFT_TYPE_OPTIONS.map((option) => (
             <label key={option} className={styles.customLabel}>
@@ -193,49 +202,56 @@ export const FiltersPage = () => {
       </section>
 
       <section className={styles.filterSection}>
-      <div className={styles.sliderWrapper}>
-        <h3 className={styles.sectionTitle}>Choose your budget</h3>
-        <div className={styles.budgetHeader}>
-          <span>Gift budget</span>
-          <span className={styles.budgetValue}>${budget}</span>
-        </div>
-
         <div className={styles.sliderWrapper}>
-          <Slider 
-            min={0}
-            max={1000}
-            step={10}
-            value={budget}
-            onChange={(val) => setBudget(val as number)}
-            styles={{
-              track: {
-                backgroundColor: '#3b82f6',
-                height: 16,
-                borderRadius: 8,
-                cursor: 'pointer'
-              },
-              rail: {
-                backgroundColor: '#e5e5e5',
-                height: 16,
-                borderRadius: 8,
-                cursor: 'pointer'
-              },
-              handle: {
-                display: 'none'
-              }
-            }}
-          />
-        </div>
+          <h3 className={styles.sectionTitle}>What’s your budget limit?</h3>
+          <div className={styles.budgetHeader}>
+            <span>Gift budget</span>
+            <span className={styles.budgetValue}>${budget}</span>
+          </div>
 
-        <div className={styles.budgetLimits}>
-          <span>$0</span>
-          <span>$1000+</span>
+          <div className={styles.sliderWrapper}>
+            <Slider
+              min={5}
+              max={1000}
+              step={5}
+              value={budget}
+              onChange={(val) => setBudget(val as number)}
+              styles={{
+                track: {
+                  backgroundColor: 'var(--color-info-800)',
+                  height: 16,
+                  borderRadius: 8,
+                  cursor: 'pointer'
+                },
+                rail: {
+                  backgroundColor: '#fff',
+                  height: 16,
+                  borderRadius: 8,
+                  cursor: 'pointer'
+                },
+                handle: {
+                  display: 'none'
+                }
+              }}
+            />
+          </div>
+
+          <div className={styles.budgetLimits}>
+            <span>$5</span>
+            <span>$1000+</span>
+          </div>
         </div>
-      </div>
       </section>
 
       <div className={styles.actionFooter}>
-        <button className={styles.generateBtn}>Generate</button>
+        <button className={styles.generateBtn} onClick={handleGenerate}>Generate</button>
+
+        {isLoading && (
+         <LoadingScreen
+           onCancel={() => setIsLoading(false)}
+           onComplete={() => navigate('/catalog')}
+           />
+       )}
       </div>
     </div>
   );

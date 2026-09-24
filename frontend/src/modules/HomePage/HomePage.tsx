@@ -1,20 +1,17 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { PixelDrift } from './components/PixelDrift';
-import { FirstCard } from './components/Cards'
-import { SecondCard } from './components/Cards'
-import { ThirdCard } from './components/Cards'
+import { FirstCard } from './components/Cards';
+import { SecondCard } from './components/Cards';
+import { ThirdCard } from './components/Cards';
 import styles from './HomePage.module.scss';
 
-const FaqItem = ({ question, answer }: { question: string, answer: string }) => {
+const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className={styles.faqItem}>
-      <button
-        className={styles.faqQuestion}
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <button className={styles.faqQuestion} onClick={() => setIsOpen(!isOpen)}>
         {question}
         <div className={`${styles.upArrowIcon} ${isOpen ? styles.rotated : ''}`} />
       </button>
@@ -31,7 +28,6 @@ const FaqItem = ({ question, answer }: { question: string, answer: string }) => 
 export const HomePage = () => {
   return (
     <div className={styles.container}>
-
       <section className={styles.heroSection}>
         <div className={styles.animationWrapper}>
           <PixelDrift />
@@ -52,7 +48,7 @@ export const HomePage = () => {
           </div>
 
           <ul className={styles.heroFeatures}>
-            <li>• Curated products with a 4.5★+ rating on Amazon</li>
+            <li>• Curated products with a 4★+ rating on Amazon</li>
             <li>• 100% free gift discovery tool</li>
           </ul>
         </div>
@@ -64,7 +60,9 @@ export const HomePage = () => {
           Why Giftly Is the Smarter Way to Discover Personalized Gifts
         </h3>
         <p className={styles.description}>
-          Instead of browsing through endless sponsored listings, our discovery engine filters authentic customer feedback, pricing, and interests to deliver curated Amazon gifts you can give with confidence.
+          Instead of browsing through endless sponsored listings, our discovery engine filters
+          authentic customer feedback, pricing, and interests to deliver curated Amazon gifts you
+          can give with confidence.
         </p>
       </section>
 
@@ -73,7 +71,9 @@ export const HomePage = () => {
         <h3 className={styles.subtitle}>How Our Amazon Gift Finder Works in 3 Simple Steps</h3>
 
         <div className={styles.info}>
-          <p className={styles.description}>From zero ideas to a thoughtful present in your Amazon cart in under two minutes.</p>
+          <p className={styles.description}>
+            From zero ideas to a thoughtful present in your Amazon cart in under two minutes.
+          </p>
           <Link to="/find-a-gift">
             <button className={styles.primaryBtn}>Start Gift Search</button>
           </Link>
@@ -81,28 +81,29 @@ export const HomePage = () => {
 
         <div className={styles.cards}>
           <div className={styles.card}>
-          <FirstCard />
+            <FirstCard />
           </div>
           <div className={styles.card}>
-          <SecondCard />
+            <SecondCard />
           </div>
           <div className={styles.card}>
-          <ThirdCard />
+            <ThirdCard />
           </div>
         </div>
-
       </section>
 
       <section className={styles.faqSection} id="faq">
         <h2 className={styles.title}>FAQ</h2>
-        <h3 className={styles.subtitle}>Everything You Need to Know About Finding Gifts with Giftly</h3>
+        <h3 className={styles.subtitle}>
+          Everything You Need to Know About Finding Gifts with Giftly
+        </h3>
         <p className={styles.description}>
           Have questions about how we select products, pricing, or delivery? We’ve got answers.
         </p>
 
         <FaqItem
           question="How does Giftly choose and recommend gifts?"
-          answer="Giftly matches your recipient's profile (age, relationship, hobbies, and budget) against a hand-curated catalog of high-demand items. We prioritize products with verified 4.5+ star ratings, genuine positive feedback, and trusted return policies on Amazon."
+          answer="Giftly matches your recipient's profile (age, relationship, hobbies, and budget) against a hand-curated catalog of high-demand items. We prioritize products with verified 4+ star ratings, genuine positive feedback, and trusted return policies on Amazon."
         />
 
         <FaqItem
@@ -130,14 +131,21 @@ export const HomePage = () => {
           answer="Yes. All purchases follow Amazon’s standard 30-day return and replacement policy. Returns and customer service issues are managed directly through your Amazon order dashboard."
         />
 
-        <p className={styles.description}>Still have questions? <Link to="contact-us" className={styles.contactLink}>Contact us</Link> at [email address].</p>
+        <p className={styles.description}>
+          Still have questions?
+          <Link to="contact-us" className={styles.contactLink}>
+            Contact us
+          </Link>
+          at [email address].
+        </p>
       </section>
 
       <section className={styles.learnMoreSection} id="features">
-        <h2 className={styles.title}>Learn more</h2>
+        <h2 className={styles.title}>Smart Features</h2>
         <h3 className={styles.subtitle}>How Gift Finder Works</h3>
         <p className={styles.description}>
-          Choosing the perfect gift can take time. Gift Finder helps you narrow down the options using a few simple details about the person you’re shopping for.
+          Choosing the perfect gift can take time. Gift Finder helps you narrow down the options
+          using a few simple details about the person you’re shopping for.
         </p>
 
         <div className={styles.masonryGrid}>
@@ -145,7 +153,10 @@ export const HomePage = () => {
             <img src="./images/lifestyle.png" alt="Lifestyle" className={styles.cardImage} />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Personality & Lifestyle Matching</h3>
-              <p className={styles.cardDescr}>Target their actual vibe — from Cozy Homebodies and Tech Geeks to Foodies and Outdoor Explorers.</p>
+              <p className={styles.cardDescr}>
+                Target their actual vibe — from Cozy Homebodies and Tech Geeks to Foodies and
+                Outdoor Explorers.
+              </p>
             </div>
           </div>
 
@@ -153,7 +164,10 @@ export const HomePage = () => {
             <img src="./images/context.png" alt="Context" className={styles.cardImage} />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Relationship Context</h3>
-              <p className={styles.cardDescr}>Calibrate risk and tone for any dynamic — whether it's for a romantic partner, parent, distant cousin, or coworker.</p>
+              <p className={styles.cardDescr}>
+                Calibrate risk and tone for any dynamic — whether it's for a romantic partner,
+                parent, distant cousin, or coworker.
+              </p>
             </div>
           </div>
 
@@ -161,7 +175,10 @@ export const HomePage = () => {
             <img src="./images/budget.png" alt="Budget" className={styles.cardImage} />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Strict Budget Limits</h3>
-              <p className={styles.cardDescr}>Set precise spending brackets from under $15 to $200+. We never push products outside what you plan to spend.</p>
+              <p className={styles.cardDescr}>
+                Set precise spending brackets from under $15 to $200+. We never push products
+                outside what you plan to spend.
+              </p>
             </div>
           </div>
 
@@ -169,15 +186,21 @@ export const HomePage = () => {
             <img src="./images/occasion.png" alt="Occasion" className={styles.cardImage} />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Cover Every Occasion</h3>
-              <p className={styles.cardDescr}>Curated collections ready for Birthdays, Housewarmings, Anniversaries, Holidays, or just because.</p>
+              <p className={styles.cardDescr}>
+                Curated collections ready for Birthdays, Housewarmings, Anniversaries, Holidays, or
+                just because.
+              </p>
             </div>
           </div>
 
           <div className={styles.gridCard}>
             <img src="./images/quality.png" alt="Quality" className={styles.cardImage} />
             <div className={styles.cardOverlay}>
-              <h3 className={styles.cardTitle}>Verified 4.5★+ Amazon Quality</h3>
-              <p className={styles.cardDescr}>We filter out sponsored junk and low-tier knockoffs. Every item comes backed by proven reviews and high ratings.</p>
+              <h3 className={styles.cardTitle}>Verified 4★+ Amazon Quality</h3>
+              <p className={styles.cardDescr}>
+                We filter out sponsored junk and low-tier knockoffs. Every item comes backed by
+                proven reviews and high ratings.
+              </p>
             </div>
           </div>
 
@@ -185,35 +208,39 @@ export const HomePage = () => {
             <img src="./images/checkout.png" alt="Checkout" className={styles.cardImage} />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Frictionless Prime Checkout</h3>
-              <p className={styles.cardDescr}>Save your favorite ideas with one tap or buy directly on Amazon with standard Prime perks, fast delivery, and simple returns.</p>
+              <p className={styles.cardDescr}>
+                Save your favorite ideas with one tap or buy directly on Amazon with standard Prime
+                perks, fast delivery, and simple returns.
+              </p>
             </div>
           </div>
         </div>
 
-        <h3 className={styles.subtitle}>
-          Find the Perfect Present in Minutes
-        </h3>
+        <h3 className={styles.subtitle}>Find the Perfect Present in Minutes</h3>
         <p className={styles.description}>
-          Choose how you want to explore: take the guided questionnaire for a custom match, or dive into our popular curated lists
+          Choose how you want to explore: take the guided questionnaire for a custom match, or dive
+          into our popular curated lists
         </p>
 
         <div className={styles.actionRow}>
           <div className={styles.actionText}>
             <h3 className={styles.subtitle}>Custom Gift Finder</h3>
             <p className={styles.description}>
-              Answer a few quick questions about their hobbies, age, and budget for hyper-personalized matches.
+              Answer a few quick questions about their hobbies, age, and budget for
+              hyper-personalized matches.
             </p>
           </div>
           <Link to="/find-a-gift">
-              <button className={styles.primaryBtn}>Start Gift Search</button>
-            </Link>
+            <button className={styles.primaryBtn}>Start Gift Search</button>
+          </Link>
         </div>
 
         <div className={styles.actionRow}>
           <div className={styles.actionText}>
             <h3 className={styles.subtitle}>Browse Ready Collections</h3>
             <p className={styles.description}>
-              Short on time? Explore pre-made, top-rated Amazon gift ideas for Mom, Dad, coworkers, and holidays.
+              Short on time? Explore pre-made, top-rated Amazon gift ideas for Mom, Dad, coworkers,
+              and holidays.
             </p>
           </div>
           <Link to="/ready-ideas">
@@ -225,10 +252,16 @@ export const HomePage = () => {
       <section className={styles.giftsSection}>
         <h2 className={styles.title}>Popular Gifts</h2>
         <h3 className={styles.subtitle}>Trending Gifts People Are Loving Right Now</h3>
-        <p className={styles.description}>Explore our most popular, editor-vetted Amazon discoveries with verified 4.5+ star ratings.</p>
+        <p className={styles.description}>
+          Explore our most popular, editor-vetted Amazon discoveries with verified 4.5+ star
+          ratings.
+        </p>
 
         <div className={styles.favGrid}>
-          <h3>Here will be product cards, but first I need real data TO AVOID WASTING time for creating FAKE cards.</h3>
+          <h3>
+            Here will be product cards, but first I need real data TO AVOID WASTING time for
+            creating FAKE cards.
+          </h3>
         </div>
       </section>
     </div>

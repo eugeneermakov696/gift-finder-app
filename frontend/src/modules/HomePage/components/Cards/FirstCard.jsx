@@ -422,7 +422,7 @@ export default function FirstCard() {
               Share Who You're Celebrating
             </h3>
             <p className="bgl-description">
-              Select their age, hobbies, personality, and your budget limit. It takes less than 60 seconds.
+              Select their age, hobbies, personality, and your budget. It takes less than 60 seconds to complete.
             </p>
           </div>
         </div>
