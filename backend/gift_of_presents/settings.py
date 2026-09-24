@@ -19,6 +19,7 @@ DEBUG = env("DEBUG", default=True)
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "backend"]
 
 # Application definition
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -28,12 +29,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third-Party Apps
-    "corsheaders",
-    "rest_framework",            # For token authentication architecture
-    "rest_framework.authtoken",  # Enables native database token strings
+    'corsheaders',
+    'rest_framework',            # Enables token authentication architecture
+    'rest_framework.authtoken',  # Enables native database token strings
+    'drf_yasg',                  # <-- CRUCIAL: Add this line to map the template loader files!
 
     # Local Apps
-    "presents",
+    'presents',
 ]
 
 MIDDLEWARE = [
@@ -65,12 +67,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "gift_of_presents.wsgi.application"
+ROOT_URLCONF = 'gift_of_presents.urls'
+
+WSGI_APPLICATION = 'gift_of_presents.wsgi.application'
 
 # 4. Database Configuration dynamically built from your environment variables
 DATABASES = {
-    'default': env.db(
-        'DATABASE_URL',
+    "default": env.db(
+        "DATABASE_URL",
         default=(
             f"postgres://{env('DB_USER', default='postgres_user')}:"
             f"{env('DB_PASSWORD', default='secure_dev_password_2026')}@"
