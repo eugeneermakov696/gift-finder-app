@@ -1,0 +1,90 @@
+@use '../../../styles/mixins' as *;
+
+.card {
+  display: flex;
+  gap: 24px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.favoriteBtn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 200px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+}
+
+.description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0 0 24px 0;
+  flex-grow: 1
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.amazonBtn, .detailsBtn {
+  background-color: #FBF7F3;
+  border: 1px solid var(--color-primary-1);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: #fff;
+  }
+}
+
+.amazonIcon {
+  @include icon-mask('/icons/Amazon.svg', 16px);
+  background-color: var(--text-main);
+}

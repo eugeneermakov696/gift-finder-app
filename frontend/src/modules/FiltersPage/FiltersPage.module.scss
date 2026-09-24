@@ -1,20 +1,32 @@
+@use '../../styles/mixins' as *;
+
 .container {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
-  padding: 40px 24px 100px;
+  padding: 40px 24px 116px;
   color: var(--text-main);
 }
 
 .header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   margin-bottom: 40px;
 }
 
 .backLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   align-self: flex-end;
   cursor: pointer;
   margin-bottom: 24px;
+  gap: 3px;
+}
+
+.arrowIcon {
+  @include icon-mask('/icons/rightArrow.svg', 16px);
+  background-color: var(--text-main);
 }
 
 .pageTitle {
@@ -27,7 +39,7 @@
 }
 
 .sectionTitle {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 500;
   margin-bottom: 24px;
 }
@@ -35,7 +47,7 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
+  gap: 24px;
 }
 
 .customLabel {
@@ -61,7 +73,7 @@
   align-items: center;
   height: 40px;
   padding: 0 16px;
-  border: 1px solid var(--border-light, #ccc);
+  border: 1px solid var(--color-primary-2);
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.2s ease;
@@ -119,11 +131,17 @@
 }
 
 .generateBtn {
-  background-color: #666;
+  height: 44px;
+  background-color: var(--color-primary-2);
   color: #fff;
+  border: solid 1px var(--text-main);
   border: none;
   border-radius: 8px;
   padding: 12px 48px;
   font-size: 16px;
-  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: var(--color-primary-1);
+  }
 }
