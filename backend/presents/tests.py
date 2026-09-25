@@ -1,4 +1,3 @@
-import json
 from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
@@ -9,10 +8,8 @@ from presents.models import Present, Wishlist
 
 class GiftFinderAPITestCase(APITestCase):
     def setUp(self):
-        # Create a test master user account
         self.user = User.objects.create_user(username="test_dev_user", password="password123")
 
-        # Instantiate a reference product record in PostgreSQL
         self.present = Present.objects.create(
             title="Test Amazon Echo Speaker",
             asin="B09B8V1VHC",
@@ -22,7 +19,6 @@ class GiftFinderAPITestCase(APITestCase):
             is_available=True
         )
 
-        # Instantiate an empty wishlist container linked to our user
         self.wishlist = Wishlist.objects.create(user=self.user, name="My Birthday List")
 
     def test_get_gifts_list(self):
@@ -49,7 +45,6 @@ class GiftFinderAPITestCase(APITestCase):
 
     def test_scrape_endpoint_auto_saves(self):
         """Verifies the mock parser engine successfully extracts ASIN sequences and registers records."""
-        # Extra actions map onto '<basename>-<action_name>'
         url = reverse("gift-scrape")
         payload = {"amazon_url": "https://amazon.com"}
         response = self.client.post(url, data=payload, format="json")

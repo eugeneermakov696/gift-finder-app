@@ -8,7 +8,7 @@ def extract_asin_from_url(url):
     """
     if not url:
         return None
-    # Flexible scan matching a standard 10-char alphanumeric string following dp/ or product/
+
     asin_match = re.search(r'(?:dp|product)/([A-Z0-9]{10})', url)
     return asin_match.group(1) if asin_match else None
 
@@ -21,7 +21,6 @@ def mock_amazon_scrape(url):
     if not asin:
         return None
 
-    # Standard seed computing calculations
     mock_seed_price = float(sum(ord(char) for char in asin) % 150) + 9.99
 
     mock_titles = [

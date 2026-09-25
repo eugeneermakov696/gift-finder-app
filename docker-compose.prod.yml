@@ -5,7 +5,7 @@ services:
     volumes:
       - prod_postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=gift_of_presents
+      - POSTGRES_DB=config
       - POSTGRES_USER=postgres_user
       - POSTGRES_PASSWORD=change_this_to_a_complex_random_string_in_production_123!
     ports:
@@ -27,7 +27,7 @@ services:
       - DEBUG=False
       - SECRET_KEY=generate-a-secure-random-long-hash-key-for-production-environment
       - DB_HOST=db
-      - DB_NAME=gift_of_presents
+      - DB_NAME=config
       - DB_USER=postgres_user
       - DB_PASSWORD=change_this_to_a_complex_random_string_in_production_123!
       - DB_PORT=5432

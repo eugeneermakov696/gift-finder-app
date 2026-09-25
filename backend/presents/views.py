@@ -13,14 +13,12 @@ from presents.models import Present, Wishlist
 from presents.serializers import PresentSerializer, WishlistSerializer, UserSerializer
 
 
-# --- CUSTOM PAGINATION SETUP ---
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'items_per_page'
     max_page_size = 100
 
 
-# --- PRODUCTS VIEWSET ---
 class PresentViewSet(viewsets.ModelViewSet):
     queryset = Present.objects.filter(is_available=True)
     serializer_class = PresentSerializer
@@ -42,7 +40,6 @@ class PresentViewSet(viewsets.ModelViewSet):
         if search:
             queryset = queryset.filter(Q(title__icontains=search) | Q(asin__icontains=search))
 
-        # Apply sorting
         if sort_by == 'price_low':
             queryset = queryset.order_by('price')
         elif sort_by == 'price_high':
@@ -85,7 +82,6 @@ class PresentViewSet(viewsets.ModelViewSet):
         return Response({"status": "success", "new_price": float(gift.price)})
 
 
-# --- WISHLIST VIEWSET ---
 class WishlistViewSet(viewsets.ModelViewSet):
     queryset = Wishlist.objects.all()
     serializer_class = WishlistSerializer
@@ -107,12 +103,10 @@ class WishlistViewSet(viewsets.ModelViewSet):
         """POST /api/wishlists/<id>/manage-item/ - Protected item linking."""
         wishlist = self.get_object()
 
-        # 1. Enforce strict token user context matching parameters
         if not request.user or request.user.is_anonymous:
             return Response({"status": "error", "message": "Authentication required."},
                             status=status.HTTP_401_UNAUTHORIZED)
 
-        # 2. Strict object-level ownership comparison check
         if wishlist.user != request.user:
             return Response({"status": "error", "message": "Permission denied. You do not own this wishlist."},
                             status=status.HTTP_403_FORBIDDEN)
@@ -151,8 +145,6 @@ class WishlistViewSet(viewsets.ModelViewSet):
             writer.writerow([item.id, item.title, item.asin, item.price, item.category])
         return response
 
-
-# --- AUTHENTICATION NATIVE DRF ENDPOINTS ---
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])

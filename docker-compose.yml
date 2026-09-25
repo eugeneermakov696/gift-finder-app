@@ -5,7 +5,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=gift_of_presents
+      - POSTGRES_DB=config
       - POSTGRES_USER=postgres_user
       - POSTGRES_PASSWORD=secure_dev_password_2026
     ports:
@@ -23,7 +23,7 @@ services:
       - "8000:8000"
     environment:
       - DB_HOST=db
-      - DB_NAME=gift_of_presents
+      - DB_NAME=config
       - DB_USER=postgres_user
       - DB_PASSWORD=secure_dev_password_2026
       - DB_PORT=5432
