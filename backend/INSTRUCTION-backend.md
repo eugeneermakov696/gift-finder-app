@@ -26,7 +26,8 @@ gift-finder-app/
 │   └── workflows/
 │       └── ci.yml              # GitHub Actions automated Continuous Integration pipeline
 └── backend/                    # Django Application Workspace Directory
-    ├── .env                    # Decoupled system secrets (Database keys, Debug flags)
+    ├── .env                    # Decoupled system secrets (Database keys, Debug flags) - IGNORED BY GIT
+    ├── .env.example            # Environment configuration template blueprint for onboarding
     ├── api_test.http           # Native PyCharm HTTP client automated scratchpad entries
     ├── Dockerfile              # Python slim multi-stage image generation manifest
     ├── INSTRUCTION-backend.md  # This documentation file
@@ -40,10 +41,10 @@ gift-finder-app/
         │   ├──0001_initial.py  # Instantiates the Present model schema
         │   ├──0002_wishlist.py # Instantiates the secure Wishlist relationship tables
         │   └── __init__.py
-        ├──management/
-        │   └─commands/
-        │     ├─__init__.py
-        │     └─import_excel.py # Importer script mapping Excel sheets into PostgreSQL
+        ├── management/
+        │   └── commands/
+        │       ├── __init__.py
+        │       └── import_excel.py # Importer script mapping Excel sheets into PostgreSQL
         ├── admin.py            # Visual object metrics model customization settings
         ├── apps.py             # Module framework metadata hook
         ├── models.py           # Relational object database structural design layout
@@ -56,7 +57,21 @@ gift-finder-app/
 
 ---
 
-## 🚀 Quick Start Instructions
+## 🚀 Environment Initialization (Onboarding)
+
+The project completely decouples sensitive database variables and security credentials from the runtime engine using environmental configuration maps. 
+
+When configuring a clean repository setup loop from scratch:
+1. Navigate into the `backend/` application workspace directory.
+2. Duplicate the `.env.example` template to initialize your active local `.env` settings file:
+   ```bash
+   cp .env.example .env
+   ```
+3. Open `backend/.env` and securely adapt your `SECRET_KEY` and target `DB_PASSWORD` parameters if necessary.
+
+---
+
+## 🛠️ Quick Start Instructions
 
 Follow these instructions to spin up the local microservices stack inside your IDE workspace terminal:
 
