@@ -9,9 +9,9 @@ psycopg2-binary>=2.9.0
 # Rest Framework & Token Auth Suite
 djangorestframework>=3.14.0
 
-# OpenAPI / Swagger Documentation Engine (Corrected Version!)
+# OpenAPI / Swagger Documentation Engine
 drf-yasg>=1.21.0,<1.22.0
 
+# Excel Parsing Tools
+pandas>=2.1.0
 openpyxl>=3.1.2
-
-gunicorn>=21.2.0
