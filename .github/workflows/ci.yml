@@ -1,0 +1,43 @@
+name: Gift Finder API CI Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-backend:
+    name: Build & Run Containerized DRF Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code Tree
+        uses: actions/checkout@v4
+
+      - name: Create Mock Environment Secrets
+        run: |
+          echo "SECRET_KEY=ci-pipeline-secure-test-crypto-string-hash" >> backend/.env
+          echo "DEBUG=True" >> backend/.env
+          echo "DB_NAME=gift_of_presents" >> backend/.env
+          echo "DB_USER=postgres_user" >> backend/.env
+          echo "DB_PASSWORD=secure_dev_password_2026" >> backend/.env
+          echo "DB_HOST=db" >> backend/.env
+          echo "DB_PORT=5432" >> backend/.env
+          echo "CORS_ALLOWED_ORIGINS=http://localhost:3000" >> backend/.env
+
+      - name: Initialize Docker Compose Network
+        run: docker compose up --build -d
+
+      - name: Wait for PostgreSQL Initialization Loop
+        run: sleep 10
+
+      - name: Run Schema Migrations
+        run: docker compose exec -T backend python manage.py migrate
+
+      - name: Execute 8-Vector DRF Test Suite
+        run: docker compose exec -T backend python manage.py test presents
+
+      - name: Shutdown Docker Services
+        if: always()
+        run: docker compose down -v
