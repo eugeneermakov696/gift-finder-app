@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PresentSerializer(serializers.ModelSerializer):
-    price = serializers.FloatField()  # Cast Decimal fields cleanly for JSON output
+    price = serializers.FloatField()
     original_price = serializers.FloatField(required=False, allow_null=True)
     rating = serializers.FloatField(required=False, allow_null=True)
 

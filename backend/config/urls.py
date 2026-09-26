@@ -10,7 +10,7 @@ schema_view = get_schema_view(
         default_version='v1',
         description="Interactive documentation portal for the Amazon Localhost Gift Backend Application.",
     ),
-    public=True,  # Allows public access to schema specs
+    public=True,
     permission_classes=(permissions.AllowAny,),
 )
 
@@ -18,7 +18,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('presents.urls')),
 
-    # Swagger & OpenAPI Interactive UI views configured for raw endpoints
     path(r'swagger<format>\.json|\.yaml/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

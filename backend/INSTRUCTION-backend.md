@@ -51,21 +51,7 @@ gift-finder-app/
         └── views.py            # Secure ModelViewSets handling backend CRUD actions
 ```
 
----
 
-## 🚀 Environment Initialization (Onboarding)
-
-The project completely decouples sensitive database variables and security credentials from the runtime engine using environmental configuration maps. 
-
-When configuring a clean repository setup loop from scratch:
-1. Navigate into the `backend/` application workspace directory.
-2. Duplicate the `.env.example` template to initialize your active local `.env` settings file:
-   ```bash
-   cp .env.example .env
-   ```
-3. Open `backend/.env` and securely adapt your `SECRET_KEY` and target `DB_PASSWORD` parameters if necessary.
-
----
 
 ## 🛠️ Quick Start Instructions
 
