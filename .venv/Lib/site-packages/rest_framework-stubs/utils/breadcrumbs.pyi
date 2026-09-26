@@ -1,3 +1,0 @@
-from django.http import HttpRequest
-
-def get_breadcrumbs(url: str, request: HttpRequest | None = None) -> list[tuple[str, str]]: ...
