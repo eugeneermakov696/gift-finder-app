@@ -1,4 +1,4 @@
-import type { Product } from './modules/WishlistPage/WishlistSlice';
+import type { Product } from './modules/WishlistPage/wishlistSlice';
 
 export const mockProducts: Product[] = [
   {
