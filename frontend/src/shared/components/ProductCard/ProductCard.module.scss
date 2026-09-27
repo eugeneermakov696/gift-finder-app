@@ -16,14 +16,20 @@
 }
 
 .favoriteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
-  top: 8px;
-  left: 8px;
+  width: 32px;
+  height: 32px;
+  top: 6px;
+  left: 6px;
   background: transparent;
   border: none;
   font-size: 24px;
-  cursor: pointer;
   z-index: 2;
+  background-color: var(--bg-main);
+  border-radius: 8px;
 }
 
 .imagePlaceholder {
@@ -71,13 +77,15 @@
 }
 
 .amazonBtn, .detailsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #FBF7F3;
   border: 1px solid var(--color-primary-1);
   border-radius: 8px;
   padding: 10px;
-  cursor: pointer;
   font-size: 14px;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 
   &:hover {
     background-color: #fff;
@@ -87,4 +95,14 @@
 .amazonIcon {
   @include icon-mask('/icons/Amazon.svg', 16px);
   background-color: var(--text-main);
+}
+
+.heartIcon {
+  @include icon-mask('/icons/heart.svg', 32px);
+  background-color: var(--color-primary-1);
+}
+
+.filledHeartIcon {
+  @include icon-mask('/icons/filledHeart.svg', 22px);
+  background-color: var(--color-primary-1);
 }

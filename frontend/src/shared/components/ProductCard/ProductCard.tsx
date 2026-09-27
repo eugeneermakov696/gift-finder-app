@@ -1,17 +1,30 @@
+import { Link } from 'react-router-dom';
 import styles from './ProductCard.module.scss';
 
 interface ProductCardProps {
   title: string;
   description: string;
   imageUrl: string;
+  isFavorite: boolean;
+  onToggleFavorite: () => void;
 }
 
-export const ProductCard = ({ title, description, imageUrl }: ProductCardProps) => {
+export const ProductCard = ({
+  title,
+  description,
+  imageUrl,
+  isFavorite,
+  onToggleFavorite,
+}: ProductCardProps) => {
   return (
     <div className={styles.card}>
       <div className={styles.imageWrapper}>
-        <button className={styles.favoriteBtn} aria-label="Add to favorites">
-          ♡
+        <button className={styles.favoriteBtn} onClick={onToggleFavorite}>
+          {isFavorite ? (
+            <span className={styles.filledHeartIcon} />
+          ) : (
+            <span className={styles.heartIcon} />
+          )}
         </button>
         <div className={styles.imagePlaceholder}>
           <img src={imageUrl} alt={title} />
@@ -26,7 +39,9 @@ export const ProductCard = ({ title, description, imageUrl }: ProductCardProps) 
           <button className={styles.amazonBtn}>
             available at Amazon <span className={styles.amazonIcon} aria-label="Amazon"></span>
           </button>
-          <button className={styles.detailsBtn}>View details</button>
+          <Link to={`/product/$id`} className={styles.detailsBtn}>
+            <button>View details</button>
+          </Link>
         </div>
       </div>
     </div>

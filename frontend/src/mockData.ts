@@ -1,4 +1,4 @@
-import type { Product } from "./modules/WishlistPage/wishlistSlice";
+import type { Product } from './modules/WishlistPage/WishlistSlice';
 
 export const mockProducts: Product[] = [
   {
@@ -13,8 +13,8 @@ export const mockProducts: Product[] = [
     recipient: 'For Him',
     relationship: 'Partner or Spouse, Coworker',
     interest: 'The Homebody & Cozy Life',
-    occasion: 'Birthday, Christmas, Father\'s Day',
-    description: 'Premium combed cotton dress socks with seamless toes for all-day office comfort.'
+    occasion: "Birthday, Christmas, Father's Day",
+    description: 'Premium combed cotton dress socks with seamless toes for all-day office comfort.',
   },
   {
     id: 2,
@@ -28,7 +28,8 @@ export const mockProducts: Product[] = [
     recipient: 'For Him',
     relationship: 'Partner or Spouse, Close Friend',
     interest: 'The Self-Care & Wellness Fan',
-    occasion: 'Birthday, Anniversary, Father\'s Day',
-    description: 'Elegant magnetic therapy copper bracelet designed to relieve joint stiffness while adding a bold masculine accent.'
-  }
+    occasion: "Birthday, Anniversary, Father's Day",
+    description:
+      'Elegant magnetic therapy copper bracelet designed to relieve joint stiffness while adding a bold masculine accent.',
+  },
 ];

@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ProductCard } from '../../shared/components/ProductCard';
+import { useAppDispatch } from '../../store/hooks';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
 import styles from './CatalogPage.module.scss';
+import { addGift, removeGift } from '../WishlistPage/WishlistSlice';
 
 // fake data for product cards
 const MOCK_PRODUCTS = [
@@ -31,6 +35,10 @@ const MOCK_PRODUCTS = [
 ];
 
 export const CatalogPage = () => {
+  const dispatch = useAppDispatch();
+  
+  const savedItems = useSelector((state: RootState) => state.wishlist.items);
+
   return (
     <div className={styles.container}>
       <header className={styles.pageHeader}>
@@ -38,25 +46,42 @@ export const CatalogPage = () => {
           <h1 className={styles.pageTitle}>We Found Some Great Gift Ideas for You</h1>
           <p className={styles.pageSubtitle}>
             Here are personalized recommendations based on your answers.
-            </p>
+          </p>
         </div>
         <div className={styles.headerActions}>
-          <button className={styles.pickAgainBtn}>Pick again</button>
+          <Link to="/find-a-gift">
+            <button className={styles.pickAgainBtn}>Pick again</button>
+          </Link>
           <Link to="/" className={styles.backLink}>
-          Back <span className={styles.arrowIcon} aria-label="Right arrow" />
-        </Link>
+            Back <span className={styles.arrowIcon} aria-label="Right arrow" />
+          </Link>
         </div>
       </header>
 
       <div className={styles.productsGrid}>
-        {MOCK_PRODUCTS.map((product) => (
-          <ProductCard
-            key={product.id}
-            title={product.title}
-            description={product.description}
-            imageUrl={product.imageUrl}
-          />
-        ))}
+        {MOCK_PRODUCTS.map((product) => {
+          const isFavorite = savedItems.some((item) => item.id === product.id);
+
+          const handleToggleFavorite = () => {
+            if (isFavorite) {
+              dispatch(removeGift(product.id));
+            } else {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              dispatch(addGift(product as any));
+            }
+          };
+
+          return (
+            <ProductCard
+              key={product.id}
+              title={product.title}
+              description={product.description}
+              imageUrl={product.imageUrl}
+              isFavorite={isFavorite}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          );
+        })}
       </div>
     </div>
   );

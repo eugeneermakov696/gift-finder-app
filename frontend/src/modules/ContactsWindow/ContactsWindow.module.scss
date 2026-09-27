@@ -1,0 +1,149 @@
+@use '../../styles/mixins' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modalContent {
+  background-color: #fff;
+  width: 100%;
+  max-width: 800px;
+  border-radius: 12px;
+  padding: 48px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-main);
+  padding: 8px;
+}
+
+.closeIcon {
+  @include icon-mask('/icons/close.svg', 16px);
+  background-color: var(--text-main);
+}
+
+.header {
+  margin-bottom: 32px;
+
+  .label {
+    font-size: 14px;
+    color: var(--text-main);
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--text-main);
+  }
+
+  .description {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.inputGroup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  label {
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background-color: #fff;
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    z-index: 1;
+  }
+
+  input, textarea {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid var(--color-primary-2);
+    border-radius: 8px;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+
+    &::placeholder {
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    &:focus {
+      border-color: var(--color-primary-2);
+      box-shadow: 0 0 0 1px var(--color-primary-2);
+    }
+  }
+
+  textarea {
+    resize: none;
+    min-height: 120px;
+    max-height: 250px; 
+    overflow-y: auto;
+  }
+
+  .helperText {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    padding-left: 16px;
+  }
+}
+
+.submitBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary-2);
+  color: #fff;
+  border: solid 1px var(--text-main);
+  border-radius: 8px;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 400;
+  height: 44px;
+  text-align: center;
+  align-self: flex-start;
+  margin-top: 8px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: var(--color-primary-1);
+  }
+}
