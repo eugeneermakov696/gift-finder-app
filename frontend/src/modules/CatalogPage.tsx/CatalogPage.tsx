@@ -4,7 +4,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import styles from './CatalogPage.module.scss';
-import { addGift, removeGift } from '../WishlistPage/WishlistSlice';
+import { addGift, removeGift } from '../WishlistPage/TempSlice';
 
 // fake data for product cards
 const MOCK_PRODUCTS = [
@@ -12,31 +12,33 @@ const MOCK_PRODUCTS = [
     id: 1,
     title: 'Basics Dumbbell Hand Weights',
     description: 'Set of 2 dumbbells for resistance training; each dumbbell weighs 3 pounds',
-    imageUrl: 'https://via.placeholder.com/200'
+    imageUrl: 'https://via.placeholder.com/200',
   },
   {
     id: 2,
     title: 'Professional Kinesiology Tape',
-    description: 'Waterproof Athletic Sports Tape for Knee, Shoulder, Arm & Back Support | 3-5 Day Adhesion',
-    imageUrl: 'https://via.placeholder.com/200'
+    description:
+      'Waterproof Athletic Sports Tape for Knee, Shoulder, Arm & Back Support | 3-5 Day Adhesion',
+    imageUrl: 'https://via.placeholder.com/200',
   },
   {
     id: 3,
     title: 'Amazon Basics Drinking Glasses',
-    description: '4-PIECE GLASSWARE SET: 311 g drinking glasses (set of 4) for water, soda, and other cold beverages',
-    imageUrl: 'https://via.placeholder.com/200'
+    description:
+      '4-PIECE GLASSWARE SET: 311 g drinking glasses (set of 4) for water, soda, and other cold beverages',
+    imageUrl: 'https://via.placeholder.com/200',
   },
   {
     id: 4,
     title: 'Cotton Waffle Kitchen Dish Towels',
     description: 'Basics Organic - Ultra Absorbent, Quick Drying, Lint-Free, 38 x 63.5 cm, 6-Pack',
-    imageUrl: 'https://via.placeholder.com/200'
-  }
+    imageUrl: 'https://via.placeholder.com/200',
+  },
 ];
 
 export const CatalogPage = () => {
   const dispatch = useAppDispatch();
-  
+
   const savedItems = useSelector((state: RootState) => state.wishlist.items);
 
   return (
@@ -60,7 +62,8 @@ export const CatalogPage = () => {
 
       <div className={styles.productsGrid}>
         {MOCK_PRODUCTS.map((product) => {
-          const isFavorite = savedItems.some((item) => item.id === product.id);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const isFavorite = savedItems.some((item: any) => item.id === product.id);
 
           const handleToggleFavorite = () => {
             if (isFavorite) {
