@@ -11,7 +11,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .headerText {
@@ -19,14 +19,14 @@
 }
 
 .pageTitle {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 500;
   color: var(--text-main);
   margin: 0 0 8px 0;
 }
 
 .pageSubtitle {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-secondary);
   margin: 0;
 }
@@ -36,9 +36,9 @@
   align-items: center;
   justify-content: center;
   align-self: flex-end;
+  gap: 6px;
+  padding: 10px 0;
   cursor: pointer;
-  margin-bottom: 24px;
-  gap: 3px;
 }
 
 .arrowIcon {
@@ -50,16 +50,21 @@
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
+  gap: 32px;
 }
 
 .pickAgainBtn {
   background-color: var(--color-primary-2);
   color: #fff;
-  border: none;
-  padding: 10px 24px;
+  border: solid 1px var(--text-main);
+  padding: 10px 42px;
   border-radius: 8px;
-  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: var(--color-primary-1);
+  }
 }
 
 .backBtn {

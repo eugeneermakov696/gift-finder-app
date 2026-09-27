@@ -5,6 +5,8 @@ import { FirstCard } from './components/Cards';
 import { SecondCard } from './components/Cards';
 import { ThirdCard } from './components/Cards';
 import styles from './HomePage.module.scss';
+import { ContactsWindow } from '../ContactsWindow';
+import { FiltersWindow } from '../FiltersWindow';
 
 const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +28,9 @@ const FaqItem = ({ question, answer }: { question: string; answer: string }) => 
 };
 
 export const HomePage = () => {
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
   return (
     <div className={styles.container}>
       <section className={styles.heroSection}>
@@ -42,9 +47,9 @@ export const HomePage = () => {
             <Link to="/find-a-gift">
               <button className={styles.primaryBtn}>Start Gift Search</button>
             </Link>
-            <Link to="/ready-ideas">
-              <button className={styles.secondaryBtn}>Explore Ready Ideas</button>
-            </Link>
+            <button className={styles.secondaryBtn} onClick={() => setIsFiltersOpen(true)}>
+              Explore Ready Ideas
+            </button>
           </div>
 
           <ul className={styles.heroFeatures}>
@@ -132,10 +137,10 @@ export const HomePage = () => {
         />
 
         <p className={styles.description}>
-          Still have questions?
-          <Link to="contact-us" className={styles.contactLink}>
+          Still have questions?{' '}
+          <button className={styles.contactLink} onClick={() => setIsContactOpen(true)}>
             Contact us
-          </Link>
+          </button>{' '}
           at [email address].
         </p>
       </section>
@@ -150,7 +155,13 @@ export const HomePage = () => {
 
         <div className={styles.masonryGrid}>
           <div className={styles.gridCard}>
-            <img src="./images/lifestyle.png" alt="Lifestyle" className={styles.cardImage} />
+            <img
+              src="/images/lifestyle.png"
+              alt="Lifestyle"
+              width="410"
+              height="406"
+              className={styles.cardImage}
+            />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Personality & Lifestyle Matching</h3>
               <p className={styles.cardDescr}>
@@ -161,7 +172,13 @@ export const HomePage = () => {
           </div>
 
           <div className={styles.gridCard}>
-            <img src="./images/context.png" alt="Context" className={styles.cardImage} />
+            <img
+              src="/images/context.png"
+              alt="Context"
+              width="411"
+              height="271"
+              className={styles.cardImage}
+            />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Relationship Context</h3>
               <p className={styles.cardDescr}>
@@ -172,7 +189,13 @@ export const HomePage = () => {
           </div>
 
           <div className={styles.gridCard}>
-            <img src="./images/budget.png" alt="Budget" className={styles.cardImage} />
+            <img
+              src="/images/budget.png"
+              alt="Budget"
+              width="411"
+              height="271"
+              className={styles.cardImage}
+            />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Strict Budget Limits</h3>
               <p className={styles.cardDescr}>
@@ -183,7 +206,13 @@ export const HomePage = () => {
           </div>
 
           <div className={styles.gridCard}>
-            <img src="./images/occasion.png" alt="Occasion" className={styles.cardImage} />
+            <img
+              src="/images/occasion.png"
+              alt="Occasion"
+              width="411"
+              height="404"
+              className={styles.cardImage}
+            />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Cover Every Occasion</h3>
               <p className={styles.cardDescr}>
@@ -194,7 +223,13 @@ export const HomePage = () => {
           </div>
 
           <div className={styles.gridCard}>
-            <img src="./images/quality.png" alt="Quality" className={styles.cardImage} />
+            <img
+              src="/images/quality.png"
+              alt="Quality"
+              width="411"
+              height="402"
+              className={styles.cardImage}
+            />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Verified 4★+ Amazon Quality</h3>
               <p className={styles.cardDescr}>
@@ -205,7 +240,13 @@ export const HomePage = () => {
           </div>
 
           <div className={styles.gridCard}>
-            <img src="./images/checkout.png" alt="Checkout" className={styles.cardImage} />
+            <img
+              src="/images/checkout.png"
+              alt="Checkout"
+              width="411"
+              height="271"
+              className={styles.cardImage}
+            />
             <div className={styles.cardOverlay}>
               <h3 className={styles.cardTitle}>Frictionless Prime Checkout</h3>
               <p className={styles.cardDescr}>
@@ -243,17 +284,17 @@ export const HomePage = () => {
               and holidays.
             </p>
           </div>
-          <Link to="/ready-ideas">
-            <button className={styles.secondaryBtn}>Explore Ready Ideas</button>
-          </Link>
+          <button className={styles.secondaryBtn} onClick={() => setIsFiltersOpen(true)}>
+            Explore Ready Ideas
+          </button>
         </div>
       </section>
 
-      <section className={styles.giftsSection}>
+      <section className={styles.giftsSection} id="popularGifts">
         <h2 className={styles.title}>Popular Gifts</h2>
         <h3 className={styles.subtitle}>Trending Gifts People Are Loving Right Now</h3>
         <p className={styles.description}>
-          Explore our most popular, editor-vetted Amazon discoveries with verified 4.5+ star
+          Explore our most popular, editor-vetted Amazon discoveries with verified 4+ star
           ratings.
         </p>
 
@@ -264,6 +305,9 @@ export const HomePage = () => {
           </h3>
         </div>
       </section>
+      {isContactOpen && <ContactsWindow onClose={() => setIsContactOpen(false)} />}
+
+      {isFiltersOpen && <FiltersWindow onClose={() => setIsFiltersOpen(false)} />}
     </div>
   );
 };

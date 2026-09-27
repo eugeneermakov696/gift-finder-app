@@ -1,1 +1,1 @@
-export * from './ConditionsPage';
+export * from './TermsPage';
