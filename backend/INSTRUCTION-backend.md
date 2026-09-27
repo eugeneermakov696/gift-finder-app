@@ -26,21 +26,23 @@ gift-finder-app/
     ├── .env.example            # Environment configuration template blueprint for onboarding
     ├── api_test.http           # Native PyCharm HTTP client automated scratchpad entries
     ├── Dockerfile              # Python slim multi-stage image generation manifest
+    ├── gifts_data.xlsx         # Native source product Excel matrix containing your gift entries
     ├── INSTRUCTION-backend.md  # This documentation file
     ├── manage.py               # Django master administrative execution script
     ├── requirements.txt        # Backend third-party packages baseline manifest
-    ├── gift_of_presents/       # Core system settings and routing contexts
-    │   ├── settings.py         # DRF Global configurations (Token Auth, Cors rules)
-    │   └── urls.py             # Global application path maps (Swagger definitions)
-    └── presents/               # Application domain business logic layer
+    ├── config/                 # Core system configuration settings directory
+    │   ├── settings.py         # DRF Global configurations (Token Auth, CORS rules, DB mapping)
+    │   ├── urls.py             # Global application path maps (Swagger and app routing)
+    │   └── wsgi.py             # Web Server Gateway Interface entry point configuration
+    └── presents/               # Application domain business logic layer (App Module)
+        ├── management/         # Custom administrative commands infrastructure
+        │   └── commands/
+        │     ├─__init__.py     # Absolute initialization hook required for package compilation
+        │     └─import_excel.py # Importer script mapping Excel sheets into PostgreSQL
         ├── migrations/         # Auto-generated database table structural schemas
-        │   ├──0001_initial.py  # Instantiates the Present model schema
+        │   ├──0001_initial.py  # Instantiates the Present model schema (TextField upgraded)
         │   ├──0002_wishlist.py # Instantiates the secure Wishlist relationship tables
         │   └── __init__.py
-        ├── management/
-        │   └── commands/
-        │       ├── __init__.py
-        │       └── import_excel.py # Importer script mapping Excel sheets into PostgreSQL
         ├── admin.py            # Visual object metrics model customization settings
         ├── apps.py             # Module framework metadata hook
         ├── models.py           # Relational object database structural design layout
@@ -51,6 +53,7 @@ gift-finder-app/
         └── views.py            # Secure ModelViewSets handling backend CRUD actions
 ```
 
+---
 
 
 ## 🛠️ Quick Start Instructions
@@ -64,7 +67,7 @@ docker compose up --build -d
 ```
 
 ### 2. Apply Relational Migrations
-On the initial configuration initialization check or when schema fields adjust, push the structural tables into PostgreSQL:
+On initial project setup or when database schemas adjust, push the structural tables into PostgreSQL:
 ```bash
 docker compose exec backend python manage.py migrate
 ```
@@ -91,20 +94,23 @@ Run this validation command to verify your active codebase:
 ```bash
 docker compose exec backend python manage.py test presents
 ```
-*Note: This identical test block is triggered automatically in the cloud by your **GitHub Actions CI/CD Pipeline** on every branch push.*
 
 ---
 
 ## 📊 Excel Sheet Database Importer
 
-The app includes a command utility tool that streams Excel tables (`.xlsx`) straight into PostgreSQL. If rows lack image links, it dynamically structures a deterministic path from the product code identifier fields.
+The app includes a command utility tool that streams Excel tables (`.xlsx`) straight into PostgreSQL. It cleans old tables out on each execution and dynamically structures a deterministic fallback link path from the product identifier fields for rows lacking image data fields.
 
 1. Ensure your spreadsheet contains these exact header labels: `title`, `asin`, `amazon_url`, `price`, `category`.
-2. Move the file into your local `backend/` folder directory (e.g., `gifts_data.xlsx`).
-3. Run the import engine directly within the active container runtime environment:
-```bash
-docker compose exec backend python manage.py import_excel gifts_data.xlsx
-```
+2. Place the file inside your local `backend/` folder directory (`backend/gifts_data.xlsx`).
+3. Manually push your spreadsheet file across the container boundaries into the isolated running instance:
+   ```bash
+   docker cp backend/gifts_data.xlsx django_backend:/app/gifts_data.xlsx
+   ```
+4. Run the import engine directly within the active container runtime environment:
+   ```bash
+   docker compose exec backend python manage.py import_excel gifts_data.xlsx
+   ```
 
 ---
 
@@ -114,7 +120,7 @@ All core CRUD logic blocks route through automatic Django REST Framework pathway
 
 | Area | HTTP Method | REST Endpoint Pathway | Description / Scope | Security Constraints |
 | :--- | :--- | :--- | :--- | :--- |
-| **Gifts** | `GET` | `/api/gifts/` | View products chunked by pagination (`?page=1`). Supports filtering (`?category=X`), keyword text search (`?search=Y`), and price ordering parameter logic (`?sort_by=price_low\|price_high\|rating`). | Public Access |
+| **Gifts** | `GET` | `/api/gifts/` | View products chunked by pagination. Supports filtering (`?category=goods`), keyword text search (`?search=Socks`), and price ordering parameter logic (`?sort_by=price_low\|price_high\|rating`). | Public Access |
 | **Gifts** | `POST` | `/api/gifts/` | Manually insert a product record item mapping frame into the database. | Public Access |
 | **Gifts** | `POST` | `/api/gifts/scrape/` | Submits an `amazon_url`, extracts the ASIN tracking key, and records the item in PostgreSQL. | Public Access |
 | **Gifts** | `POST` | `/api/gifts/<id>/price-check/` | Simulates scanning an item and logs a 10% price drop markdown. | Public Access |

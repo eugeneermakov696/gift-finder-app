@@ -3,11 +3,11 @@ from django.contrib.auth.models import User
 
 
 class Present(models.Model):
-    title = models.CharField(max_length=255, help_text="The name of the Amazon product")
+    title = models.TextField(help_text="The name of the Amazon product")
     asin = models.CharField(max_length=20, unique=True, db_index=True,
                             help_text="Amazon Standard Identification Number")
-    amazon_url = models.URLField(max_length=500, help_text="Direct link to the Amazon product page")
-    image_url = models.URLField(max_length=500, blank=True, null=True, help_text="Product main image link")
+    amazon_url = models.TextField(help_text="Direct link to the Amazon product page")
+    image_url = models.TextField(blank=True, null=True, help_text="Product main image link")
 
     price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Current listing price on Amazon")
     original_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True,
