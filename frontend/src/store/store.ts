@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import wishlistReducer from '../modules/WishlistPage/TempSlice';
+import wishlistReducer from '../modules/WishlistPage/wishlistSlice';
 
 export const store = configureStore({
   reducer: {

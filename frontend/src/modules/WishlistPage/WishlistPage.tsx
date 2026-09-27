@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../store/hooks';
 import type { RootState } from '../../store/store';
-import { removeGift } from './TempSlice';
+import { removeGift } from './wishlistSlice';
 import styles from './WishlistPage.module.scss';
 
 export const WishlistPage = () => {

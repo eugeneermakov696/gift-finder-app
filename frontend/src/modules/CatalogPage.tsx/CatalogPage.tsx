@@ -4,7 +4,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import styles from './CatalogPage.module.scss';
-import { addGift, removeGift } from '../WishlistPage/TempSlice';
+import { addGift, removeGift } from '../WishlistPage/wishlistSlice';
 
 // fake data for product cards
 const MOCK_PRODUCTS = [
