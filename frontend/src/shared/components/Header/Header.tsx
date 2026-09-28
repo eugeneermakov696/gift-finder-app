@@ -23,7 +23,7 @@ export const Header = () => {
                 className={styles.logo}
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               >
-                <img src="/icons/logo.svg" className={styles.logoImg} alt="Giftly logo" />
+                <img src={`${import.meta.env.BASE_URL}icons/logo.svg`} className={styles.logoImg} alt="Giftly logo" />
               </Link>
             </li>
 

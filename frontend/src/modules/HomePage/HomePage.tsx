@@ -156,7 +156,7 @@ export const HomePage = () => {
         <div className={styles.masonryGrid}>
           <div className={styles.gridCard}>
             <img
-              src="/images/lifestyle.png"
+              src={`${import.meta.env.BASE_URL}images/lifestyle.png`}
               alt="Lifestyle"
               width="410"
               height="406"
@@ -173,7 +173,7 @@ export const HomePage = () => {
 
           <div className={styles.gridCard}>
             <img
-              src="/images/context.png"
+              src={`${import.meta.env.BASE_URL}images/context.png`}
               alt="Context"
               width="411"
               height="271"
@@ -190,7 +190,7 @@ export const HomePage = () => {
 
           <div className={styles.gridCard}>
             <img
-              src="/images/budget.png"
+              src={`${import.meta.env.BASE_URL}images/budget.png`}
               alt="Budget"
               width="411"
               height="271"
@@ -207,7 +207,7 @@ export const HomePage = () => {
 
           <div className={styles.gridCard}>
             <img
-              src="/images/occasion.png"
+              src={`${import.meta.env.BASE_URL}images/occasion.png`}
               alt="Occasion"
               width="411"
               height="404"
@@ -224,7 +224,7 @@ export const HomePage = () => {
 
           <div className={styles.gridCard}>
             <img
-              src="/images/quality.png"
+              src={`${import.meta.env.BASE_URL}/images/quality.png`}
               alt="Quality"
               width="411"
               height="402"
@@ -241,7 +241,7 @@ export const HomePage = () => {
 
           <div className={styles.gridCard}>
             <img
-              src="/images/checkout.png"
+              src={`${import.meta.env.BASE_URL}images/checkout.png`}
               alt="Checkout"
               width="411"
               height="271"
