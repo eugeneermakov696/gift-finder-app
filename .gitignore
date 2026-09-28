@@ -1,0 +1,8 @@
+.venv/
+.idea/
+__pycache__/
+db.sqlite3
+*.pyc
+backend/.env
+node_modules/
+.flake8
