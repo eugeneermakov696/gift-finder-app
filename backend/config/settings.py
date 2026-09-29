@@ -14,7 +14,14 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-dev-key-change-this-in-production")
 DEBUG = env("DEBUG", default=True)
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "backend"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
+    "backend",
+    ".ngrok-free.app",
+    ".localhost",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
