@@ -17,16 +17,14 @@ Welcome to the backend service engine for the **Gift of Presents on Amazon** pro
 
 ```text
 gift-finder-app/
-├── .flake8                     # Code quality linter configuration profile
 ├── .gitignore                  # Wipes untracked files (.env, .venv) from Git
 ├── docker-compose.yml          # Local container orchestration matrix
+├── gifts_data.xlsx             # Native source product Excel matrix containing your gift entries
 ├── README.md                   # Global application landing index configuration
 └── backend/                    # Django Application Workspace Directory
-    ├── .env                    # Decoupled system secrets (Database keys, Debug flags) - IGNORED BY GIT
     ├── .env.example            # Environment configuration template blueprint for onboarding
     ├── api_test.http           # Native PyCharm HTTP client automated scratchpad entries
     ├── Dockerfile              # Python slim multi-stage image generation manifest
-    ├── gifts_data.xlsx         # Native source product Excel matrix containing your gift entries
     ├── INSTRUCTION-backend.md  # This documentation file
     ├── manage.py               # Django master administrative execution script
     ├── requirements.txt        # Backend third-party packages baseline manifest
