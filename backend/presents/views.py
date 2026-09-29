@@ -10,44 +10,59 @@ from rest_framework.authtoken.models import Token
 from rest_framework.pagination import PageNumberPagination
 
 from presents.models import Present, Wishlist
-from presents.serializers import PresentSerializer, WishlistSerializer, UserSerializer
-
+from presents.serializers import (
+    PresentCardSerializer,
+    PresentDetailSerializer,
+    WishlistSerializer,
+    UserSerializer
+)
 
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 12
     page_size_query_param = "items_per_page"
     max_page_size = 100
 
-
 class PresentViewSet(viewsets.ModelViewSet):
     queryset = Present.objects.filter(is_available=True)
-    serializer_class = PresentSerializer
     pagination_class = StandardResultsSetPagination
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return PresentDetailSerializer
+        return PresentCardSerializer
 
     def get_queryset(self):
-        """Replaces handwritten filtering logic with clean queryset manipulation."""
         queryset = super().get_queryset()
-        category = self.request.query_params.get("category")
-        max_price = self.request.query_params.get("max_price")
-        search = self.request.query_params.get("search")
-        sort_by = self.request.query_params.get("sort_by")
+        params = self.request.query_params
 
-        if category:
-            queryset = queryset.filter(category__iexact=category)
-        if max_price:
-            queryset = queryset.filter(price__lte=float(max_price))
+        search = params.get("search")
+        recipient = params.get("recipient")
+        relationship = params.get("relationship")
+        interest = params.get("interest")
+        occasion = params.get("occasion")
+        budget_bracket = params.get("budget_bracket")
+        max_price = params.get("max_price")
+
         if search:
-            queryset = queryset.filter(Q(title__icontains=search) | Q(asin__icontains=search))
-
-        if sort_by == "price_low":
-            queryset = queryset.order_by("price")
-        elif sort_by == "price_high":
-            queryset = queryset.order_by("-price")
-        elif sort_by == "rating":
-            queryset = queryset.order_by("-rating")
-        else:
-            queryset = queryset.order_by("-created_at")
+            queryset = queryset.filter(
+                Q(title__icontains=search) | Q(description__icontains=search)
+            )
+        if recipient:
+            queryset = queryset.filter(recipient__icontains=recipient)
+        if relationship:
+            queryset = queryset.filter(relationship__icontains=relationship)
+        if interest:
+            queryset = queryset.filter(interest__icontains=interest)
+        if occasion:
+            queryset = queryset.filter(occasion__icontains=occasion)
+        if budget_bracket:
+            queryset = queryset.filter(budget_bracket__iexact=budget_bracket)
+        if max_price:
+            try:
+                queryset = queryset.filter(price__lte=float(max_price))
+            except ValueError:
+                pass
 
         return queryset
 
@@ -65,7 +80,6 @@ class PresentViewSet(viewsets.ModelViewSet):
                 "title": f"Amazon Choice Product ({asin})",
                 "amazon_url": f"https://amazon.com{asin}",
                 "price": round(mock_seed_price, 2),
-                "category": "Featured Products",
                 "is_available": True
             }
         )
@@ -87,7 +101,6 @@ class WishlistViewSet(viewsets.ModelViewSet):
     serializer_class = WishlistSerializer
 
     def get_permissions(self):
-        """Allows access to endpoints to handle permission logic dynamically inside the view."""
         return [permissions.AllowAny()]
 
     def perform_create(self, serializer):
@@ -99,7 +112,6 @@ class WishlistViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="manage-item")
     def manage_item(self, request, pk=None):
-        """POST /api/wishlists/<id>/manage-item/ - Protected item linking."""
         wishlist = self.get_object()
 
         if not request.user or request.user.is_anonymous:
@@ -134,7 +146,6 @@ class WishlistViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"], url_path="export/csv")
     def export_csv(self, request, pk=None):
-        """GET /api/wishlists/<id>/export/csv/ - Streaming multi-format exports."""
         wishlist = self.get_object()
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = f'attachment; filename="{wishlist.name}_export.csv"'
