@@ -15,7 +15,7 @@ from presents.serializers import PresentSerializer, WishlistSerializer, UserSeri
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
-    page_size_query_param = 'items_per_page'
+    page_size_query_param = "items_per_page"
     max_page_size = 100
 
 
@@ -23,15 +23,15 @@ class PresentViewSet(viewsets.ModelViewSet):
     queryset = Present.objects.filter(is_available=True)
     serializer_class = PresentSerializer
     pagination_class = StandardResultsSetPagination
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         """Replaces handwritten filtering logic with clean queryset manipulation."""
         queryset = super().get_queryset()
-        category = self.request.query_params.get('category')
-        max_price = self.request.query_params.get('max_price')
-        search = self.request.query_params.get('search')
-        sort_by = self.request.query_params.get('sort_by')
+        category = self.request.query_params.get("category")
+        max_price = self.request.query_params.get("max_price")
+        search = self.request.query_params.get("search")
+        sort_by = self.request.query_params.get("sort_by")
 
         if category:
             queryset = queryset.filter(category__iexact=category)
@@ -40,21 +40,21 @@ class PresentViewSet(viewsets.ModelViewSet):
         if search:
             queryset = queryset.filter(Q(title__icontains=search) | Q(asin__icontains=search))
 
-        if sort_by == 'price_low':
-            queryset = queryset.order_by('price')
-        elif sort_by == 'price_high':
-            queryset = queryset.order_by('-price')
-        elif sort_by == 'rating':
-            queryset = queryset.order_by('-rating')
+        if sort_by == "price_low":
+            queryset = queryset.order_by("price")
+        elif sort_by == "price_high":
+            queryset = queryset.order_by("-price")
+        elif sort_by == "rating":
+            queryset = queryset.order_by("-rating")
         else:
-            queryset = queryset.order_by('-created_at')
+            queryset = queryset.order_by("-created_at")
 
         return queryset
 
-    @action(detail=False, methods=['post'], url_path='scrape')
+    @action(detail=False, methods=["post"], url_path="scrape")
     def scrape(self, request):
         """POST /api/gifts/scrape/ - Automated scraping endpoint integration."""
-        amazon_url = request.data.get('amazon_url', '')
+        amazon_url = request.data.get("amazon_url", "")
         asin_match = re.search(r'(?:dp|product)/([A-Z0-9]{10})', amazon_url)
         asin = asin_match.group(1) if asin_match else "B07ZPKZSSC"
 
@@ -71,7 +71,7 @@ class PresentViewSet(viewsets.ModelViewSet):
         )
         return Response({"status": "success", "action": "created" if created else "updated", "id": gift.id})
 
-    @action(detail=True, methods=['post'], url_path='price-check')
+    @action(detail=True, methods=["post"], url_path="price-check")
     def price_check(self, request, pk=None):
         """POST /api/gifts/<id>/price-check/ - Price drop automation action."""
         gift = self.get_object()
@@ -94,11 +94,10 @@ class WishlistViewSet(viewsets.ModelViewSet):
         if self.request.user and not self.request.user.is_anonymous:
             serializer.save(user=self.request.user)
         else:
-            # Fallback handling context for test boundaries
             from django.contrib.auth.models import User
             serializer.save(user=User.objects.first())
 
-    @action(detail=True, methods=['post'], url_path='manage-item')
+    @action(detail=True, methods=["post"], url_path="manage-item")
     def manage_item(self, request, pk=None):
         """POST /api/wishlists/<id>/manage-item/ - Protected item linking."""
         wishlist = self.get_object()
@@ -111,8 +110,8 @@ class WishlistViewSet(viewsets.ModelViewSet):
             return Response({"status": "error", "message": "Permission denied. You do not own this wishlist."},
                             status=status.HTTP_403_FORBIDDEN)
 
-        present_id = request.data.get('present_id')
-        action_type = request.data.get('action')
+        present_id = request.data.get("present_id")
+        action_type = request.data.get("action")
 
         try:
             present = Present.objects.get(pk=present_id)
@@ -133,14 +132,14 @@ class WishlistViewSet(viewsets.ModelViewSet):
 
         return Response({"status": "success", "message": f"Action '{action_type}' processed successfully."})
 
-    @action(detail=True, methods=['get'], url_path='export/csv')
+    @action(detail=True, methods=["get"], url_path="export/csv")
     def export_csv(self, request, pk=None):
         """GET /api/wishlists/<id>/export/csv/ - Streaming multi-format exports."""
         wishlist = self.get_object()
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="{wishlist.name}_export.csv"'
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = f'attachment; filename="{wishlist.name}_export.csv"'
         writer = csv.writer(response)
-        writer.writerow(['ID', 'Title', 'ASIN', 'Price', 'Category'])
+        writer.writerow(["ID", "Title", "ASIN", "Price", "Category"])
         for item in wishlist.items.all():
             writer.writerow([item.id, item.title, item.asin, item.price, item.category])
         return response
@@ -160,8 +159,8 @@ def user_register(request):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def user_login(request):
-    username = request.data.get('username')
-    password = request.data.get('password')
+    username = request.data.get("username")
+    password = request.data.get("password")
     user = authenticate(username=username, password=password)
     if user:
         token, _ = Token.objects.get_or_create(user=user)
