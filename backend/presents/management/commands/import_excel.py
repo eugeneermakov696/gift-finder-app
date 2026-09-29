@@ -65,4 +65,3 @@ class Command(BaseCommand):
 
         except Exception as e:
             self.stderr.write(self.style.ERROR(f"Execution pipeline failure tracking error: {str(e)}"))
-
