@@ -3,8 +3,10 @@ import { ProductCard } from '../../shared/components/ProductCard';
 import { useAppDispatch } from '../../store/hooks';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-import styles from './CatalogPage.module.scss';
 import { addGift, removeGift } from '../WishlistPage/wishlistSlice';
+import { useEffect, useState } from 'react';
+import { getGifts } from '../../api/gifts';
+import styles from './CatalogPage.module.scss';
 
 // fake data for product cards
 const MOCK_PRODUCTS = [
@@ -36,10 +38,48 @@ const MOCK_PRODUCTS = [
   },
 ];
 
+interface Product {
+  id: number;
+  productUrl: string;
+  imageUrl: string;
+  title: string;
+  rating: number;
+  reviewsCount: number;
+  price: number;
+  budgetBracket: string;
+  recipient: string;
+  relationship: string;
+  interest: string;
+  occasion: string;
+  description: string;
+}
+
 export const CatalogPage = () => {
+  const [gifts, setGifts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const dispatch = useAppDispatch();
 
   const savedItems = useSelector((state: RootState) => state.wishlist.items);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getGifts();
+        setGifts(data);
+      } catch (error) {
+        console.error('Failed to load presents', error);
+      } finally {
+        setIsLoading(false); 
+      }
+    };
+
+    fetchData();
+  }, [])
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -61,7 +101,7 @@ export const CatalogPage = () => {
       </header>
 
       <div className={styles.productsGrid}>
-        {MOCK_PRODUCTS.map((product) => {
+        {gifts.map((product) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const isFavorite = savedItems.some((item: any) => item.id === product.id);
 
