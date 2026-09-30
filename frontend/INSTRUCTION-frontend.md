@@ -39,13 +39,14 @@ All commands must be executed from within the `frontend` directory.
 * `npm run lint` — checks the code for issues and errors using ESLint.
 * `npm run deploy` — deploys the site on GitHub pages.
 
-## 📂 Folder Structure
+## 📁 Folder Structure
 
-* `public/` — static assets (favicons, manifest, base HTML) that bypass the bundler pipeline.
-* `src/api/` — centralized folder for backend communication, API routes, and external network requests.
-* `src/modules/` — isolated components and logic for specific pages (e.g., HomePage, ProfilePage).
-* `src/shared/` — shared components (Header, Footer, UI elements) used across the entire application.
-* `src/store/` — Redux Toolkit setup, including the main store configuration, root reducer, and custom typed hooks for React components. (Global state management configuration)
-* `src/styles/` — global SCSS styles and variables.
-* `src/shared/hooks/` — reusable custom React hooks (e.g., debounce, click-outside) to encapsulate UI logic.
-* `src/shared/types/` — Global TypeScript definitions and interfaces to keep component files clean.
+* `public/` — static files (`index.html`, favicons) that the server serves "as is", without additional processing by the bundler.
+* `src/assets/` — images, SVG icons, and local fonts. These are imported directly into the code and automatically optimized during the project build.
+* `src/api/` — backend communication logic: Axios configuration, API endpoints, and functions for network requests.
+* `src/modules/` — large isolated features and full website pages (e.g., HomePage, ProfilePage).
+* `src/shared/` — universal UI "building blocks" (Header, Footer, standard buttons, inputs) used across multiple pages.
+* `src/store/` — global data storage (Redux Toolkit). This holds information accessible from anywhere in the app (e.g., user authentication status or saved search filters).
+* `src/styles/` — global SCSS styles, base variables (colors, sizing), and theme configuration.
+* `src/shared/hooks/` — reusable logic for React components (e.g., hooks for detecting clicks outside an element or debouncing inputs).
+* `src/shared/types/` — global TypeScript interfaces (blueprints for data objects like `User` or `Gift`) to keep the code clean and type-safe.

@@ -1,3 +1,5 @@
+@use '../../styles/mixins' as *;
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -13,16 +15,41 @@
 
 .metaInfo {
   font-size: 20px;
-  color: var(--text-main);
-  margin-bottom: 32px;
-  padding-bottom: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.introSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 64px;
+  gap: 24px;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  gap: 12px;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.arrowIcon {
+  @include icon-mask('/icons/rightArrow.svg', 16px);
+  background-color: var(--text-main);
 }
 
 .introText {
   font-size: 16px;
-  font-weight: 400;
-  line-height: 100%;
-  margin-bottom: 64px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 70%;
+  margin: 0;
+  margin-top: 40px;
 }
 
 .section {
@@ -30,14 +57,15 @@
 
   h2 {
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--color-primary-2);
     margin-bottom: 16px;
   }
 
-  p {
+  p:not(.introText) {
     font-size: 16px;
-    line-height: 1.6;
+    font-weight: 400;
+    line-height: 140%;
     margin-bottom: 16px;
     color: var(--text-main);
   }

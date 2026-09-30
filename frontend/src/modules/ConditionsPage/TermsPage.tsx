@@ -1,25 +1,31 @@
+import { Link } from 'react-router-dom';
 import styles from './TermsPage.module.scss';
 
 export const TermsPage = () => {
   return (
     <div className={styles.container}>
-      <h1 className={styles.itle}>Terms of Service</h1>
+      <h1 className={styles.pageTitle}>Terms of Service</h1>
 
       <div className={styles.metaInfo}>
         Effective Date: September 20, 2026 | Last Updated: September 20, 2026
       </div>
 
-      <div className={styles.introText}>
-        <p>
-          Welcome to Giftly (accessible at [giftly.com] / "the Website"). These Terms of Service
-          ("Terms") govern your access to and use of Giftly, including our gift-discovery quiz,
-          curated guides, product recommendations, and related services.
+      <div className={styles.introSection}>
+        <p className={styles.introText}>
+          Welcome to Giftly (accessible at [https://eugeneermakov696.github.io/gift-finder-app/] /
+          "the Website"). These Terms of Service ("Terms") govern your access to and use of Giftly,
+          including our gift-discovery quiz, curated guides, product recommendations, and related
+          services.
         </p>
-        <p>
-          By accessing or using Giftly, you agree to be bound by these Terms and our Privacy Policy.
-          If you do not agree, please discontinue using the Website immediately.
-        </p>
+        <Link to="/" className={styles.backLink}>
+          Back to home <span className={styles.arrowIcon} />
+        </Link>
       </div>
+
+      <p className={styles.introText}>
+        By accessing or using Giftly, you agree to be bound by these Terms and our Privacy Policy.
+        If you do not agree, please discontinue using the Website immediately.
+      </p>
 
       <section className={styles.section}>
         <h2>1. What Giftly Is (Nature of Service)</h2>
@@ -61,7 +67,7 @@ export const TermsPage = () => {
             security breach.
           </li>
         </ul>
-        <p>
+        <p className={styles.introText}>
           Giftly reserves the right to suspend, restrict, or terminate your account at our sole
           discretion, without prior notice, if we identify fraudulent activity, system abuse, or a
           breach of these Terms.
@@ -93,16 +99,17 @@ export const TermsPage = () => {
       <section className={styles.section}>
         <h2>4. Amazon Associates & Affiliate Disclosure</h2>
         <p>
-          Giftly is a participant in the Amazon Services LLC Associates Program, an affiliate
+          To Giftly is a participant in the Amazon Services LLC Associates Program, an affiliate
           advertising program designed to provide a means for sites to earn advertising fees by
-          advertising and linking to Amazon.com and affiliated sites.
+          advertising and linking to Amazon.com and affiliated sites. As an Amazon Associate, Giftly
+          earns from qualifying purchases. Clicking on product links or buttons (e.g., "View on
+          Amazon" or "Check Price on Amazon") redirects you to Amazon.com with our affiliate
+          tracking tag attached.
         </p>
-        <p>As an Amazon Associate, Giftly earns from qualifying purchases.</p>
-        <p>
-          Clicking on product links or buttons (e.g., "View on Amazon" or "Check Price on Amazon")
-          redirects you to Amazon.com with our affiliate tracking tag attached. This referral occurs
-          at no extra cost to you. The price you pay on Amazon remains exactly the same whether you
-          use our links or navigate directly.
+
+        <p className={styles.introText}>
+          This referral occurs at no extra cost to you. The price you pay on Amazon remains exactly
+          the same whether you use our links or navigate directly.
         </p>
       </section>
 
@@ -247,7 +254,10 @@ export const TermsPage = () => {
             <strong>Email:</strong> hello@giftly.com
           </li>
           <li>
-            <strong>Website:</strong> https://giftly.com
+            <strong>Website:</strong>{' '}
+            <a href="https://eugeneermakov696.github.io/gift-finder-app/">
+              github.io/gift-finder-app
+            </a>
           </li>
         </ul>
       </section>

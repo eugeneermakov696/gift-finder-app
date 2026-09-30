@@ -62,16 +62,9 @@ export const LoadingScreen = ({ onCancel, onComplete }: LoadingScreenProps) => {
 
       <div className={styles.statusSection}>
         <h4 className={styles.statusTitle}>Dynamic Status:</h4>
-        <ul className={styles.statusList}>
-          {STATUS_MESSAGES.map((msg, index) => (
-            <li
-              key={index}
-              className={`${styles.statusItem} ${index === activeTextIndex ? styles.active : ''}`}
-            >
-              {msg}
-            </li>
-          ))}
-        </ul>
+        <p className={`${styles.statusItem} ${styles.active}`}>
+          {STATUS_MESSAGES[activeTextIndex]}
+        </p>
       </div>
 
       <button className={styles.cancelBtn} onClick={onCancel}>

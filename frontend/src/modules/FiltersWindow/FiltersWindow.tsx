@@ -107,13 +107,6 @@ export const FiltersWindow = ({ onClose }: PopularGiftsModalProps) => {
               </div>
             ))}
           </div>
-
-          <div className={styles.footer}>
-            <button className={styles.submitBtn} onClick={onClose}>
-              Show Results
-            </button>
-          </div>
-
         </div>
       </div>
     </div>

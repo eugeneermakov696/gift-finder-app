@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import styles from './Footer.module.scss';
+import { useState } from 'react';
+import { ContactsWindow } from '../../../modules/ContactsWindow';
 
 export const Footer = () => {
+  const [isContactOpen, setIsContactOpen] = useState(false);
+
   return (
     <footer>
       <div className={styles.topSection}>
@@ -14,6 +18,9 @@ export const Footer = () => {
       <div className={styles.rightSection}>
         <nav className={styles.nav}>
           <ul className={styles.navList}>
+            <button className={styles.link} onClick={() => setIsContactOpen(true)}>
+            Contact
+          </button>{' '}
             <Link to="/terms&conditions" aria-label="Terms & Conditions">
               <p className={styles.link}>Terms & Conditions</p>
             </Link>
@@ -30,6 +37,7 @@ export const Footer = () => {
           © 2026 Giftly · hello@giftly.com | All Rights Reserved
         </p>
       </div>
+      {isContactOpen && <ContactsWindow onClose={() => setIsContactOpen(false)} />}
     </footer>
   )
 };
