@@ -102,7 +102,7 @@ export const FiltersPage = () => {
       <header className={styles.header}>
         <h1 className={styles.pageTitle}>Gift search</h1>
         <Link to="/" className={styles.backLink}>
-          Back <span className={styles.arrowIcon} aria-label="Right arrow" />
+          Back to home<span className={styles.arrowIcon} aria-label="Right arrow" />
         </Link>
       </header>
 

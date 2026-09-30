@@ -22,7 +22,7 @@ export const WishlistPage = () => {
 
       <div className={styles.grid}>
         {savedItems.length === 0 ? (
-          <p className={styles.emptyState}>Your wishlist is empty.</p>
+          <p className={styles.emptyState}>Your favourites list is empty.</p>
         ) : (
           savedItems.map((item) => (
             <div key={item.id} className={styles.card}>

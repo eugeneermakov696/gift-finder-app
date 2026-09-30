@@ -58,15 +58,9 @@
 }
 
 .statusItem {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-secondary);
   transition: all 0.3s ease;
-  
-  &.active {
-    color: var(--text-primary);
-    font-weight: 500;
-    transform: scale(1.05);
-  }
 }
 
 .cancelBtn {

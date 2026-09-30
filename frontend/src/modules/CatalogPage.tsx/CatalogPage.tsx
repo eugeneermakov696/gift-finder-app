@@ -8,36 +8,6 @@ import { useEffect, useState } from 'react';
 import { getGifts } from '../../api/gifts';
 import styles from './CatalogPage.module.scss';
 
-// fake data for product cards
-const MOCK_PRODUCTS = [
-  {
-    id: 1,
-    title: 'Basics Dumbbell Hand Weights',
-    description: 'Set of 2 dumbbells for resistance training; each dumbbell weighs 3 pounds',
-    imageUrl: 'https://via.placeholder.com/200',
-  },
-  {
-    id: 2,
-    title: 'Professional Kinesiology Tape',
-    description:
-      'Waterproof Athletic Sports Tape for Knee, Shoulder, Arm & Back Support | 3-5 Day Adhesion',
-    imageUrl: 'https://via.placeholder.com/200',
-  },
-  {
-    id: 3,
-    title: 'Amazon Basics Drinking Glasses',
-    description:
-      '4-PIECE GLASSWARE SET: 311 g drinking glasses (set of 4) for water, soda, and other cold beverages',
-    imageUrl: 'https://via.placeholder.com/200',
-  },
-  {
-    id: 4,
-    title: 'Cotton Waffle Kitchen Dish Towels',
-    description: 'Basics Organic - Ultra Absorbent, Quick Drying, Lint-Free, 38 x 63.5 cm, 6-Pack',
-    imageUrl: 'https://via.placeholder.com/200',
-  },
-];
-
 interface Product {
   id: number;
   productUrl: string;
@@ -95,7 +65,7 @@ export const CatalogPage = () => {
             <button className={styles.pickAgainBtn}>Pick again</button>
           </Link>
           <Link to="/" className={styles.backLink}>
-            Back <span className={styles.arrowIcon} aria-label="Right arrow" />
+            Back to home <span className={styles.arrowIcon} aria-label="Right arrow" />
           </Link>
         </div>
       </header>

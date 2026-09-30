@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styles from './RightsPage.module.scss';
 
 export const RightsPage = () => {
@@ -9,19 +10,27 @@ export const RightsPage = () => {
         Effective Date: September 20, 2026 | Last Updated: September 20, 2026
       </div>
 
-      <div className={styles.introText}>
-        <p>
-          At Giftly (accessible at <a href="https://giftly.com">https://giftly.com</a>, "we," "us,"
-          or "our"), we respect your privacy and are committed to protecting your personal data.
-          This Privacy Policy explains how we collect, use, store, and safeguard your information
-          when you visit our website, register for an account, create and manage gift wishlists, and
-          interact with our affiliate links.
+      <div className={styles.introSection}>
+        <p className={styles.introText}>
+          At Giftly (accessible at{' '}
+          <a href="https://eugeneermakov696.github.io/gift-finder-app/">
+            github.io/gift-finder-app
+          </a>
+          , "we," "us," or "our"), we respect your privacy and are committed to protecting your
+          personal data. This Privacy Policy explains how we collect, use, store, and safeguard your
+          information when you visit our website, register for an account, create and manage gift
+          wishlists, and interact with our affiliate links.
         </p>
-        <p>
-          Please read this policy carefully before using Giftly. If you do not agree with any part
-          of this Privacy Policy, please discontinue using the service.
-        </p>
+
+        <Link to="/" className={styles.backLink}>
+          Back to home <span className={styles.arrowIcon} />
+        </Link>
       </div>
+
+      <p className={styles.introText}>
+        Please read this policy carefully before using Giftly. If you do not agree with any part of
+        this Privacy Policy, please discontinue using the service.
+      </p>
 
       <section className={styles.section}>
         <h2>1. Information We Collect</h2>
@@ -282,7 +291,10 @@ export const RightsPage = () => {
             <strong>Email:</strong> <a href="mailto:hello@giftly.com">hello@giftly.com</a>
           </li>
           <li>
-            <strong>Website:</strong> <a href="https://giftly.com">https://giftly.com</a>
+            <strong>Website:</strong>{' '}
+            <a href="https://eugeneermakov696.github.io/gift-finder-app/">
+              github.io/gift-finder-app
+            </a>
           </li>
         </ul>
       </section>
