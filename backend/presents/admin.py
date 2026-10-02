@@ -1,30 +1,15 @@
 from django.contrib import admin
-from presents.models import Present
-
+from .models import Present, Wishlist
 
 @admin.register(Present)
 class PresentAdmin(admin.ModelAdmin):
-    list_display = ("title", "asin", "price", "category", "rating", "is_available", "created_at")
+    list_display = ("title", "asin", "price", "budget_bracket", "recipient", "is_available")
+    list_filter = ("is_available", "budget_bracket", "recipient", "occasion")
+    search_fields = ("title", "asin", "description")
 
-    list_link_fields = ("title", "asin")
-
-    search_fields = ("title", "asin", "category")
-
-    list_filter = ("is_available", "category", "age_group", "gender_target")
-
-    fieldsets = (
-        ("Core Information", {
-            "fields": ("title", "asin", "amazon_url", "image_url")
-        }),
-        ("Pricing & Status", {
-            "fields": ("price", "original_price", "is_available")
-        }),
-        ("Ratings & Analytics", {
-            "fields": ("rating", "reviews_count")
-        }),
-        ("Target Demographics", {
-            "fields": ("category", "age_group", "gender_target")
-        }),
-    )
-
-    readonly_fields = ("created_at", "updated_at")
+@admin.register(Wishlist)
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ("name", "user", "created_at", "items_count")
+    
+    def items_count(self, obj):
+        return obj.items.count()
