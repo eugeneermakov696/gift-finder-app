@@ -7,7 +7,34 @@
 }
 
 .header {
+ display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 40px;
+}
+
+.headerActions {
+  align-self: flex-end;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  cursor: pointer;
+  gap: 12px;
+  transition: all 0.3s ease;
+
+  &:hover span {
+    transform: translateX(4px);
+  }
+}
+
+.arrowIcon {
+  @include icon-mask('/icons/rightArrow.svg', 16px);
+  background-color: var(--text-main);
+  transition: all 0.3s ease;
 }
 
 .heartIcon {
