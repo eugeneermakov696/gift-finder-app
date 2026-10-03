@@ -11,7 +11,28 @@ permissions:
     id-token: write
 
 jobs:
+
+    changes:
+        runs-on: ubuntu-latest
+        outputs:
+            frontend: ${{ steps.filter.outputs.frontend }}
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6
+
+            - uses: dorny/paths-filter@v3
+              id: filter
+              with:
+                  filters: |
+                      frontend:
+                          - 'frontend/**'
     frontend-ci:
+        needs:
+          - changes
+
+        if: needs.changes.outputs.frontend == 'true'
+        
         runs-on: ubuntu-latest
 
         defaults:
@@ -45,10 +66,14 @@ jobs:
                 path: ./frontend
 
     frontend-deploy:
+
+        needs:
+          - changes
+          - frontend-ci
+
+        if: needs.changes.outputs.frontend == 'true'
+
         runs-on: ubuntu-latest
-
-        needs: frontend-ci
-
         environment:
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
@@ -84,21 +109,6 @@ jobs:
               id: deployment
               uses: actions/deploy-pages@v4
 
-    changes:
-        runs-on: ubuntu-latest
-        outputs:
-            frontend: ${{ steps.filter.outputs.frontend }}
-
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v6
-
-            - uses: dorny/paths-filter@v3
-              id: filter
-              with:
-                  filters: |
-                      frontend:
-                          - 'frontend/**'
     build-frontend-image:
 
         needs:
