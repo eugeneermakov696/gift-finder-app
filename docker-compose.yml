@@ -1,7 +1,13 @@
+networks:
+  my-docker-network:
+    driver: bridge
+
 services:
   db:
     image: postgres:15-alpine
     container_name: django_postgres_db
+    networks:
+      - my-docker-network
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -16,6 +22,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: django_backend
+    networks:
+      - my-docker-network
     # Explicitly commented out volume mounts to bypass the 'C:\Mate academy' space bug
     # volumes:
     #   - ./backend:/app
@@ -30,6 +38,21 @@ services:
       - CORS_ALLOWED_ORIGINS=http://localhost:3000
     depends_on:
       - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react_frontend
+    networks:
+      - my-docker-network
+    # Explicitly commented out volume mounts to bypass the 'C:\Mate academy' space bug
+    # volumes:
+    #   - ./frontend:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
 
 # CRUCIAL: This global definition block was missing, causing your error!
 volumes:
