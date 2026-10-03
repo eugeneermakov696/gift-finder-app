@@ -23,7 +23,7 @@ class PresentViewSet(viewsets.ModelViewSet):
     queryset = Present.objects.filter(is_available=True)
     serializer_class = PresentSerializer
     pagination_class = StandardResultsSetPagination
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         """Replaces handwritten filtering logic with clean queryset manipulation."""
@@ -51,7 +51,7 @@ class PresentViewSet(viewsets.ModelViewSet):
 
         return queryset
 
-    @action(detail=False, methods=["post"], url_path="scrape")
+    @action(detail=False, methods=["post"], url_path="scrape", permission_classes=[permissions.IsAdminUser])
     def scrape(self, request):
         """POST /api/gifts/scrape/ - Automated scraping endpoint integration."""
         amazon_url = request.data.get("amazon_url", "")
@@ -71,7 +71,7 @@ class PresentViewSet(viewsets.ModelViewSet):
         )
         return Response({"status": "success", "action": "created" if created else "updated", "id": gift.id})
 
-    @action(detail=True, methods=["post"], url_path="price-check")
+    @action(detail=True, methods=["post"], url_path="price-check", permission_classes=[permissions.IsAdminUser])
     def price_check(self, request, pk=None):
         """POST /api/gifts/<id>/price-check/ - Price drop automation action."""
         gift = self.get_object()
