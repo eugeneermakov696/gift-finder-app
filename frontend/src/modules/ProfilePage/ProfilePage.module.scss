@@ -1,0 +1,358 @@
+@use '../../styles/mixins' as *;
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  color: var(--text-main);
+}
+
+/* --- Page Header --- */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  gap: 12px;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.arrowIcon {
+  @include icon-mask('/icons/rightArrow.svg', 16px);
+  background-color: var(--text-main);
+}
+
+/* --- Main Auth Container --- */
+.authContainer {
+  display: flex;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  margin-bottom: 64px;
+}
+
+/* --- Left: Welcome Section --- */
+.welcomeSection {
+  flex: 1.5;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 32px;
+  padding: 48px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 1px;
+    background-color: var(--text-muted);
+    top: 36px;
+    bottom: 36px;
+  }
+}
+
+.illustrationWrapper {
+  flex: 0 0 300px;
+
+  .placeholderBox {
+    width: 100%;
+    aspect-ratio: 1;
+    background-image: url(/images/profileUnauthorized.png);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.welcomeContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+
+  p {
+    color: var(--text-secondary);
+    line-height: 1.5;
+    font-size: 16px;
+  }
+}
+
+.badge {
+  font-size: 16px;
+  color: var(--text-main);
+  margin-bottom: 32px;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 24px;
+  margin-top: 32px;
+
+  button {
+    padding: 10px 42px;
+    height: 44px;
+    border-radius: 8px;
+    font-weight: 400;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+}
+
+.createBtn {
+  background-color: var(--color-primary-2);
+  color: #fff;
+  border: solid 1px var(--text-main);
+
+  &:hover {
+    background-color: var(--color-primary-1);
+  }
+}
+
+.guestBtn {
+  background-color: var(--bg-main);
+  color: var(--color-primary-1);
+}
+
+/* --- Right: Login Section --- */
+.loginSection {
+  flex: 0.8;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.loginHeader {
+  margin-bottom: 24px;
+  max-width: 360px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin: 0;
+  }
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 360px;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input {
+    width: 100%;
+    border: 1px solid var(--text-muted);
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+
+    &:focus {
+      border-color: var(--color-primary-2);
+    }
+  }
+
+  input[type='email'] {
+    padding: 12px 16px 12px 40px;
+  }
+
+  input[type='password'] {
+    padding: 12px 40px 12px 16px;
+  }
+}
+
+.emailIcon {
+  position: absolute;
+  left: 12px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--text-muted);
+  mask-image: url('/icons/Email.svg');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  mask-image: url('/icons/Eye.svg');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: var(--text-main);
+  }
+}
+
+.formOptions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.customCheckbox {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--text-secondary);
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease-in-out;
+
+  &:checked {
+    background-color: var(--color-primary-2);
+    border-color: var(--color-primary-2);
+
+    &::after {
+      content: '';
+      width: 14px;
+      height: 10px;
+      background-color: white;
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 10' fill='none'%3E%3Cpath d='M1 5L5 9L13 1' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+    }
+  }
+}
+
+.forgotLink {
+  color: var(--text-main);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-primary-2);
+  padding-bottom: 2px;
+  transition: border-color 0.3s;
+
+  &:hover {
+    border-bottom-color: var(--color-primary-1);
+  }
+}
+
+.loginBtn {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: 38px;
+  align-self: flex-end;
+  border: 1px solid var(--color-primary-2);
+  color: var(--text-main);
+  padding: 10px 64px;
+  border-radius: 8px;
+  font-weight: 400;
+  margin-top: 8px;
+}
+
+/* --- Benefits Section --- */
+.benefitsHeader {
+  margin-bottom: 28px;
+
+  h3 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  p {
+    color: var(--text-secondary);
+    font-weight: 400;
+    font-size: 16px;
+  }
+}
+
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.benefitCard {
+  border-radius: 8px;
+  padding: 24px;
+  background-color: #fff;
+
+  h4 {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 768px) {
+  .authContainer {
+    flex-direction: column;
+  }
+  .welcomeSection {
+    border-right: none;
+    border-bottom: 1px solid var(--text-muted);
+  }
+  .benefitsGrid {
+    grid-template-columns: 1fr;
+  }
+}
