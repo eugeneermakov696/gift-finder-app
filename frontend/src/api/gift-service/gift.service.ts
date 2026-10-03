@@ -11,8 +11,11 @@ class GiftService {
 
   /**
    * Fetch a paginated list of gifts.
-   * TODO for Maksym: double check the name of fields on the backend. Django will snake_case everything.
-   * Also there are some fields on the backend that are not in this type. Look at the API documentation.
+   * 
+   * TODO for Maksym: double check the name of fields on the backend. 
+   * Django will snake_case everything.
+   * Also there are some fields on the backend that are not in this type. 
+   * Look at the API documentation.
    */
   public async getGifts(): Promise<GiftsResponse> {
     const response = await this.api.get('gifts/');
