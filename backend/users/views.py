@@ -60,3 +60,12 @@ def user_register(request):
         return Response({"status": "success"}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_me(request):
+    """
+    Возвращает данные текущего авторизованного пользователя.
+    Фронтенд использует это при загрузке приложения.
+    """
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
