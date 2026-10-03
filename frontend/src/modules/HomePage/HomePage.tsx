@@ -4,9 +4,10 @@ import { PixelDrift } from './components/PixelDrift';
 import { FirstCard } from './components/Cards';
 import { SecondCard } from './components/Cards';
 import { ThirdCard } from './components/Cards';
-import styles from './HomePage.module.scss';
 import { ContactsWindow } from '../ContactsWindow';
 import { FiltersWindow } from '../FiltersWindow';
+import styles from './HomePage.module.scss';
+import { Button } from '../../shared/components/Button';
 
 const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,11 +46,13 @@ export const HomePage = () => {
 
           <div className={styles.buttons}>
             <Link to="/find-a-gift">
-              <button className={styles.primaryBtn}>Start Gift Search</button>
+              <Button variant="primary" size="large">
+                Start Gift Search
+              </Button>
             </Link>
-            <button className={styles.secondaryBtn} onClick={() => setIsFiltersOpen(true)}>
+            <Button variant="secondary" size="extraLarge" onClick={() => setIsFiltersOpen(true)}>
               Explore Ready Ideas
-            </button>
+            </Button>
           </div>
 
           <ul className={styles.heroFeatures}>
@@ -69,6 +72,19 @@ export const HomePage = () => {
           authentic customer feedback, pricing, and interests to deliver curated Amazon gifts you
           can give with confidence.
         </p>
+        <p className={styles.description}>
+          1. Human-Centered Curation We bypass sponsored clutter on Amazon to match items based on
+          authentic recipient personality, hobbies, and your specific budget.
+        </p>
+        <p className={styles.description}>
+          2. Fast or Detailed — You Choose Need something right now? Grab handpicked ideas in 1
+          click. Looking for something special? Take our interactive quiz.
+        </p>
+        <p className={styles.description}>
+          3. Free Wishlists & Favorites Never lose a great idea again. Save favorites to custom
+          wishlists for birthdays or holidays and share private links with family. if it looks good
+          in the design
+        </p>
       </section>
 
       <section className={styles.howWorksSection} id="howItWorks">
@@ -80,7 +96,9 @@ export const HomePage = () => {
             From zero ideas to a thoughtful present in your Amazon cart in under two minutes.
           </p>
           <Link to="/find-a-gift">
-            <button className={styles.primaryBtn}>Start Gift Search</button>
+            <Button variant="primary" size="default">
+              Start Gift Search
+            </Button>
           </Link>
         </div>
 
@@ -272,7 +290,9 @@ export const HomePage = () => {
             </p>
           </div>
           <Link to="/find-a-gift">
-            <button className={styles.primaryBtn}>Start Gift Search</button>
+            <Button variant="primary" size="large">
+              Start Gift Search
+            </Button>
           </Link>
         </div>
 
@@ -284,9 +304,9 @@ export const HomePage = () => {
               and holidays.
             </p>
           </div>
-          <button className={styles.secondaryBtn} onClick={() => setIsFiltersOpen(true)}>
+          <Button variant="secondary" size="extraLarge" onClick={() => setIsFiltersOpen(true)}>
             Explore Ready Ideas
-          </button>
+          </Button>
         </div>
       </section>
 
@@ -294,8 +314,7 @@ export const HomePage = () => {
         <h2 className={styles.title}>Popular Gifts</h2>
         <h3 className={styles.subtitle}>Trending Gifts People Are Loving Right Now</h3>
         <p className={styles.description}>
-          Explore our most popular, editor-vetted Amazon discoveries with verified 4+ star
-          ratings.
+          Explore our most popular, editor-vetted Amazon discoveries with verified 4+ star ratings.
         </p>
 
         <div className={styles.favGrid}>

@@ -27,7 +27,7 @@ export const LoadingScreen = ({ onCancel, onComplete }: LoadingScreenProps) => {
           clearInterval(progressInterval);
           return 100;
         }
-        return prev + 1;
+        return prev + 10;
       });
     }, 50);
 

@@ -29,7 +29,7 @@
 .description {
   font-size: 16px;
   font-family: var(--font-primary);
-  line-height: 100%;
+  line-height: 140%;
   margin-bottom: 32px;
   margin-top: 0;
   color: var(--text-secondary);
@@ -81,41 +81,6 @@
   margin-bottom: 32px;
 }
 
-.primaryBtn, .secondaryBtn {
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 400;
-  height: 44px;
-  padding: 0 42px;
-  transition: all 0.3s ease;
-
-  &:active {
-    transform: scale(0.97);
-  }
-}
-
-.primaryBtn {
-  background-color: var(--color-primary-2);
-  color: #fff;
-  border: solid 0.5px var(--text-main);
-
-  &:hover {
-    background-color: var(--color-primary-1);
-  }
-}
-
-.secondaryBtn {
-  padding: 0 62px;
-  background-color: var(--color-primary-3);
-  color: var(--color-primary-1);
-  border: solid 0.5px var(--color-primary-1);
-
-  &:hover {
-    border: solid 1px var(--color-primary-1);
-    color: var(--text-main);
-  }
-}
-
 .heroFeatures {
   list-style: none;
   padding: 0;
@@ -136,6 +101,10 @@
   align-items: flex-start;
   max-width: 800px;
   margin-bottom: 120px;
+
+  .description {
+    margin-bottom: 10px;
+  }
 }
 
 /* --- HOW IT WORKS SECTION --- */

@@ -3,6 +3,7 @@ import { useAppDispatch } from '../../store/hooks';
 import type { RootState } from '../../store/store';
 import { removeGift } from './wishlistSlice';
 import styles from './WishlistPage.module.scss';
+import { Link } from 'react-router-dom';
 
 export const WishlistPage = () => {
   const dispatch = useAppDispatch();
@@ -11,13 +12,23 @@ export const WishlistPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.breadcrumb}>
-          <span className={styles.heartIcon} /> Favourites
+        <div className={styles.headerTextGroup}>
+          <div className={styles.breadcrumb}>
+            <span className={styles.heartIcon} /> Favourites
+          </div>
+
+          <h1 className={styles.title}>Your Saved Gift Ideas</h1>
+
+          <p className={styles.subtitle}>
+            Keep track of the gifts you liked and come back to them anytime.
+          </p>
         </div>
-        <h1 className={styles.title}>Your Saved Gift Ideas</h1>
-        <p className={styles.subtitle}>
-          Keep track of the gifts you liked and come back to them anytime.
-        </p>
+
+        <div className={styles.headerActions}>
+          <Link to="/" className={styles.backLink}>
+            Back to home <span className={styles.arrowIcon} aria-label="Right arrow" />
+          </Link>
+        </div>
       </div>
 
       <div className={styles.grid}>

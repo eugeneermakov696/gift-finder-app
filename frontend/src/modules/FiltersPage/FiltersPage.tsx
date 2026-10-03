@@ -4,6 +4,7 @@ import 'rc-slider/assets/index.css';
 import styles from './FiltersPage.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
+import { Button } from '../../shared/components/Button';
 
 const AGE_OPTIONS = [
   '0-2 years',
@@ -244,7 +245,7 @@ export const FiltersPage = () => {
       </section>
 
       <div className={styles.actionFooter}>
-        <button className={styles.generateBtn} onClick={handleGenerate}>Generate</button>
+        <Button variant='primary' size='large' onClick={handleGenerate}>Generate</Button>
 
         {isLoading && (
          <LoadingScreen
