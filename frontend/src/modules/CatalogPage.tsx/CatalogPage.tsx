@@ -5,24 +5,9 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { addGift, removeGift } from '../WishlistPage/wishlistSlice';
 import { useEffect, useState } from 'react';
-import { getGifts } from '../../api/gifts';
+import { giftService } from '../../api/gift-service/gift.service';
+import type { Product } from '../../api/gift-service/types/product.type';
 import styles from './CatalogPage.module.scss';
-
-interface Product {
-  id: number;
-  productUrl: string;
-  imageUrl: string;
-  title: string;
-  rating: number;
-  reviewsCount: number;
-  price: number;
-  budgetBracket: string;
-  recipient: string;
-  relationship: string;
-  interest: string;
-  occasion: string;
-  description: string;
-}
 
 export const CatalogPage = () => {
   const [gifts, setGifts] = useState<Product[]>([]);
@@ -35,12 +20,12 @@ export const CatalogPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getGifts();
-        setGifts(data);
+        const data = await giftService.getGifts();
+        setGifts(data.results);
       } catch (error) {
         console.error('Failed to load presents', error);
       } finally {
-        setIsLoading(false); 
+        setIsLoading(false);
       }
     };
 
