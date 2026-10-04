@@ -67,6 +67,18 @@
   margin-bottom: 16px;
   max-width: 400px;
 }
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.errorMsg {
+  color: var(--color-danger-800);
+  font-size: 12px;
+  margin-left: 4px;
+}
 
 .inputGroup {
   position: relative;
@@ -167,11 +179,7 @@
   
   a {
     color: var(--color-primary-1);
-    text-decoration: underline;
-
-    &:hover {
-      text-decoration: none;
-    }
+    border-bottom: 1px solid var(--color-primary-1);
   }
 }
 
@@ -207,21 +215,7 @@
 }
 
 .submitBtn {
-  background-color: var(--color-primary-3);
-  color: var(--color-primary-1);
-  border: 1px solid var(--color-primary-1);
-  padding: 14px;
-  border-radius: 8px;
-  font-weight: 400;
-  font-size: 16px;
-  margin-top: 8px;
   max-width: 340px;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
-  
-  &:hover {
-    opacity: 0.9;
-  }
 }
 
 .footer {
@@ -234,13 +228,8 @@
     border: none;
     color: var(--color-primary-1);
     font-weight: 400;
-    text-decoration: underline;
-    cursor: pointer;
-    padding: 0;
+    border-bottom: 1px solid var(--color-primary-1);
+    padding-bottom: 1;
     margin-left: 4px;
-    
-    &:hover {
-      text-decoration: none;
-    }
   }
 }

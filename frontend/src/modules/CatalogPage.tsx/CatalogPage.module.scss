@@ -59,19 +59,6 @@
   gap: 32px;
 }
 
-.pickAgainBtn {
-  background-color: var(--color-primary-2);
-  color: #fff;
-  border: solid 1px var(--text-main);
-  padding: 10px 42px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: var(--color-primary-1);
-  }
-}
-
 .backBtn {
   background: transparent;
   border: none;

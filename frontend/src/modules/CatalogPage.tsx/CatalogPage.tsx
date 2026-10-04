@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { giftService } from '../../api/gift-service/gift.service';
 import type { Product } from '../../api/gift-service/types/product.type';
 import styles from './CatalogPage.module.scss';
+import { Button } from '../../shared/components/Button';
 
 export const CatalogPage = () => {
   const [gifts, setGifts] = useState<Product[]>([]);
@@ -47,7 +48,7 @@ export const CatalogPage = () => {
         </div>
         <div className={styles.headerActions}>
           <Link to="/find-a-gift">
-            <button className={styles.pickAgainBtn}>Pick again</button>
+            <Button variant='primary' size='large'>Pick again</Button>
           </Link>
           <Link to="/" className={styles.backLink}>
             Back to home <span className={styles.arrowIcon} aria-label="Right arrow" />

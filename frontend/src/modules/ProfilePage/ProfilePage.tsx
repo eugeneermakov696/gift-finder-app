@@ -1,17 +1,65 @@
-import { useState } from 'react';
-import styles from './ProfilePage.module.scss';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RegisterModal } from '../RegisterModal';
+import { GlowCard } from '../../shared/components/GlowCard';
+import { ProfileDashboard } from './components/ProfileDashboard';
+import { Button } from '../../shared/components/Button';
+import styles from './ProfilePage.module.scss';
 
 export const ProfilePage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem('giftly_isAuth') === 'true';
+  });
+
+  const [loginError, setLoginError] = useState('');
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleRegisterSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
+  const loginInputRef = useRef<HTMLInputElement>(null);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
+    setLoginError('');
+
+    const savedUser = JSON.parse(localStorage.getItem('giftly_user') || 'null');
+
+    if (!savedUser) {
+      setLoginError('Account does not exist. Please create one.');
+      return;
+    }
+
+    if (savedUser.email === email && savedUser.password === password) {
+      localStorage.setItem('giftly_isAuth', 'true');
+      setIsLoggedIn(true);
+    } else {
+      setLoginError('Invalid email or password.');
+    }
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('giftly_isAuth');
+    setIsLoggedIn(false);
+    setEmail('');
+    setPassword('');
+  };
+
+  const handleSwitchToLogin = () => {
+    setTimeout(() => {
+      loginInputRef.current?.focus();
+    }, 100);
+  };
+
+  if (isLoggedIn) {
+    return <ProfileDashboard onLogout={handleLogout} />;
+  }
 
   return (
     <div className={styles.container}>
@@ -24,7 +72,7 @@ export const ProfilePage = () => {
           </p>
         </div>
         <Link to="/" className={styles.backLink}>
-          Back to home <span className={styles.arrowIcon}>→</span>
+          Back to home <span className={styles.arrowIcon} />
         </Link>
       </div>
 
@@ -43,10 +91,14 @@ export const ProfilePage = () => {
             </p>
 
             <div className={styles.actionButtons}>
-              <button className={styles.createBtn} onClick={() => setIsModalOpen(true)}>
+              <Button variant="primary" size="large" onClick={() => setIsModalOpen(true)}>
                 Create Account
-              </button>
-              <button className={styles.guestBtn}>Browse as Guest</button>
+              </Button>
+              <Link to="/">
+                <Button variant="select" size="large">
+                  Browse as Guest
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -62,27 +114,39 @@ export const ProfilePage = () => {
               <span className={styles.emailIcon} />
               <input
                 type="email"
+                ref={loginInputRef}
                 placeholder="Email address"
+                className={styles.emailInput}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setLoginError('');
+                }}
                 required
               />
             </div>
 
             <div className={styles.inputWrapper}>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
+                className={styles.passwordInput}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setLoginError('');
+                }}
                 required
               />
               <button
                 type="button"
-                className={styles.eyeIcon}
+                className={`${styles.eyeIcon} ${showPassword ? styles.eyeOpen : ''}`}
+                onClick={() => setShowPassword(!showPassword)}
                 aria-label="Toggle password visibility"
               />
             </div>
+
+            {loginError && <div className={styles.errprMsg}>{loginError}</div>}
 
             <div className={styles.formOptions}>
               <label className={styles.checkboxLabel}>
@@ -94,9 +158,9 @@ export const ProfilePage = () => {
               </a>
             </div>
 
-            <button type="submit" className={styles.loginBtn}>
+            <Button variant="select" size="extraLarge" type="submit" className={styles.loginBtn}>
               Log In
-            </button>
+            </Button>
           </form>
         </div>
       </div>
@@ -108,28 +172,37 @@ export const ProfilePage = () => {
         </div>
 
         <div className={styles.benefitsGrid}>
-          <div className={styles.benefitCard}>
-            <h4>Save Your Favorites</h4>
-            <p>
-              Keep the gift ideas you love in one place, so you can easily come back to them
-              anytime.
-            </p>
-          </div>
-          <div className={styles.benefitCard}>
-            <h4>Revisit Gift Ideas</h4>
-            <p>Return to gift ideas you liked without starting your search again.</p>
-          </div>
-          <div className={styles.benefitCard}>
-            <h4>Keep Everything Organized</h4>
-            <p>Save gift ideas and easily compare your favorites before you decide.</p>
-          </div>
-          <div className={styles.benefitCard}>
-            <h4>Pick Up Where You Left Off</h4>
-            <p>Sign in anytime and continue exploring all of your saved gift ideas.</p>
-          </div>
+          <GlowCard
+            title="Save Your Favorites"
+            description="Save your favourite gift ideas and revisit them anytime."
+            className={styles.card}
+          />
+
+          <GlowCard
+            title="Revisit Gift Ideas"
+            description="Return to gift ideas you liked without starting your search again."
+            className={styles.card}
+          />
+
+          <GlowCard
+            title="Keep Everything Organized"
+            description="Save gift ideas and easily compare your favorites before you decide."
+            className={styles.card}
+          />
+
+          <GlowCard
+            title="Pick Up Where You Left Off"
+            description="Sign in anytime and continue exploring all of your saved gift."
+            className={styles.card}
+          />
         </div>
       </div>
-      <RegisterModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <RegisterModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSwitchToLogin={handleSwitchToLogin}
+        onSuccess={handleRegisterSuccess}
+      />
     </div>
   );
 };
