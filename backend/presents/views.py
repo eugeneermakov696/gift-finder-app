@@ -94,7 +94,8 @@ class WishlistViewSet(viewsets.ModelViewSet):
         if self.request.user and not self.request.user.is_anonymous:
             serializer.save(user=self.request.user)
         else:
-            from django.contrib.auth.models import User
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
             serializer.save(user=User.objects.first())
 
     @action(detail=True, methods=["post"], url_path="manage-item")
