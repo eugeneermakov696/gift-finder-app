@@ -13,3 +13,17 @@ frontend:
       limits:
         memory: "512Mi"
         cpu: "500m"
+
+backend:
+  deployment:
+    replicas: 2
+    label: backend
+    image: eug696/backend:latest
+    port: 8000
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"

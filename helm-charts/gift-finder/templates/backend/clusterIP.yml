@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.namespace }}-backend-service
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.backend.deployment.label }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.backend.deployment.port }}
+      targetPort: {{ .Values.backend.deployment.port }}
+  type: ClusterIP
