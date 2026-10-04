@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend-deployment
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.backend.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.backend.deployment.label }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.backend.deployment.label }}
+    spec:
+      containers:
+        - name: {{ .Values.backend.deployment.label }}-container
+          image: {{ .Values.backend.deployment.image }}
+          ports:
+            - containerPort: {{ .Values.backend.deployment.port }}
+          resources:
+            requests:
+              memory: {{ .Values.backend.deployment.resources.requests.memory }}
+              cpu: {{ .Values.backend.deployment.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.backend.deployment.resources.limits.memory }}
+              cpu: {{ .Values.backend.deployment.resources.limits.cpu }}

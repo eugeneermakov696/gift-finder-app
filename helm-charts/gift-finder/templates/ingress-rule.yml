@@ -15,3 +15,12 @@ spec:
                         name: {{ .Values.namespace }}-frontend-service
                         port:
                             number: {{ .Values.frontend.deployment.port }}
+        - http:
+            paths:
+                - pathType: Prefix
+                  path: /api
+                  backend:
+                    service:
+                        name: {{ .Values.namespace }}-backend-service
+                        port:
+                            number: {{ .Values.backend.deployment.port }}
