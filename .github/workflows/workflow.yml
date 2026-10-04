@@ -12,7 +12,7 @@ permissions:
 
 jobs:
 
-    changes:
+    changes-frontend:
         runs-on: ubuntu-latest
         outputs:
             frontend: ${{ steps.filter.outputs.frontend }}
@@ -29,10 +29,10 @@ jobs:
                           - 'frontend/**'
     frontend-ci:
         needs:
-          - changes
+          - changes-frontend
 
-        if: needs.changes.outputs.frontend == 'true'
-        
+        if: needs.changes-frontend.outputs.frontend == 'true'
+
         runs-on: ubuntu-latest
 
         defaults:
@@ -68,10 +68,10 @@ jobs:
     frontend-deploy:
 
         needs:
-          - changes
+          - changes-frontend
           - frontend-ci
 
-        if: needs.changes.outputs.frontend == 'true'
+        if: needs.changes-frontend.outputs.frontend == 'true'
 
         runs-on: ubuntu-latest
         environment:
@@ -112,10 +112,10 @@ jobs:
     build-frontend-image:
 
         needs:
-          - changes
+          - changes-frontend
           - frontend-ci
 
-        if: needs.changes.outputs.frontend == 'true'
+        if: needs.changes-frontend.outputs.frontend == 'true'
 
         runs-on: ubuntu-latest
 
@@ -138,3 +138,70 @@ jobs:
                   context: ./frontend
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+    changes-backend:
+        runs-on: ubuntu-latest
+        outputs:
+            backend: ${{ steps.filter.outputs.backend }}
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6
+
+            - uses: dorny/paths-filter@v3
+              id: filter
+              with:
+                  filters: |
+                      backend:
+                          - 'backend/**'
+
+    backend-ci:
+        needs:
+          - changes-backend
+
+        if: needs.changes-backend.outputs.backend == 'true'
+
+        runs-on: ubuntu-latest
+
+        defaults:
+            run:
+                working-directory: ./backend
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6
+
+            - name: Upload backend artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: backend-artifact
+                path: ./backend
+
+    build-backend-image:
+
+        needs:
+          - changes-backend
+          - backend-ci
+
+        if: needs.changes-backend.outputs.backend == 'true'
+
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Download backend artifact
+              uses: actions/download-artifact@v4
+              with:
+                name: backend-artifact
+                path: ./backend
+
+            - name: Login to DockerHub
+              uses: docker/login-action@v2
+              with:
+                  username: ${{ secrets.DOCKER_USERNAME }}
+                  password: ${{ secrets.DOCKER_PASSWORD }}
+
+            - name: Build and push Docker image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./backend
+                  push: true
+                  tags: ${{ secrets.DOCKER_USERNAME }}/backend:latest
