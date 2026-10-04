@@ -1,13 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { PixelDrift } from './components/PixelDrift';
-import { FirstCard } from './components/Cards';
-import { SecondCard } from './components/Cards';
-import { ThirdCard } from './components/Cards';
 import { ContactsWindow } from '../ContactsWindow';
 import { FiltersWindow } from '../FiltersWindow';
-import styles from './HomePage.module.scss';
 import { Button } from '../../shared/components/Button';
+import styles from './HomePage.module.scss';
+import { GlowCard } from '../../shared/components/GlowCard';
 
 const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -103,15 +101,24 @@ export const HomePage = () => {
         </div>
 
         <div className={styles.cards}>
-          <div className={styles.card}>
-            <FirstCard />
-          </div>
-          <div className={styles.card}>
-            <SecondCard />
-          </div>
-          <div className={styles.card}>
-            <ThirdCard />
-          </div>
+            <GlowCard
+              eyebrow="STEP 01"
+              title="Share Who You're Celebrating"
+              description="Select their age, hobbies, personality, and your budget. It takes less than 60 seconds to complete."
+              className={styles.card}
+            />
+            <GlowCard
+              eyebrow="STEP 02"
+              title="Get Handpicked Matches"
+              description="Our engine cuts out dropship junk and filters top-rated Amazon items matching their specific vibe."
+              className={styles.card}
+            />
+            <GlowCard
+              eyebrow="STEP 03"
+              title="Buy With Prime Confidence"
+              description="Check real price trends and verified reviews, then checkout seamlessly via your existing Amazon account."
+              className={styles.card}
+            />
         </div>
       </section>
 

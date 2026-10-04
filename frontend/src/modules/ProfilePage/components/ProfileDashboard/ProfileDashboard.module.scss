@@ -1,0 +1,251 @@
+.container {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 80px; /* Налаштуй паддінги під свою загальну сітку */
+  
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Базовий стиль для всіх трьох карток */
+.card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 40px;
+}
+
+/* --- Верхній ряд --- */
+.topRow {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr; /* Ліва картка ширша за праву */
+  gap: 24px;
+}
+
+/* Ліва картка: Профіль */
+.topRow > .card:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profileSection {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.avatarWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #f0f0f0; /* Тут буде img */
+}
+
+.cameraBadge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  background-color: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+  }
+
+  .email {
+    color: var(--text-secondary);
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .location {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .editBtn {
+    width: fit-content;
+    padding: 10px 24px;
+  }
+}
+
+.pinIcon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-color: var(--text-secondary);
+  mask: url('/icons/location.svg') no-repeat center / contain;
+  -webkit-mask: url('/icons/location.svg') no-repeat center / contain;
+}
+
+.verticalDivider {
+  width: 1px;
+  height: 100%;
+  min-height: 120px;
+  background-color: #f0f0f0;
+  margin: 0 24px;
+}
+
+.authStatusSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex: 1;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--color-success-100);
+  color: #166534;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    background-color: #22c55e;
+    border-radius: 50%;
+  }
+}
+
+.signedInText {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin: 0 0 24px 0;
+}
+
+.logoutBtn {
+  background: none;
+  border: none;
+  color: var(--text-main);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Info */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.userOutlineIcon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: var(--text-main);
+  mask: url('/icons/profile.svg') no-repeat center / contain;
+  -webkit-mask: url('/icons/profile.svg') no-repeat center / contain;
+}
+
+.infoTable {
+  display: flex;
+  flex-direction: column;
+}
+
+.infoRow {
+  display: flex;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.infoLabel {
+  width: 140px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.infoValue {
+  color: var(--text-main);
+  font-size: 16px;
+}
+
+/* --- Favorites --- */
+.favoritesHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.viewAllBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #fcf4f4;
+  color: var(--text-main);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #faeaea;
+  }
+}
+
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import styles from './FiltersWindow.module.scss';
+import { Button } from '../../shared/components/Button';
 
 const GIFT_CATEGORIES = [
   {
@@ -99,9 +100,9 @@ export const FiltersWindow = ({ onClose }: PopularGiftsModalProps) => {
                 <h3 className={styles.categoryTitle}>{category.title}</h3>
                 <div className={styles.buttonsGrid}>
                   {category.ideas.map((idea, i) => (
-                    <button key={i} className={styles.ideaBtn}>
+                    <Button variant='select' size='large' key={i}>
                       {idea}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
