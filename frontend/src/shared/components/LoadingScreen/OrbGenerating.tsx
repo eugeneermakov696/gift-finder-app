@@ -40,9 +40,6 @@ export const OrbGenerating: React.FC = () => {
     const node = root.current;
     if (!node) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const __q = (sel: string): HTMLElement | null =>
-      node.matches(sel) ? node : node.querySelector(sel);
   }, []);
 
   return (
