@@ -4,7 +4,6 @@
   max-width: 1440px;
   margin: 0 auto;
   padding: 40px 24px;
-  color: var(--text-main);
 }
 
 /* --- Page Header --- */
@@ -187,8 +186,8 @@
   left: 12px;
   width: 20px;
   height: 20px;
+  @include icon-mask('/icons/Email.svg', 16px);
   background-color: var(--text-muted);
-  mask-image: url('/icons/Email.svg');
   mask-size: contain;
   mask-repeat: no-repeat;
 }
@@ -198,13 +197,12 @@
   right: 12px;
   width: 20px;
   height: 20px;
-  background-color: var(--text-muted);
   border: none;
   cursor: pointer;
-  mask-image: url('/icons/Eye.svg');
+  @include icon-mask('/icons/Eye.svg', 18px);
+  background-color: var(--text-secondary);
   mask-size: contain;
   mask-repeat: no-repeat;
-  transition: background-color 0.3s ease;
 
   &:hover {
     background-color: var(--text-main);
@@ -317,11 +315,13 @@
   :global(.bgl-title) {
     font-size: 20px;
     white-space: nowrap;
+    font-family: var(--font-primary);
   }
 
   :global(.bgl-description) {
     color: var(--text-secondary);
     font-size: 16px;
+    font-family: var(--font-primary);
   }
 }
 

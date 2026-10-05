@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import styles from './LoadingScreen.module.scss';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { OrbGenerating } from './OrbGenerating';
 
 const STATUS_MESSAGES = [

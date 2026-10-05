@@ -139,11 +139,13 @@
   :global(.bgl-title) {
     font-size: 22px;
     white-space: nowrap;
+    font-family: var(--font-primary);
   }
 
   :global(.bgl-description) {
     color: var(--text-secondary);
     font-size: 14px;
+    font-family: var(--font-primary);
   }
 
   :global(.bgl-inner) {
