@@ -85,13 +85,20 @@
   font-size: 20px;
   cursor: pointer;
   color: var(--text-main);
-  padding: 8px;
-  margin-top: -8px; 
+  padding: 6px;
+  margin-top: -6px; 
   margin-right: -8px;
+  border-radius: 50%;
+  
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
 }
 
 .closeIcon {
-  @include icon-mask('/icons/close.svg', 16px);
+  @include icon-mask('/icons/close.svg', 18px);
   background-color: var(--text-main);
 }
 

@@ -1,11 +1,11 @@
-import { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 
 const CSS = String.raw`
 /* The orb's stage is transparent so it inherits whatever sits behind it.
    A standalone file has nothing behind it, and a browser's white default
    would hide the white label, so the export supplies the dark canvas. */
 
-.og-export-host{width:100%;height}
+.og-export-host{width:100%;height:100%}
 .og-root{display:contents}
 .og-frame{display:grid;place-items:center;width:100%;height:100%;overflow:hidden;background:var(--og-stage)}
 .og-loader{position:relative;display:flex;align-items:center;justify-content:center;width:var(--og-size);height:var(--og-size);font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:calc(var(--og-text-size) * var(--og-unit) * 16px);font-weight:300;letter-spacing:var(--og-tracking);color:var(--og-text);border-radius:50%;background-color:transparent;user-select:none}
@@ -26,8 +26,8 @@ const CSS = String.raw`
 @media(prefers-reduced-motion:reduce){.og-orb,.og-letter{animation:none}.og-letter{opacity:1}}
 `;
 
-export const OrbGenerating = () => {
-  const root = useRef(null);
+export const OrbGenerating: React.FC = () => {
+  const root = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (!document.querySelector('style[data-orb-generating]')) {
@@ -36,44 +36,116 @@ export const OrbGenerating = () => {
       tag.textContent = CSS;
       document.head.append(tag);
     }
-    const node = root.current;
-    const __q = (sel) => (node.matches(sel) ? node : node.querySelector(sel));
 
+    const node = root.current;
+    if (!node) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const __q = (sel: string): HTMLElement | null =>
+      node.matches(sel) ? node : node.querySelector(sel);
   }, []);
 
   return (
     <div ref={root} className="og-export-host">
-      <div className="og-frame" style={{ '--og-stage': '#fbf7f3', '--og-size': '196px', '--og-unit': '1.0888888888888888', '--og-depth': '1', '--og-highlight': '#ffffff', '--og-halo': '#653f49', '--og-core': '#653f49', '--og-halo-alt': '#f4e8ea', '--og-core-alt': '#7a4e59', '--og-text': '#2f2a2c', '--og-text-size': '1.2', '--og-tracking': '0px', '--og-rest': '0.4', '--og-duration': '2000ms', '--og-stagger': '100ms', '--og-pop': '1.15' }}>
-        <div className="og-loader" role="status" aria-live="polite" aria-label="Generating" data-playback="play">
+      <div
+        className="og-frame"
+        style={
+          {
+            '--og-stage': '#fbf7f3',
+            '--og-size': '196px',
+            '--og-unit': '1.0888888888888888',
+            '--og-depth': '1',
+            '--og-highlight': '#ffffff',
+            '--og-halo': '#653f49',
+            '--og-core': '#653f49',
+            '--og-halo-alt': '#f4e8ea',
+            '--og-core-alt': '#7a4e59',
+            '--og-text': '#2f2a2c',
+            '--og-text-size': '1.2',
+            '--og-tracking': '0px',
+            '--og-rest': '0.4',
+            '--og-duration': '2000ms',
+            '--og-stagger': '100ms',
+            '--og-pop': '1.15',
+          } as React.CSSProperties
+        }
+      >
+        <div
+          className="og-loader"
+          role="status"
+          aria-live="polite"
+          aria-label="Generating"
+          data-playback="play"
+        >
           <span className="og-word">
-            <span className="og-letter" style={{ '--i': '0' }} aria-hidden="true">
+            <span
+              className="og-letter"
+              style={{ '--i': '0' } as React.CSSProperties}
+              aria-hidden="true"
+            >
               G
             </span>
-            <span className="og-letter" style={{ '--i': '1' }} aria-hidden="true">
+            <span
+              className="og-letter"
+              style={{ '--i': '1' } as React.CSSProperties}
+              aria-hidden="true"
+            >
               e
             </span>
-            <span className="og-letter" style={{ '--i': '2' }} aria-hidden="true">
+            <span
+              className="og-letter"
+              style={{ '--i': '2' } as React.CSSProperties}
+              aria-hidden="true"
+            >
               n
             </span>
-            <span className="og-letter" style={{ '--i': '3' }} aria-hidden="true">
+            <span
+              className="og-letter"
+              style={{ '--i': '3' } as React.CSSProperties}
+              aria-hidden="true"
+            >
               e
             </span>
-            <span className="og-letter" style={{ '--i': '4' }} aria-hidden="true">
+            <span
+              className="og-letter"
+              style={{ '--i': '4' } as React.CSSProperties}
+              aria-hidden="true"
+            >
               r
             </span>
-            <span className="og-letter" style={{ '--i': '5' }} aria-hidden="true">
+            <span
+              className="og-letter"
+              style={{ '--i': '5' } as React.CSSProperties}
+              aria-hidden="true"
+            >
               a
             </span>
-            <span className="og-letter" style={{ '--i': '6' }} aria-hidden="true">
+            <span
+              className="og-letter"
+              style={{ '--i': '6' } as React.CSSProperties}
+              aria-hidden="true"
+            >
               t
             </span>
-            <span className="og-letter" style={{ '--i': '7' }} aria-hidden="true">
+            <span
+              className="og-letter"
+              style={{ '--i': '7' } as React.CSSProperties}
+              aria-hidden="true"
+            >
               i
             </span>
-            <span className="og-letter" style={{ '--i': '8' }} aria-hidden="true">
+            <span
+              className="og-letter"
+              style={{ '--i': '8' } as React.CSSProperties}
+              aria-hidden="true"
+            >
               n
             </span>
-            <span className="og-letter" style={{ '--i': '9' }} aria-hidden="true">
+            <span
+              className="og-letter"
+              style={{ '--i': '9' } as React.CSSProperties}
+              aria-hidden="true"
+            >
               g
             </span>
           </span>
@@ -82,4 +154,4 @@ export const OrbGenerating = () => {
       </div>
     </div>
   );
-}
+};

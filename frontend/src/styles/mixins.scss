@@ -2,7 +2,7 @@
   display: inline-block;
   width: $size;
   height: $size;
-  background-color: black;
+  background-color: var(--text-main);
   transition: background-color 0.3s ease;
 
   -webkit-mask-image: url($url);

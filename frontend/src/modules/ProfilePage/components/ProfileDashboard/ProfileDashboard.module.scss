@@ -1,77 +1,125 @@
+@use '../../../../styles/mixins' as *;
+
 .container {
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
-  padding: 40px 80px; /* Налаштуй паддінги під свою загальну сітку */
+  padding: 40px 80px;
+  color: var(--text-main);
   
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-/* Базовий стиль для всіх трьох карток */
 .card {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 40px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
 
-/* --- Верхній ряд --- */
+/* --- Page Header --- */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  padding: 10px 0;
+  gap: 12px;
+  transition: all 0.3s ease;
+
+  &:hover span {
+    transform: translateX(4px);
+  }
+}
+
+.arrowIcon {
+  @include icon-mask('/icons/rightArrow.svg', 16px);
+  background-color: var(--text-main);
+  transition: all 0.3s ease;
+}
+
+/* --- Top row --- */
+.profileCard {
+  padding: 16px;
+}
+
 .topRow {
   display: grid;
-  grid-template-columns: 1.4fr 1fr; /* Ліва картка ширша за праву */
+  grid-template-columns: 1.5fr 1fr;
   gap: 24px;
 }
 
-/* Ліва картка: Профіль */
 .topRow > .card:first-child {
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
 .profileSection {
   display: flex;
   align-items: center;
   gap: 32px;
+  flex: 1;
 }
 
 .avatarWrapper {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 170px;
+  height: 170px;
+  flex-shrink: 0;
 }
 
 .avatar {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background-color: #f0f0f0; /* Тут буде img */
+  background-color: #e5e5e5;
+  background-size: cover;
+  background-position: center;
 }
 
 .cameraBadge {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 36px;
-  height: 36px;
-  background-color: #ffffff;
-  border: 1px solid #e5e5e5;
+  bottom: 8px;
+  right: 8px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.cameraIcon {
+  @include icon-mask('/icons/camera.svg', 32px);
 }
 
 .profileDetails {
   display: flex;
   flex-direction: column;
-  gap: 6px;
 
   h2 {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
     margin: 0 0 4px 0;
   }
@@ -79,66 +127,71 @@
   .email {
     color: var(--text-secondary);
     font-size: 16px;
-    margin: 0;
+    margin: 0 0 12px 0;
   }
 
   .location {
     color: var(--text-secondary);
     font-size: 14px;
-    margin: 0 0 12px 0;
+    margin: 0 0 22px 0;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 2px;
   }
-
+  
   .editBtn {
     width: fit-content;
-    padding: 10px 24px;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 }
 
-.pinIcon {
+.locationIcon {
+  @include icon-mask('/icons/location.svg', 24px);
   display: inline-block;
-  width: 16px;
-  height: 16px;
-  background-color: var(--text-secondary);
-  mask: url('/icons/location.svg') no-repeat center / contain;
-  -webkit-mask: url('/icons/location.svg') no-repeat center / contain;
+  background-color: var(--text-main);
 }
 
 .verticalDivider {
   width: 1px;
   height: 100%;
-  min-height: 120px;
-  background-color: #f0f0f0;
-  margin: 0 24px;
+  background-color: #e5e5e5;
+  margin: 0  32px;
+  flex-shrink: 0;
 }
 
 .authStatusSection {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  text-align: center;
   flex: 1;
+  gap: 16px;
 }
 
-.statusBadge {
+.statusBlock {
+  width: 100%;
+  background-color: #f0fdf4;
+  border-radius: 8px;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.statusHeader {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background-color: var(--color-success-100);
-  color: #166534;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 12px;
+  gap: 10px;
+  color: var(--text-main);
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 24px;
 
   .dot {
-    width: 6px;
-    height: 6px;
-    background-color: #22c55e;
+    width: 8px;
+    height: 8px;
+    background-color: var(--text-main);
     border-radius: 50%;
   }
 }
@@ -146,43 +199,50 @@
 .signedInText {
   color: var(--text-secondary);
   font-size: 12px;
-  margin: 0 0 24px 0;
+  font-weight: 400;
+  margin: 0;
 }
 
 .logoutBtn {
   background: none;
   border: none;
-  color: var(--text-main);
+  color: var(--color-primary-1);
   font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
+  font-weight: 400;
+  margin-right: 8px;
+  border-bottom: 1px solid var(--color-primary-1);
   
   &:hover {
-    text-decoration: underline;
+    border: transparent;
+    border-bottom: 1px solid var(--color-primary-1);
   }
 }
 
-/* Info */
-.cardHeader {
+/* --- Info --- */
+.personalInfoCard {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 32px;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.userOutlineIcon {
+  flex-shrink: 0;
+  display: inline-block;
+  margin-right: 20px;
+  @include icon-mask('/icons/profile.svg', 32px);
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  flex: 1;
 
   h2 {
     font-size: 20px;
     font-weight: 500;
-    margin: 0;
+    margin: 0 0 24px 0;
   }
-}
-
-.userOutlineIcon {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  background-color: var(--text-main);
-  mask: url('/icons/profile.svg') no-repeat center / contain;
-  -webkit-mask: url('/icons/profile.svg') no-repeat center / contain;
 }
 
 .infoTable {
@@ -191,53 +251,51 @@
 }
 
 .infoRow {
-  display: flex;
-  padding: 16px 0;
-  border-bottom: 1px solid #f0f0f0;
-
-  &:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--text-muted);
 }
 
 .infoLabel {
-  width: 140px;
-  color: var(--text-secondary);
-  font-size: 16px;
-}
-
-.infoValue {
   color: var(--text-main);
   font-size: 16px;
 }
 
-/* --- Favorites --- */
-.favoritesHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 32px;
+.infoValue {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
 
-  h2 {
-    font-size: 20px;
-    font-weight: 500;
-    margin: 0;
-  }
+/* --- Favorites --- */
+.favoritesCard {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.favoritesTitle {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+  min-width: 140px;
 }
 
 .viewAllBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
-  background-color: #fcf4f4;
-  color: var(--text-main);
+  height: 44px;
+  padding: 10px 32px;
+  background-color: var(--bg-main);
+  color: var(--color-primary-1);
   border-radius: 8px;
-  text-decoration: none;
-  font-weight: 500;
+  font-weight: 400;
   font-size: 14px;
-  transition: background-color 0.2s;
+  white-space: nowrap;
+  transition: background-color 0.3s;
 
   &:hover {
     background-color: #faeaea;
@@ -245,7 +303,42 @@
 }
 
 .productsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex: 1;
+  justify-content: center;
   gap: 24px;
+  flex-wrap: wrap;
+}
+
+.tempProductStub {
+  display: flex;
+  flex-direction: column;
+  width: 190px;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+
+  .tempImage {
+    width: 100%;
+    height: 190px;
+    background-color: #f9f9f9;
+  }
+
+  .tempInfo {
+    padding: 12px 16px 16px 16px;
+    
+    h4 {
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0 0 6px 0;
+      line-height: 1.4;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+  }
 }
