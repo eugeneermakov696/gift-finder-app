@@ -1,0 +1,12 @@
+apliVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-postgres-pvc
+  namespace: {{ .Values.postgres.namespace }}
+spec:
+  volumeName: {{ .Release.Name }}-postgres-pv
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

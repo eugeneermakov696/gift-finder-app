@@ -1,0 +1,13 @@
+postgres:
+  namespace: gf-postgres
+  label: postgres
+  image: postgres:15.3-alpine
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  migrationJobContainer:
+    image: eug696/backend:latest
