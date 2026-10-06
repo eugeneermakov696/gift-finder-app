@@ -9,6 +9,7 @@ class CustomUser(AbstractUser):
     address = models.CharField(max_length=255, blank=True, null=True)
     image_url = models.TextField(blank=True, null=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer')
+    email_is_confirmed = models.BooleanField(default=False)
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
