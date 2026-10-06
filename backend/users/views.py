@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
-from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.utils import swagger_auto_schema, no_body
 from drf_yasg import openapi
 
 from users.serializers import RegisterSerializer, CustomTokenObtainPairSerializer
@@ -19,6 +19,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
     @swagger_auto_schema(
         operation_summary="User Login",
         operation_description="Authenticate user with email and password. Returns an empty JSON response, but sets HTTP-only cookies containing the access and refresh tokens.",
+        request_body=CustomTokenObtainPairSerializer,
         responses={200: openapi.Response("Tokens set in cookies successfully")}
     )
     def post(self, request, *args, **kwargs):
@@ -38,7 +39,8 @@ class CookieTokenObtainPairView(TokenObtainPairView):
 class CookieTokenRefreshView(TokenRefreshView):
     @swagger_auto_schema(
         operation_summary="Refresh Access Token",
-        operation_description="Issues a new access token using the refresh token stored in HTTP-only cookies. The new access token is set as a cookie.",
+        operation_description="Issues a new access token using the refresh token stored in HTTP-only cookies. The new access token is set as a cookie. No request body is needed.",
+        request_body=no_body, # Completely removes the body from Swagger
         responses={
             200: openapi.Response("Access token refreshed in cookies"),
             401: "No refresh token provided or token is invalid"
@@ -50,7 +52,13 @@ class CookieTokenRefreshView(TokenRefreshView):
         if not refresh_token:
             return Response("No refresh token provided", status=status.HTTP_401_UNAUTHORIZED)
 
-        request.data['refresh'] = refresh_token
+        # Create a mutable copy of request.data and add the refresh token
+        mutable_data = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
+        mutable_data['refresh'] = refresh_token
+        
+        # Override the request data
+        request._full_data = mutable_data
+
         response = super().post(request, *args, **kwargs)
 
         access_token = response.data.get('access')

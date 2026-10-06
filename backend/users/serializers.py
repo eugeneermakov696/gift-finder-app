@@ -36,19 +36,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    username_field = 'email'
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Change username to email
         self.fields['email'] = serializers.EmailField()
-        del self.fields['username']
+        if 'username' in self.fields:
+            del self.fields['username']
 
     def validate(self, attrs):
         # We need to authenticate using email.
-        # However, SimpleJWT calls authenticate(username=email, password=password) under the hood 
-        # if username_field is set to 'email'. But we need a custom auth backend for that to work!
-        # Alternatively, we can find the user by email here, and pass their real username.
         email = attrs.get('email')
         password = attrs.get('password')
 
@@ -56,7 +52,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
-                raise serializers.ValidationError('No user with this email found.')
+                raise serializers.ValidationError('No active account found with the given credentials')
 
             # Overwrite email with real username so super().validate works with default ModelBackend
             attrs['username'] = user.username
