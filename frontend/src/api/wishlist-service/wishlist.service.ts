@@ -21,7 +21,10 @@ class WishlistService {
   /**
    * Add a product to a wishlist.
    */
-  public async addProduct(wishlistId: number, presentId: number): Promise<{ status: string; message: string }> {
+  public async addProduct(
+    wishlistId: number,
+    presentId: number
+  ): Promise<{ status: string; message: string }> {
     const response = await this.api.post(`wishlists/${wishlistId}/manage-item/`, {
       present_id: presentId,
       action: 'add'
@@ -33,7 +36,10 @@ class WishlistService {
   /**
    * Remove a product from a wishlist.
    */
-  public async removeProduct(wishlistId: number, presentId: number): Promise<{ status: string; message: string }> {
+  public async removeProduct(
+    wishlistId: number,
+    presentId: number
+  ): Promise<{ status: string; message: string }> {
     const response = await this.api.post(`wishlists/${wishlistId}/manage-item/`, {
       present_id: presentId,
       action: 'remove'

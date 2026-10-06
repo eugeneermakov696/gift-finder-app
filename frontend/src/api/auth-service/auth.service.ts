@@ -36,7 +36,12 @@ class AuthService {
   /**
    * Register a new user
    */
-  public async register(email: string, password: string, confirmPassword: string, fullname: string): Promise<AuthResponse> {
+  public async register(
+    email: string,
+    password: string,
+    confirmPassword: string,
+    fullname: string
+  ): Promise<AuthResponse> {
     const response = await this.api.post('auth/register/', {
       email,
       password,
