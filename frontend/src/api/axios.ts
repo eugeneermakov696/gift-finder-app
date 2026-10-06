@@ -13,7 +13,7 @@ axiosInstance.interceptors.response.use(
         const originalRequest = error.config;
 
         if (error.response && error.response.status === 401) {
-            if (originalRequest._isRetry || originalRequest.url?.includes('token/refresh/')) {
+            if (originalRequest._isRetry || originalRequest.url?.includes('auth/refresh/')) {
                 // window.location.href = `${import.meta.env.BASE_URL}login`;
                 // uncomment it when u will have the login page
                 return Promise.reject(error);
@@ -22,7 +22,7 @@ axiosInstance.interceptors.response.use(
             originalRequest._isRetry = true;
 
             try {
-                await axiosInstance.post('token/refresh/');
+                await axiosInstance.post('auth/refresh/');
 
                 return axiosInstance.request(originalRequest);
             } catch (refreshError) {

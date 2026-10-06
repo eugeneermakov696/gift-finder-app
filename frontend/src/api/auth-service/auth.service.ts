@@ -24,9 +24,9 @@ class AuthService {
    * Login
    * The backend will attach httponly cookies (access_token, refresh_token)
    */
-  public async login(username: string, password: string): Promise<AuthResponse> {
-    const response = await this.api.post('token/', {
-      username,
+  public async login(email: string, password: string): Promise<AuthResponse> {
+    const response = await this.api.post('auth/login/', {
+      email,
       password,
     });
 
@@ -36,10 +36,12 @@ class AuthService {
   /**
    * Register a new user
    */
-  public async register(username: string, password: string): Promise<AuthResponse> {
+  public async register(email: string, password: string, firstName: string, lastName: string): Promise<AuthResponse> {
     const response = await this.api.post('auth/register/', {
-      username,
+      email,
       password,
+      first_name: firstName,
+      last_name: lastName,
     });
 
     return response.data;
