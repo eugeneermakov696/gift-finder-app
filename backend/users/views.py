@@ -18,9 +18,19 @@ class CookieTokenObtainPairView(TokenObtainPairView):
 
     @swagger_auto_schema(
         operation_summary="User Login",
-        operation_description="Authenticate user with email and password. Returns an empty JSON response, but sets HTTP-only cookies containing the access and refresh tokens.",
+        operation_description="Authenticate user with email and password. Returns a success message and sets HTTP-only cookies containing the access and refresh tokens.",
         request_body=CustomTokenObtainPairSerializer,
-        responses={200: openapi.Response("Tokens set in cookies successfully")}
+        responses={
+            200: openapi.Response(
+                description="Tokens set in cookies successfully",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, example="Login successful")
+                    }
+                )
+            )
+        }
     )
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
@@ -33,6 +43,8 @@ class CookieTokenObtainPairView(TokenObtainPairView):
 
         del response.data['access']
         del response.data['refresh']
+        
+        response.data['message'] = "Login successful"
         
         return response
 
@@ -66,6 +78,8 @@ class CookieTokenRefreshView(TokenRefreshView):
         response.set_cookie('access_token', access_token, httponly=True, secure=False, max_age=60*15)
 
         del response.data['access']
+
+        response.data['message'] = "Token refreshed successfully"
 
         return response
 

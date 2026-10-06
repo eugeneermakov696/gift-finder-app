@@ -45,6 +45,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
+from rest_framework.exceptions import AuthenticationFailed
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -62,7 +64,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
-                raise serializers.ValidationError('No active account found with the given credentials')
+                raise AuthenticationFailed('No active account found with the given credentials', code='no_active_account')
 
             # Overwrite email with real username so super().validate works with default ModelBackend
             attrs['username'] = user.username
