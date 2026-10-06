@@ -86,7 +86,7 @@ class LogoutView(APIView):
 @swagger_auto_schema(
     method='post',
     operation_summary="User Registration",
-    operation_description="Registers a new customer. Requires email, password, first_name, and last_name. The username is generated automatically.",
+    operation_description="Registers a new customer. Requires email, password, confirm_password, and full_name. The username, first_name, and last_name are generated automatically.",
     request_body=RegisterSerializer,
     responses={
         201: openapi.Response("User successfully registered"),
