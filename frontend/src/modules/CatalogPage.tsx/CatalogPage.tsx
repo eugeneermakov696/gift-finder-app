@@ -73,8 +73,8 @@ export const CatalogPage = () => {
             <ProductCard
               key={product.id}
               title={product.title}
-              description={product.description}
-              imageUrl={product.imageUrl}
+              description={product.description ?? ''}
+              imageUrl={product.image_url ?? ''}
               isFavorite={isFavorite}
               onToggleFavorite={handleToggleFavorite}
             />

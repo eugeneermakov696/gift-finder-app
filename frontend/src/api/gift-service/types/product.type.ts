@@ -9,6 +9,7 @@ export type Product = {
   rating: number | null;
   reviews_count: number;
   category: string | null;
+  description: string | null;
   age_group: string | null;
   gender_target: string | null;
   occasion: string | null;

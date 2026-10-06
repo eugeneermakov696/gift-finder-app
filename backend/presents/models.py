@@ -21,6 +21,7 @@ class Present(models.Model):
 
     category = models.CharField(max_length=100, blank=True, null=True, db_index=True,
                                 help_text="e.g. Electronics, Home, Toys")
+    description = models.TextField(blank=True, null=True, help_text="Short description or features of the product")
     age_group = models.CharField(max_length=50, blank=True, null=True, help_text="e.g. Kids, Teens, Adults")
     gender_target = models.CharField(max_length=50, blank=True, null=True, help_text="e.g. Unisex, Men, Women")
     occasion = models.CharField(max_length=100, blank=True, null=True, help_text="e.g. Birthday, New Year, Anniversary")
