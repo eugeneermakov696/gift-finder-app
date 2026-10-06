@@ -6,3 +6,6 @@ db.sqlite3
 backend/.env
 node_modules/
 .flake8
+
+# Documentation
+docs/

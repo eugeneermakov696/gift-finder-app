@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Present(models.Model):
@@ -19,8 +21,12 @@ class Present(models.Model):
 
     category = models.CharField(max_length=100, blank=True, null=True, db_index=True,
                                 help_text="e.g. Electronics, Home, Toys")
+    description = models.TextField(blank=True, null=True, help_text="Short description or features of the product")
     age_group = models.CharField(max_length=50, blank=True, null=True, help_text="e.g. Kids, Teens, Adults")
     gender_target = models.CharField(max_length=50, blank=True, null=True, help_text="e.g. Unisex, Men, Women")
+    occasion = models.CharField(max_length=100, blank=True, null=True, help_text="e.g. Birthday, New Year, Anniversary")
+    interests = models.CharField(max_length=255, blank=True, null=True, help_text="e.g. Sports, Music, Gaming")
+    recipient = models.CharField(max_length=100, blank=True, null=True, help_text="e.g. Mom, Boyfriend, Colleague")
 
     is_available = models.BooleanField(default=True, help_text="Is the item currently in stock?")
     created_at = models.DateTimeField(auto_now_add=True)

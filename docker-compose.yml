@@ -25,8 +25,8 @@ services:
     networks:
       - my-docker-network
     # Explicitly commented out volume mounts to bypass the 'C:\Mate academy' space bug
-    # volumes:
-    #   - ./backend:/app
+    volumes:
+      - ./backend:/app
     ports:
       - "8000:8000"
     environment:
@@ -47,8 +47,8 @@ services:
     networks:
       - my-docker-network
     # Explicitly commented out volume mounts to bypass the 'C:\Mate academy' space bug
-    # volumes:
-    #   - ./frontend:/app
+    volumes:
+      - ./frontend:/app/frontend
     ports:
       - "3000:3000"
     depends_on:

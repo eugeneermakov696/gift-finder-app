@@ -2,6 +2,19 @@ import axiosInstance from "../axios";
 import type { AxiosInstance } from "axios";
 import type { GiftsResponse } from "./types/gifts-response.type";
 
+export type GetGiftsParams = {
+  page?: number;
+  items_per_page?: number;
+  category?: string;
+  max_price?: number;
+  search?: string;
+  sort_by?: string;
+  gender_target?: string;
+  occasion?: string;
+  interests?: string;
+  recipient?: string;
+};
+
 class GiftService {
   private readonly api: AxiosInstance;
 
@@ -11,14 +24,9 @@ class GiftService {
 
   /**
    * Fetch a paginated list of gifts.
-   * 
-   * TODO for Maksym: double check the name of fields on the backend. 
-   * Django will snake_case everything.
-   * Also there are some fields on the backend that are not in this type. 
-   * Look at the API documentation.
    */
-  public async getGifts(): Promise<GiftsResponse> {
-    const response = await this.api.get('gifts/');
+  public async getGifts(params?: GetGiftsParams): Promise<GiftsResponse> {
+    const response = await this.api.get('gifts/', { params });
     return response.data;
   }
 }

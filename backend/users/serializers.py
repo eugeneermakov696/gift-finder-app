@@ -1,0 +1,72 @@
+import uuid
+from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+User = get_user_model()
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+    email = serializers.EmailField(required=True)
+    full_name = serializers.CharField(required=True, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'confirm_password', 'full_name']
+
+    def validate(self, attrs):
+        if attrs.get('password') != attrs.get('confirm_password'):
+            raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
+        return attrs
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("User with this email already exists.")
+        return value
+
+    def create(self, validated_data):
+        full_name = validated_data.pop('full_name')
+        name_parts = full_name.strip().split(' ', 1)
+        first_name = name_parts[0]
+        last_name = name_parts[1] if len(name_parts) > 1 else ''
+
+        # Generate username
+        base_username = f"{first_name}_{last_name}".lower().replace(" ", "")
+        username = f"{base_username}_{uuid.uuid4().hex[:6]}"
+        
+        user = User.objects.create_user(
+            username=username,
+            email=validated_data['email'],
+            password=validated_data['password'],
+            first_name=first_name,
+            last_name=last_name,
+            role='customer'
+        )
+        return user
+
+from rest_framework.exceptions import AuthenticationFailed
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Change username to email
+        self.fields['email'] = serializers.EmailField()
+        if 'username' in self.fields:
+            del self.fields['username']
+
+    def validate(self, attrs):
+        # We need to authenticate using email.
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        if email and password:
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                raise AuthenticationFailed('No active account found with the given credentials', code='no_active_account')
+
+            # Overwrite email with real username so super().validate works with default ModelBackend
+            attrs['username'] = user.username
+            
+        return super().validate(attrs)
