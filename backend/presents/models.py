@@ -23,6 +23,9 @@ class Present(models.Model):
                                 help_text="e.g. Electronics, Home, Toys")
     age_group = models.CharField(max_length=50, blank=True, null=True, help_text="e.g. Kids, Teens, Adults")
     gender_target = models.CharField(max_length=50, blank=True, null=True, help_text="e.g. Unisex, Men, Women")
+    occasion = models.CharField(max_length=100, blank=True, null=True, help_text="e.g. Birthday, New Year, Anniversary")
+    interests = models.CharField(max_length=255, blank=True, null=True, help_text="e.g. Sports, Music, Gaming")
+    recipient = models.CharField(max_length=100, blank=True, null=True, help_text="e.g. Mom, Boyfriend, Colleague")
 
     is_available = models.BooleanField(default=True, help_text="Is the item currently in stock?")
     created_at = models.DateTimeField(auto_now_add=True)
