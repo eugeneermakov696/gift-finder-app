@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-postgres-migration-job
+  namespace: {{ .Values.postgres.namespace }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-postgres-migration-container
+          image: {{ .Values.postgres.migrationJobContainer.image }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+                until pg_isready \
+                    -h "$DB_HOST" \
+                    -p "$DB_PORT" \
+                    -U "$DB_USER"; do
+                    echo "Waiting for PostgreSQL to be ready..."
+                    sleep 2
+                done
+
+                python manage.py migrate
+
+          restartPolicy: Never
+  backoffLimit: 3
