@@ -1,17 +1,28 @@
-from rest_framework import permissions
-from presents.serializers import UserSerializer
-from rest_framework.decorators import permission_classes
-from rest_framework.decorators import api_view
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework import status
+from django.contrib.auth import get_user_model
+from rest_framework import views, status, permissions
 from rest_framework.response import Response
-from rest_framework.views import APIView
-
-
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_yasg.utils import swagger_auto_schema, no_body
 from drf_yasg import openapi
 
-from users.serializers import RegisterSerializer, CustomTokenObtainPairSerializer
+from presents.serializers import UserSerializer
+from users.serializers import (
+    RegisterSerializer,
+    CustomTokenObtainPairSerializer,
+    VerifyEmailSerializer,
+    PasswordResetRequestSerializer,
+    PasswordResetConfirmSerializer
+)
+from users.models import VerificationScenario
+from users.services import (
+    verify_code,
+    create_and_send_verification_code,
+    request_password_reset_code
+)
+
+User = get_user_model()
+
 
 class CookieTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -38,21 +49,21 @@ class CookieTokenObtainPairView(TokenObtainPairView):
         access_token = response.data.get('access')
         refresh_token = response.data.get('refresh')
 
-        response.set_cookie('access_token', access_token, httponly=True, secure=False, max_age=60*15)
-        response.set_cookie('refresh_token', refresh_token, httponly=True, secure=False, max_age=60*60*24*7)
+        response.set_cookie('access_token', access_token, httponly=True, secure=False, max_age=60 * 15)
+        response.set_cookie('refresh_token', refresh_token, httponly=True, secure=False, max_age=60 * 60 * 24 * 7)
 
         del response.data['access']
         del response.data['refresh']
-        
+
         response.data['message'] = "Login successful"
-        
         return response
+
 
 class CookieTokenRefreshView(TokenRefreshView):
     @swagger_auto_schema(
         operation_summary="Refresh Access Token",
         operation_description="Issues a new access token using the refresh token stored in HTTP-only cookies. The new access token is set as a cookie. No request body is needed.",
-        request_body=no_body, # Completely removes the body from Swagger
+        request_body=no_body,
         responses={
             200: openapi.Response("Access token refreshed in cookies"),
             401: "No refresh token provided or token is invalid"
@@ -64,26 +75,21 @@ class CookieTokenRefreshView(TokenRefreshView):
         if not refresh_token:
             return Response("No refresh token provided", status=status.HTTP_401_UNAUTHORIZED)
 
-        # Create a mutable copy of request.data and add the refresh token
         mutable_data = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
         mutable_data['refresh'] = refresh_token
-        
-        # Override the request data
         request._full_data = mutable_data
 
         response = super().post(request, *args, **kwargs)
-
         access_token = response.data.get('access')
 
-        response.set_cookie('access_token', access_token, httponly=True, secure=False, max_age=60*15)
-
+        response.set_cookie('access_token', access_token, httponly=True, secure=False, max_age=60 * 15)
         del response.data['access']
 
         response.data['message'] = "Token refreshed successfully"
-
         return response
 
-class LogoutView(APIView):
+
+class LogoutView(views.APIView):
     @swagger_auto_schema(
         operation_summary="User Logout",
         operation_description="Logs out the user by deleting the access and refresh token cookies.",
@@ -91,16 +97,15 @@ class LogoutView(APIView):
     )
     def post(self, request, *args, **kwargs):
         response = Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
-
         response.delete_cookie('access_token')
         response.delete_cookie('refresh_token')
-
         return response
+
 
 @swagger_auto_schema(
     method='post',
     operation_summary="User Registration",
-    operation_description="Registers a new customer. Requires email, password, confirm_password, and full_name. The username, first_name, and last_name are generated automatically.",
+    operation_description="Registers a new customer. Requires email, password, confirm_password, and full_name. Dispatches an email verification code immediately upon creation.",
     request_body=RegisterSerializer,
     responses={
         201: openapi.Response("User successfully registered"),
@@ -113,9 +118,11 @@ def user_register(request):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
-        # No tokens are created during registration. User must log in separately.
-        return Response({"status": "success"}, status=status.HTTP_201_CREATED)
+        create_and_send_verification_code(user, VerificationScenario.EMAIL_CONFIRMATION)
+        return Response({"status": "success", "detail": "Registration successful. Verification code dispatched."},
+                        status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @swagger_auto_schema(
     method='get',
@@ -135,3 +142,93 @@ def get_me(request):
     """
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
+
+
+class VerifyEmailView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="Verify Email Code",
+        operation_description="Validates the 6-digit numeric verification code for the logged-in user to confirm their email address.",
+        request_body=VerifyEmailSerializer,
+        responses={
+            200: openapi.Response("Email verified successfully."),
+            400: "Invalid or expired token."
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = VerifyEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        if verify_code(request.user, serializer.validated_data["code"], VerificationScenario.EMAIL_CONFIRMATION):
+            request.user.email_is_confirmed = True
+            request.user.save()
+            return Response({"detail": "Email verified successfully."}, status=status.HTTP_200_OK)
+        return Response({"detail": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ResendEmailCodeView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="Resend Email Verification Code",
+        operation_description="Generates and emails a new 6-digit verification token if the user's account is unverified.",
+        request_body=no_body,
+        responses={
+            200: openapi.Response("New verification code dispatched."),
+            400: "Email already verified."
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        if request.user.email_is_confirmed:
+            return Response({"detail": "Email already verified."}, status=status.HTTP_400_BAD_REQUEST)
+
+        create_and_send_verification_code(request.user, VerificationScenario.EMAIL_CONFIRMATION)
+        return Response({"detail": "New verification code dispatched."}, status=status.HTTP_200_OK)
+
+
+class PasswordResetRequestView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    @swagger_auto_schema(
+        operation_summary="Request Password Reset",
+        operation_description="Accepts an account email and sends a recovery token if the account exists, safe from enumeration scanning.",
+        request_body=PasswordResetRequestSerializer,
+        responses={200: openapi.Response("If the account exists, a reset code has been dispatched.")}
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        request_password_reset_code(serializer.validated_data["email"].lower())
+        return Response({"detail": "If the account exists, a reset code has been dispatched."},
+                        status=status.HTTP_200_OK)
+
+
+class PasswordResetConfirmView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    @swagger_auto_schema(
+        operation_summary="Confirm Password Reset",
+        operation_description="Validates the recovery token against user email context and commits the updated custom user password.",
+        request_body=PasswordResetConfirmSerializer,
+        responses={
+            200: openapi.Response("Password updated successfully."),
+            400: "Invalid parameters or token."
+        }
+    )
+
+    def post(self, request, *args, **kwargs):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            user = User.objects.get(email=serializer.validated_data["email"].lower())
+        except User.DoesNotExist:
+            return Response({"detail": "Invalid parameters or token."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if verify_code(user, serializer.validated_data["code"], VerificationScenario.PASSWORD_RESET):
+            user.set_password(serializer.validated_data["new_password"])
+            user.save()
+            return Response({"detail": "Password updated successfully."}, status=status.HTTP_200_OK)
+
+        return Response({"detail": "Invalid parameters or token."}, status=status.HTTP_400_BAD_REQUEST)
