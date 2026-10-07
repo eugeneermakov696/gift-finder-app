@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '../../shared/components/ProductCard';
 import { useAppDispatch } from '../../store/hooks';
 import { useSelector } from 'react-redux';
@@ -7,15 +7,34 @@ import { addGift, removeGift } from '../WishlistPage/wishlistSlice';
 import { useEffect, useState } from 'react';
 import { giftService } from '../../api/gift-service/gift.service';
 import type { Product } from '../../api/gift-service/types/product.type';
-import styles from './CatalogPage.module.scss';
 import { Button } from '../../shared/components/Button';
+import { LoadingScreen } from '../../shared/components/LoadingScreen';
+import styles from './CatalogPage.module.scss';
+
+export const mockProduct = {
+  id: 101,
+  title: "Fleece Weighted Blanket for Adults, 15 lbs, Cozy Sherpa Reversible",
+  amazon_url: "https://www.amazon.com/dp/B08F2QXNG6",
+  image_url: "https://m.media-amazon.com/images/I/81xU9E+9bXL._AC_SL1500_.jpg",
+  price: 69.99,
+  original_price: 89.99,
+  category: "Home & Kitchen",
+  description: "Experience the ultimate comfort with our premium fleece weighted blanket.",
+  age_group: "Adult",
+  gender_target: "Unisex",
+  occasion: "Christmas, Birthday, Mother's Day",
+  interests: "Wellness, Sleep, Home Decor",
+  recipient: "Partner, Parent, Friend",
+  is_available: true,
+
+};
 
 export const CatalogPage = () => {
-  const [gifts, setGifts] = useState<Product[]>([]);
+  const [, setGifts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const dispatch = useAppDispatch();
-
+  const navigate = useNavigate();
   const savedItems = useSelector((state: RootState) => state.wishlist.items);
 
   useEffect(() => {
@@ -31,10 +50,12 @@ export const CatalogPage = () => {
     };
 
     fetchData();
-  }, [])
+  }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <LoadingScreen onCancel={() => setIsLoading(false)} onComplete={() => navigate('/catalog')} />
+    );
   }
 
   return (
@@ -48,7 +69,9 @@ export const CatalogPage = () => {
         </div>
         <div className={styles.headerActions}>
           <Link to="/find-a-gift">
-            <Button variant='primary' size='large'>Pick again</Button>
+            <Button variant="primary" size="large">
+              Pick again
+            </Button>
           </Link>
           <Link to="/" className={styles.backLink}>
             Back to home <span className={styles.arrowIcon} aria-label="Right arrow" />
@@ -57,7 +80,7 @@ export const CatalogPage = () => {
       </header>
 
       <div className={styles.productsGrid}>
-        {gifts.map((product) => {
+        {[mockProduct].map((product) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const isFavorite = savedItems.some((item: any) => item.id === product.id);
 

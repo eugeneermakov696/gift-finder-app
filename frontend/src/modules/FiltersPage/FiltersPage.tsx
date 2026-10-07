@@ -2,8 +2,7 @@ import { useState } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import styles from './FiltersPage.module.scss';
-import { Link, useNavigate } from 'react-router-dom';
-import { LoadingScreen } from '../../shared/components/LoadingScreen';
+import { Link } from 'react-router-dom';
 import { Button } from '../../shared/components/Button';
 
 const AGE_OPTIONS = [
@@ -78,13 +77,6 @@ export const FiltersPage = () => {
   const [giftTypes, setGiftTypes] = useState<string[]>([]);
 
   const [budget, setBudget] = useState(450);
-
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const handleGenerate = () => {
-    setIsLoading(true);
-  };
 
   const toggleSelection = (
     value: string,
@@ -245,14 +237,9 @@ export const FiltersPage = () => {
       </section>
 
       <div className={styles.actionFooter}>
-        <Button variant='primary' size='large' onClick={handleGenerate}>Generate</Button>
-
-        {isLoading && (
-         <LoadingScreen
-           onCancel={() => setIsLoading(false)}
-           onComplete={() => navigate('/catalog')}
-           />
-       )}
+        <Link to="/catalog">
+          <Button variant='primary' size='large'>Generate</Button>
+        </Link>
       </div>
     </div>
   );
