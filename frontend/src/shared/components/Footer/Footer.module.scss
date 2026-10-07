@@ -1,7 +1,14 @@
+@use '../../../styles/mixins' as *;
+
 .footer {
   height: 200px;
   flex-shrink: 0;
   padding: 0 80px;
+
+  @include on-phone {
+    height: auto; // Дозволяємо футеру рости в залежності від контенту
+    padding: 32px 16px; /* твої значення відступів */
+  }
 }
 
 .topSection {
@@ -11,6 +18,14 @@
   justify-content: space-between;
   padding: 0 160px 0 80px;
   border-bottom: 1px solid var(--text-muted);
+
+  @include on-phone {
+    height: auto;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 0 32px 0; /* твої значення відступів */
+    gap: 32px; /* відступ між лого і навігацією */
+  }
 }
 
 .bottomSection {
@@ -18,6 +33,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @include on-phone {
+    height: auto;
+    padding-top: 24px; /* твоє значення */
+  }
 }
 
 .logo {
@@ -34,17 +54,31 @@
   &:hover {
     transform: scale(1.1);
   }
+
+  @include on-phone {
+    margin: 0 auto; // Центруємо логотип
+  }
 }
 
 .rightSection {
   display: flex;
   align-items: center;
+
+  @include on-phone {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .navList {
   display: flex;
   align-items: center;
   gap: 72px;
+
+  @include on-phone {
+    flex-direction: column;
+    gap: 24px; /* відступ між лінками */
+  }
 }
 
 .link {
@@ -82,4 +116,8 @@
   font-family: var(--font-main);
   color: var(--text-main);
   text-align: center;
+
+  @include on-phone {
+    font-size: 14px; /* твоє значення */
+  }
 }

@@ -2,6 +2,7 @@
 
 .header {
   position: sticky;
+  width: 100%;
   z-index: 100;
   top: 0;
 
@@ -13,6 +14,11 @@
   padding: 0 100px 0 80px;
 
   background-color: var(--bg-main);
+
+  @include on-phone {
+    height: 72px; /* твоє значення */
+    padding: 0 20px; /* твоє значення */
+  }
 }
 
 .rightSection {
@@ -20,6 +26,10 @@
   align-items: center;
   justify-content: center;
   gap: 52px;
+
+  @include on-phone {
+    gap: 16px; /* твоє значення */
+  }
 }
 
 .navList {
@@ -27,6 +37,10 @@
   align-items: center;
   gap: 16px;
   white-space: nowrap;
+
+  @include on-phone {
+    display: none; // Ховаємо лінки, залишаємо для бургера
+  }
 }
 
 .link {
@@ -82,6 +96,11 @@
 
   &:hover {
     transform: scale(1.1);
+  }
+
+  @include on-phone {
+    max-width: 90px; /* твоє значення */
+    margin-right: 0;
   }
 }
 

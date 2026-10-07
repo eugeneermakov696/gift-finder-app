@@ -49,6 +49,8 @@ services:
     # Explicitly commented out volume mounts to bypass the 'C:\Mate academy' space bug
     volumes:
       - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+      - /app/frontend/dist
     ports:
       - "3000:3000"
     depends_on:
