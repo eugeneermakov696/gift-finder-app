@@ -41,6 +41,7 @@ export interface ExtendedProduct {
   reviews: Review[];
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const mockPantsProduct: ExtendedProduct = {
   id: 102,
   title: 'Hiking Pants Women Quick Dry',

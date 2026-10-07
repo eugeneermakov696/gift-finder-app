@@ -17,7 +17,6 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    location: '',
     password: '',
     confirmPassword: '',
     agreedToTerms: false,
@@ -73,7 +72,6 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
     const userProfile = {
       fullName: formData.fullName,
       email: formData.email,
-      location: formData.location,
       password: formData.password,
     };
 
@@ -83,7 +81,6 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
     setFormData({
       fullName: '',
       email: '',
-      location: '',
       password: '',
       confirmPassword: '',
       agreedToTerms: false,
@@ -137,19 +134,6 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
                 onChange={handleChange}
                 placeholder="Email address"
                 className={styles.withIconLeft}
-                required
-              />
-            </div>
-          </div>
-
-          <div className={styles.inputWrapper}>
-            <div className={styles.inputGroup}>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                placeholder="Location"
                 required
               />
             </div>

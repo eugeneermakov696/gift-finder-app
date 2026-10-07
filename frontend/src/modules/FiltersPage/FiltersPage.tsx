@@ -95,14 +95,13 @@ export const FiltersPage = () => {
       <header className={styles.header}>
         <h1 className={styles.pageTitle}>Gift search</h1>
         <Link to="/" className={styles.backLink}>
-          Back to home<span className={styles.arrowIcon} aria-label="Right arrow" />
+          Back to home
+          <span className={styles.arrowIcon} aria-label="Right arrow" />
         </Link>
       </header>
 
       <section className={styles.filterSection}>
-        <h3 className={styles.sectionTitle}>
-          How old are they?
-        </h3>
+        <h3 className={styles.sectionTitle}>How old are they?</h3>
         <div className={styles.grid}>
           {AGE_OPTIONS.map((option) => (
             <label key={option} className={styles.customLabel}>
@@ -121,9 +120,7 @@ export const FiltersPage = () => {
       </section>
 
       <section className={styles.filterSection}>
-        <h3 className={styles.sectionTitle}>
-          Gender
-        </h3>
+        <h3 className={styles.sectionTitle}>Gender</h3>
         <div className={styles.grid}>
           {GENDER_OPTIONS.map((option) => (
             <label key={option} className={styles.customLabel}>
@@ -214,17 +211,17 @@ export const FiltersPage = () => {
                   backgroundColor: 'var(--color-info-800)',
                   height: 16,
                   borderRadius: 8,
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 },
                 rail: {
                   backgroundColor: '#fff',
                   height: 16,
                   borderRadius: 8,
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 },
                 handle: {
-                  display: 'none'
-                }
+                  display: 'none',
+                },
               }}
             />
           </div>
@@ -237,8 +234,10 @@ export const FiltersPage = () => {
       </section>
 
       <div className={styles.actionFooter}>
-        <Link to="/catalog">
-          <Button variant='primary' size='large'>Generate</Button>
+        <Link to="/catalog" state={{ fromGenerate: true }}>
+          <Button variant="primary" size="large">
+            Generate
+          </Button>
         </Link>
       </div>
     </div>

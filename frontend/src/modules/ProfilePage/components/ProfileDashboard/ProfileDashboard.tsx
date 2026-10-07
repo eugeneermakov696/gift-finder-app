@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../../../../shared/components/Button';
-import styles from './ProfileDashboard.module.scss';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { EditModal } from '../EditModal';
+import { useAvatarUpload } from '../../../../shared/hooks/useProfileDashboard';
+import { ProductCard } from '../../../../shared/components/ProductCard';
+import { useAppDispatch } from '../../../../store/hooks';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../../store/store';
+import { addGift, removeGift } from '../../../WishlistPage/wishlistSlice';
+import styles from './ProfileDashboard.module.scss';
 
 interface ProfileDashboardProps {
   onLogout: () => void;
@@ -10,36 +16,12 @@ interface ProfileDashboardProps {
 
 export const ProfileDashboard = ({ onLogout }: ProfileDashboardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('giftly_user') || '{}'));
+  const { user, fileInputRef, triggerFileSelect, handleFileChange } = useAvatarUpload(
+    JSON.parse(localStorage.getItem('giftly_user') || '{}'),
+  );
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleCameraClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      alert('File is too large! Please choose an image under 2MB.');
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-
-      const updatedUser = { ...user, avatar: base64String };
-      setUser(updatedUser);
-
-      localStorage.setItem('giftly_user', JSON.stringify(updatedUser));
-    };
-
-    reader.readAsDataURL(file);
-  };
+  const dispatch = useAppDispatch();
+  const savedItems = useSelector((state: RootState) => state.wishlist.items);
 
   return (
     <div className={styles.container}>
@@ -68,7 +50,7 @@ export const ProfileDashboard = ({ onLogout }: ProfileDashboardProps) => {
               <button
                 className={styles.cameraBadge}
                 aria-label="Upload photo"
-                onClick={handleCameraClick}
+                onClick={triggerFileSelect}
               >
                 <span className={styles.cameraIcon} />
               </button>
@@ -83,12 +65,8 @@ export const ProfileDashboard = ({ onLogout }: ProfileDashboardProps) => {
             </div>
 
             <div className={styles.profileDetails}>
-              <h2>{user.fullName || 'Alex Smith'}</h2>
-              <p className={styles.email}>{user.email || 'alex.smith@gmail.com'}</p>
-              <p className={styles.location}>
-                <span className={styles.pinIcon} />
-                {user.location || 'San Francisco, CA'}
-              </p>
+              <h2>{user.fullName}</h2>
+              <p className={styles.email}>{user.email}</p>
               <Button
                 variant="primary"
                 className={styles.editBtn}
@@ -106,9 +84,7 @@ export const ProfileDashboard = ({ onLogout }: ProfileDashboardProps) => {
               <div className={styles.statusHeader}>
                 <span className={styles.dot} /> You're logged in
               </div>
-              <p className={styles.signedInText}>
-                Signed in as {user.email || 'alex.smith@gmail.com'}
-              </p>
+              <p className={styles.signedInText}>Signed in as {user.email}</p>
             </div>
             <button onClick={onLogout} className={styles.logoutBtn}>
               Log out
@@ -124,15 +100,11 @@ export const ProfileDashboard = ({ onLogout }: ProfileDashboardProps) => {
             <div className={styles.infoTable}>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>Full Name</span>
-                <span className={styles.infoValue}>{user.fullName || 'Alex Smith'}</span>
+                <span className={styles.infoValue}>{user.fullName}</span>
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>Email Address</span>
-                <span className={styles.infoValue}>{user.email || 'alex.smith@gmail.com'}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <span className={styles.infoLabel}>Location</span>
-                <span className={styles.infoValue}>{user.location || 'San Francisco, CA'}</span>
+                <span className={styles.infoValue}>{user.email}</span>
               </div>
             </div>
           </div>
@@ -143,19 +115,37 @@ export const ProfileDashboard = ({ onLogout }: ProfileDashboardProps) => {
         <h2 className={styles.favoritesTitle}>My Favourites</h2>
 
         <div className={styles.productsGrid}>
-          {[1, 2, 3, 4].map((item) => (
-            <div key={item} className={styles.tempProductStub}>
-              <div className={styles.tempImage}></div>
-              <div className={styles.tempInfo}>
-                <h4>Fleece Weighted Blanket for Adults</h4>
-                <p>$69.99</p>
-              </div>
-            </div>
-          ))}
+          {[1, 2, 3, 4].map((product) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const isFavorite = savedItems.some((item: any) => item.id === product);
+
+            const handleToggleFavorite = () => {
+              if (isFavorite) {
+                dispatch(removeGift(product));
+              } else {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                dispatch(addGift(product as any));
+              }
+            };
+
+            return (
+              <ProductCard
+                variant="profile"
+                key={product}
+                id={product}
+                title="Hiking Pants Women Quick Wide Leg"
+                description="Hiking pants are made with Lighweight Fabric that repels light moisture and dries quicle."
+                imageUrl=""
+                price={15}
+                isFavorite={isFavorite}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            );
+          })}
         </div>
 
         <Link to="/wishlist" className={styles.viewAllBtn}>
-          View All (12) <span className={styles.arrowIcon}>→</span>
+          View All (12) <span className={styles.arrowIcon} />
         </Link>
       </div>
       {isModalOpen && <EditModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
