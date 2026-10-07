@@ -2,15 +2,13 @@ import csv
 import re
 from django.http import HttpResponse
 from django.db.models import Q
-from django.contrib.auth import authenticate
 from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 from rest_framework.pagination import PageNumberPagination
 
 from presents.models import Present, Wishlist
-from presents.serializers import PresentSerializer, WishlistSerializer, UserSerializer
+from presents.serializers import PresentSerializer, WishlistSerializer
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -24,12 +22,15 @@ class IsCustomAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated and getattr(request.user, 'role', '') == 'admin')
 
+
 class IsCustomAdminOrReadOnly(permissions.BasePermission):
-    """Allows read access to anyone, but restricts edits to 'admin' role."""
+    """Allows read access to authenticated users, but restricts modifications to 'admin' role."""
     def has_permission(self, request, view):
+        if not (request.user and request.user.is_authenticated):
+            return False
         if request.method in permissions.SAFE_METHODS:
             return True
-        return bool(request.user and request.user.is_authenticated and getattr(request.user, 'role', '') == 'admin')
+        return getattr(request.user, 'role', '') == 'admin'
 
 
 class PresentViewSet(viewsets.ModelViewSet):
@@ -39,7 +40,6 @@ class PresentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsCustomAdminOrReadOnly]
 
     def get_queryset(self):
-        """Replaces handwritten filtering logic with clean queryset manipulation."""
         queryset = super().get_queryset()
         category = self.request.query_params.get("category")
         max_price = self.request.query_params.get("max_price")
@@ -78,7 +78,6 @@ class PresentViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path="scrape", permission_classes=[IsCustomAdminUser])
     def scrape(self, request):
-        """POST /api/gifts/scrape/ - Automated scraping endpoint integration."""
         amazon_url = request.data.get("amazon_url", "")
         asin_match = re.search(r'(?:dp|product)/([A-Z0-9]{10})', amazon_url)
         asin = asin_match.group(1) if asin_match else "B07ZPKZSSC"
@@ -98,7 +97,6 @@ class PresentViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="price-check", permission_classes=[IsCustomAdminUser])
     def price_check(self, request, pk=None):
-        """POST /api/gifts/<id>/price-check/ - Price drop automation action."""
         gift = self.get_object()
         old_price = float(gift.price)
         gift.original_price = gift.price
@@ -112,22 +110,25 @@ class WishlistViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        """Returns only the wishlists belonging to the currently authenticated user."""
+        """Filters by owner on list views while allowing detail views to locate objects for authorization checks."""
         if getattr(self, "swagger_fake_view", False):
             return Wishlist.objects.none()
-        return Wishlist.objects.filter(user=self.request.user)
+        if self.action == "list":
+            return Wishlist.objects.filter(user=self.request.user)
+        return Wishlist.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
     @action(detail=True, methods=["post"], url_path="manage-item")
     def manage_item(self, request, pk=None):
-        """POST /api/wishlists/<id>/manage-item/ - Protected item linking."""
         wishlist = self.get_object()
 
         if wishlist.user != request.user:
-            return Response({"status": "error", "message": "Permission denied. You do not own this wishlist."},
-                            status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"status": "error", "message": "Permission denied. You do not own this wishlist."},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
         present_id = request.data.get("present_id")
         action_type = request.data.get("action")
@@ -135,25 +136,30 @@ class WishlistViewSet(viewsets.ModelViewSet):
         try:
             present = Present.objects.get(pk=present_id)
         except Present.DoesNotExist:
-            return Response({"status": "error", "message": "Product missing from database."},
-                            status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"status": "error", "message": "Product missing from database."},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         if action_type == "add":
             if wishlist.items.count() >= 50:
-                return Response({"status": "error", "message": "Wishlist capacity limit reached (max 50)."},
-                                status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"status": "error", "message": "Wishlist capacity limit reached (max 50)."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             wishlist.items.add(present)
         elif action_type == "remove":
             wishlist.items.remove(present)
         else:
-            return Response({"status": "error", "message": "Invalid action argument. Use add/remove."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"status": "error", "message": "Invalid action argument. Use add/remove."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         return Response({"status": "success", "message": f"Action '{action_type}' processed successfully."})
 
     @action(detail=True, methods=["get"], url_path="export/csv")
     def export_csv(self, request, pk=None):
-        """GET /api/wishlists/<id>/export/csv/ - Streaming multi-format exports."""
         wishlist = self.get_object()
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = f'attachment; filename="{wishlist.name}_export.csv"'

@@ -1,5 +1,15 @@
 from django.urls import path
-from .views import CookieTokenObtainPairView, CookieTokenRefreshView, LogoutView, user_register, get_me
+from .views import (
+    CookieTokenObtainPairView,
+    CookieTokenRefreshView,
+    LogoutView,
+    user_register,
+    get_me,
+    VerifyEmailView,
+    ResendEmailCodeView,
+    PasswordResetRequestView,
+    PasswordResetConfirmView,
+)
 
 urlpatterns = [
     path('api/auth/login/', CookieTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -7,4 +17,8 @@ urlpatterns = [
     path('api/auth/logout/', LogoutView.as_view(), name='logout'),
     path('api/auth/register/', user_register, name="auth-register"),
     path('api/auth/me/', get_me, name='auth-me'),
+    path('api/auth/verify-email/', VerifyEmailView.as_view(), name='verify-email'),
+    path('api/auth/resend-email-code/', ResendEmailCodeView.as_view(), name='resend-email-code'),
+    path('api/auth/password-reset-request/', PasswordResetRequestView.as_view(), name='password-reset-request'),
+    path('api/auth/password-reset-confirm/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
 ]

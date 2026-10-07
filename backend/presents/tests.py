@@ -1,20 +1,23 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from presents.models import Present, Wishlist
 
 User = get_user_model()
 
+
 class GiftFinderAPITestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="test_dev_user", password="password123")
-        self.token, _ = Token.objects.get_or_create(user=self.user)
+        # Create user with role='admin' to satisfy IsCustomAdminOrReadOnly/IsCustomAdminUser checks
+        self.user = User.objects.create_user(
+            username="test_dev_user",
+            password="password123",
+            role="admin"
+        )
+        # Authenticate client directly
+        self.client.force_authenticate(user=self.user)
 
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
-
-        # Instantiate a reference product record in PostgreSQL
         self.present = Present.objects.create(
             title="Test Amazon Echo Speaker",
             asin="B09B8V1VHC",
@@ -24,24 +27,20 @@ class GiftFinderAPITestCase(APITestCase):
             is_available=True
         )
 
-        # Instantiate an empty wishlist container linked to our user
         self.wishlist = Wishlist.objects.create(user=self.user, name="My Birthday List")
 
     def test_get_gifts_list(self):
-        """Checks if the main GET route fetches entries successfully when authenticated."""
         response = self.client.get(reverse('gift-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('results', response.data)
         self.assertTrue(len(response.data['results']) > 0)
 
     def test_get_gifts_list_unauthenticated_returns_401(self):
-        """Verifies that clearing credentials explicitly blocks access with a 401."""
-        self.client.credentials()  # Wipe the active auth token
+        self.client.force_authenticate(user=None)
         response = self.client.get(reverse('gift-list'))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_post_create_gift(self):
-        """Checks if passing a valid JSON payload adds a new Present record."""
         payload = {
             "title": "Mechanical Keyboard",
             "asin": "B08N5LNXCZ",
@@ -54,7 +53,6 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertTrue(Present.objects.filter(asin="B08N5LNXCZ").exists())
 
     def test_scrape_endpoint_auto_saves(self):
-        """Verifies the mock parser engine successfully extracts ASIN sequences and registers records."""
         url = reverse('gift-scrape')
         payload = {"amazon_url": "https://amazon.com"}
         response = self.client.post(url, data=payload, format='json')
@@ -63,19 +61,14 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertTrue(Present.objects.filter(asin="B07ZPKZSSC").exists())
 
     def test_add_item_to_wishlist(self):
-        """Verifies assigning a product item modifies the user's Wishlist dataset container securely."""
         url = reverse('wishlist-manage-item', kwargs={'pk': self.wishlist.id})
-        payload = {
-            "present_id": self.present.id,
-            "action": "add"
-        }
+        payload = {"present_id": self.present.id, "action": "add"}
         response = self.client.post(url, data=payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'], 'success')
         self.assertTrue(self.wishlist.items.filter(id=self.present.id).exists())
 
     def test_trigger_price_tracker_calculation(self):
-        """Validates that running a price check modifies pricing properties cleanly."""
         url = reverse('gift-price-check', kwargs={'pk': self.present.id})
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -85,18 +78,15 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertTrue(float(self.present.price) < 49.99)
 
     def test_add_item_missing_token_returns_401(self):
-        """Verifies that making requests without token metadata fields yields an explicit 401 response."""
-        self.client.credentials()  # Wipe tokens to check security boundaries
+        self.client.force_authenticate(user=None)
         url = reverse('wishlist-manage-item', kwargs={'pk': self.wishlist.id})
         payload = {"present_id": self.present.id, "action": "add"}
         response = self.client.post(url, data=payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_add_item_wrong_user_token_returns_403(self):
-        """Verifies that an authenticated user trying to edit someone else's wishlist triggers a 403 response."""
         rogue_user = User.objects.create_user(username="rogue_hacker", password="password123")
-        rogue_token, _ = Token.objects.get_or_create(user=rogue_user)
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {rogue_token.key}')
+        self.client.force_authenticate(user=rogue_user)
 
         url = reverse('wishlist-manage-item', kwargs={'pk': self.wishlist.id})
         payload = {"present_id": self.present.id, "action": "add"}
@@ -104,7 +94,6 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_wishlist_max_capacity_limit(self):
-        """Verifies that trying to add a 51st item to a wishlist is blocked by a 400 error."""
         for i in range(50):
             mock_gift = Present.objects.create(
                 title=f"Bulk Present Item {i}",
