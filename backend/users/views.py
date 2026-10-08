@@ -232,3 +232,46 @@ class PasswordResetConfirmView(views.APIView):
             return Response({"detail": "Password updated successfully."}, status=status.HTTP_200_OK)
 
         return Response({"detail": "Invalid parameters or token."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+from rest_framework.parsers import MultiPartParser, FormParser
+
+class AvatarUploadView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    @swagger_auto_schema(
+        operation_summary="Upload User Avatar",
+        operation_description="Uploads an image file to be used as the user's avatar. Saves to S3.",
+        manual_parameters=[
+            openapi.Parameter(
+                name='avatar',
+                in_=openapi.IN_FORM,
+                description='The avatar image file',
+                type=openapi.TYPE_FILE,
+                required=True
+            )
+        ],
+        responses={
+            200: openapi.Response("Avatar uploaded successfully."),
+            400: "No file provided."
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        if 'avatar' not in request.FILES:
+            return Response({"detail": "No file provided."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        avatar_file = request.FILES['avatar']
+        user = request.user
+        
+        # Save the file to the avatar field (this uses django-storages/boto3 automatically)
+        user.avatar.save(avatar_file.name, avatar_file, save=True)
+        
+        # Build absolute URI for the frontend
+        avatar_url = request.build_absolute_uri(user.avatar.url) if user.avatar else None
+        
+        return Response({
+            "detail": "Avatar uploaded successfully.",
+            "avatar_url": avatar_url
+        }, status=status.HTTP_200_OK)
+

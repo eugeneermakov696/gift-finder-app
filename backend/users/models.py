@@ -14,6 +14,7 @@ class CustomUser(AbstractUser):
     )
     address = models.CharField(max_length=255, blank=True, null=True)
     image_url = models.TextField(blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer')
     email_is_confirmed = models.BooleanField(default=False)
 
