@@ -9,7 +9,7 @@ frontend:
     resources:
       requests:
         memory: "128Mi"
-        cpu: "250m"
+        cpu: "200m"
       limits:
         memory: "512Mi"
         cpu: "500m"
@@ -23,7 +23,13 @@ backend:
     resources:
       requests:
         memory: "128Mi"
-        cpu: "250m"
+        cpu: "200m"
       limits:
         memory: "512Mi"
         cpu: "500m"
+  config:
+    DB_HOST: gift-finder-postgres.gf-postgres.svc.cluster.local
+    DB_NAME: config
+    DB_USER: postgres_user
+    DB_PORT: 5432
+    DB_PASSWORD: ""

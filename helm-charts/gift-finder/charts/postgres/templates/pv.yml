@@ -4,11 +4,11 @@ metadata:
   name: {{ .Release.Name }}-postgres-pv
   namespace: {{ .Values.postgres.namespace }}
 spec:
-  StorageClassName: standard
+  storageClassName: standard
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteMany
   capacity:
-    storage: 1Gi
+    storage: 200Mi
   hostPath:
     path: /data/postgres
