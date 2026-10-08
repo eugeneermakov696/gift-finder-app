@@ -59,6 +59,39 @@ class AuthService {
   public async logout(): Promise<void> {
     await this.api.post('auth/logout/');
   };
+
+  /**
+   * Upload an avatar to the backend (which then saves to S3/Cloudflare R2).
+   * 
+   * @param file - The File object selected by the user via <input type="file" />
+   * @returns An object containing the new absolute avatar_url
+   * 
+   * @example
+   * const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+   *   const file = event.target.files?.[0];
+   *   if (!file) return;
+   *   
+   *   try {
+   *     const response = await authService.uploadAvatar(file);
+   *     console.log("New Avatar URL:", response.avatar_url);
+   *     // Update local user state (Zustand/Redux/Context) with the new URL
+   *   } catch (error) {
+   *     console.error("Failed to upload avatar", error);
+   *   }
+   * };
+   */
+  public async uploadAvatar(file: File): Promise<{ detail: string; avatar_url: string | null }> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const response = await this.api.post('auth/avatar/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  };
 }
 
 export const authService = new AuthService(axiosInstance);
