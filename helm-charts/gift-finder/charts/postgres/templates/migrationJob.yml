@@ -23,5 +23,5 @@ spec:
 
                 python manage.py migrate
 
-          restartPolicy: Never
+      restartPolicy: Never
   backoffLimit: 3

@@ -5,9 +5,13 @@ postgres:
   resources:
     requests:
       memory: "256Mi"
-      cpu: "250m"
+      cpu: "230m"
     limits:
       memory: "1Gi"
       cpu: "500m"
   migrationJobContainer:
     image: eug696/backend:latest
+  config:
+    POSTGRES_DB: config
+    POSTGRES_USER: postgres_user
+    POSTGRES_PASSWORD: ""
