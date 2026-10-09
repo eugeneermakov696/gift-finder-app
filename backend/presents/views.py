@@ -20,7 +20,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 class IsCustomAdminUser(permissions.BasePermission):
     """Allows access only to users with the 'admin' role."""
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and getattr(request.user, 'role', '') == 'admin')
+        return bool(request.user and request.user.is_authenticated and getattr(request.user, "role", "") == "admin")
 
 
 class IsCustomAdminOrReadOnly(permissions.BasePermission):
@@ -30,7 +30,7 @@ class IsCustomAdminOrReadOnly(permissions.BasePermission):
             return False
         if request.method in permissions.SAFE_METHODS:
             return True
-        return getattr(request.user, 'role', '') == 'admin'
+        return getattr(request.user, "role", "") == "admin"
 
 
 class PresentViewSet(viewsets.ModelViewSet):

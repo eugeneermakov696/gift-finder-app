@@ -43,7 +43,7 @@ class Wishlist(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='wishlists',
+        related_name="wishlists",
         help_text="The owner of this wishlist"
     )
     name = models.CharField(

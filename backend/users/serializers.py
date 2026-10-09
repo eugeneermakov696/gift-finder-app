@@ -20,10 +20,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'confirm_password', 'full_name']
+        fields = ["email", "password", "confirm_password", "full_name"]
 
     def validate(self, attrs):
-        if attrs.get('password') != attrs.get('confirm_password'):
+        if attrs.get("password") != attrs.get("confirm_password"):
             raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
         return attrs
 
@@ -34,21 +34,21 @@ class RegisterSerializer(serializers.ModelSerializer):
         return normalized_email
 
     def create(self, validated_data):
-        full_name = validated_data.pop('full_name', '')
-        name_parts = full_name.strip().split(' ', 1)
+        full_name = validated_data.pop("full_name", "")
+        name_parts = full_name.strip().split(" ", 1)
         first_name = name_parts[0]
-        last_name = name_parts[1] if len(name_parts) > 1 else ''
+        last_name = name_parts[1] if len(name_parts) > 1 else ""
 
         base_username = f"{first_name}_{last_name}".lower().replace(" ", "")
         username = f"{base_username}_{uuid.uuid4().hex[:6]}"
 
         user = User.objects.create_user(
             username=username,
-            email=validated_data.get('email'),
-            password=validated_data.get('password'),
+            email=validated_data.get("email"),
+            password=validated_data.get("password"),
             first_name=first_name,
             last_name=last_name,
-            role='customer'
+            role="customer"
         )
         return user
 
@@ -56,29 +56,29 @@ class RegisterSerializer(serializers.ModelSerializer):
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['email'] = serializers.EmailField()
-        if 'username' in self.fields:
-            del self.fields['username']
+        self.fields["email"] = serializers.EmailField()
+        if "username" in self.fields:
+            del self.fields["username"]
 
     def validate(self, attrs):
-        email = attrs.get('email')
-        password = attrs.get('password')
+        email = attrs.get("email")
+        password = attrs.get("password")
 
         if email and password:
             try:
                 user = User.objects.get(email=email.lower().strip())
             except User.DoesNotExist:
                 raise AuthenticationFailed(
-                    'No active account found with the given credentials',
-                    code='no_active_account'
+                    "No active account found with the given credentials",
+                    code="no_active_account"
                 )
 
             if not user.check_password(password):
                 raise AuthenticationFailed(
-                    'No active account found with the given credentials',
-                    code='no_active_account'
+                    "No active account found with the given credentials",
+                    code="no_active_account"
                 )
-            attrs['username'] = user.username
+            attrs["username"] = user.username
 
         return super().validate(attrs)
 

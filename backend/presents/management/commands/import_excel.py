@@ -5,14 +5,14 @@ from presents.models import Present
 
 
 class Command(BaseCommand):
-    help = ('Loads and streams Amazon gift listings from an Excel table '
-            'directly into PostgreSQL with automated mock image injection.')
+    help = ("Loads and streams Amazon gift listings from an Excel table "
+            "directly into PostgreSQL with automated mock image injection.")
 
     def add_arguments(self, parser):
-        parser.add_argument('excel_file', type=str, help='The relative path to the Excel file inside the container')
+        parser.add_argument("excel_file", type=str, help="The relative path to the Excel file inside the container")
 
     def handle(self, *args, **options):
-        file_path = options['excel_file']
+        file_path = options["excel_file"]
 
         if not os.path.exists(file_path):
             self.stderr.write(self.style.ERROR(f"File tracking target missing at path: {file_path}"))
@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
             df.columns = [c.lower().strip() for c in df.columns]
 
-            required_columns = ['title', 'asin', 'amazon_url', 'price']
+            required_columns = ["title", "asin", "amazon_url", "price"]
             for col in required_columns:
                 if col not in df.columns:
                     self.stderr.write(self.style.ERROR(f"Missing required target header column: '{col}'"))
@@ -33,12 +33,12 @@ class Command(BaseCommand):
             success_count = 0
 
             for _, row in df.iterrows():
-                if pd.isna(row['asin']) or pd.isna(row['title']):
+                if pd.isna(row["asin"]) or pd.isna(row["title"]):
                     continue
 
-                asin_clean = str(row['asin']).strip()
+                asin_clean = str(row["asin"]).strip()
 
-                image_url = row.get('image_url')
+                image_url = row.get("image_url")
                 if pd.isna(image_url) or not str(image_url).strip():
                     image_url = f"https://ssl-images-amazon.com{asin_clean}.jpg"
                 else:
@@ -47,12 +47,12 @@ class Command(BaseCommand):
                 gift, created = Present.objects.update_or_create(
                     asin=asin_clean,
                     defaults={
-                        "title": str(row['title']).strip(),
-                        "amazon_url": str(row['amazon_url']).strip(),
+                        "title": str(row["title"]).strip(),
+                        "amazon_url": str(row["amazon_url"]).strip(),
                         "image_url": image_url,
-                        "price": float(row['price']),
-                        "category": str(row.get('category', 'Imported Gifts')).strip() if not pd.isna(
-                            row.get('category')) else "Imported Gifts",
+                        "price": float(row["price"]),
+                        "category": str(row.get("category", "Imported Gifts")).strip() if not pd.isna(
+                            row.get("category")) else "Imported Gifts",
                         "is_available": True
                     }
                 )
