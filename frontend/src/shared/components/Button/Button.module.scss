@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as *;
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -27,11 +29,21 @@
 .large {
   padding: 0 42px;
   height: 44px;
+
+  @include on-phone {
+    padding: 0 16px;;
+    height: 40px;
+  }
 }
 
 .extraLarge {
   padding: 0 64px;
   height: 44px;
+
+  @include on-phone {
+    padding: 0 24px;
+    max-height: 40px;
+  }
 }
 
 

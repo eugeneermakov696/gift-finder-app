@@ -6,8 +6,8 @@
   padding: 0 80px;
 
   @include on-phone {
-    height: auto; // Дозволяємо футеру рости в залежності від контенту
-    padding: 32px 16px; /* твої значення відступів */
+    height: auto;
+    padding: 16px 16px;
   }
 }
 
@@ -23,8 +23,8 @@
     height: auto;
     flex-direction: column;
     justify-content: center;
-    padding: 0 0 32px 0; /* твої значення відступів */
-    gap: 32px; /* відступ між лого і навігацією */
+    padding: 0 0 16px 0;
+    gap: 12px;
   }
 }
 
@@ -36,18 +36,18 @@
 
   @include on-phone {
     height: auto;
-    padding-top: 24px; /* твоє значення */
+    padding-top: 12px; 
+    padding-bottom: 12px;
   }
 }
 
 .logo {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   
-  max-width: 120px;
-  width: 100%;
-  height: 28px;
+  width: 120px; 
+  margin-right: 12px;
   
   transition: transform 0.3s ease;
 
@@ -56,8 +56,15 @@
   }
 
   @include on-phone {
-    margin: 0 auto; // Центруємо логотип
+    width: 90px;
+    margin-right: 0;
   }
+}
+
+.logoImg {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .rightSection {
@@ -77,7 +84,7 @@
 
   @include on-phone {
     flex-direction: column;
-    gap: 24px; /* відступ між лінками */
+    gap: 12px
   }
 }
 
@@ -88,6 +95,7 @@
   text-align: center;
   line-height: 100%;
   position: relative;
+  margin: 0;
 
   &::after {
     content: '';
@@ -108,9 +116,16 @@
   &:hover::after {
     transform: scaleX(1);
   }
+
+  @include on-phone {
+    font-size: 10px;
+  }
 }
 
 .footerText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 16px;
   font-weight: 400;
   font-family: var(--font-main);
@@ -118,6 +133,6 @@
   text-align: center;
 
   @include on-phone {
-    font-size: 14px; /* твоє значення */
+    font-size: 10px;
   }
 }
