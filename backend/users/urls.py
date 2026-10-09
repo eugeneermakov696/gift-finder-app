@@ -9,6 +9,7 @@ from .views import (
     ResendEmailCodeView,
     PasswordResetRequestView,
     PasswordResetConfirmView,
+    AvatarUploadView,
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
     path("api/auth/resend-email-code/", ResendEmailCodeView.as_view(), name="resend-email-code"),
     path("api/auth/password-reset-request/", PasswordResetRequestView.as_view(), name="password-reset-request"),
     path("api/auth/password-reset-confirm/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
+    path("api/auth/avatar/", AvatarUploadView.as_view(), name="avatar-upload"),
 ]

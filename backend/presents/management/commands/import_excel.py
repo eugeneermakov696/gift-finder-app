@@ -44,17 +44,57 @@ class Command(BaseCommand):
                 else:
                     image_url = str(image_url).strip()
 
+                # Helper to safely parse strings or return None
+                def get_str(col_name):
+                    val = row.get(col_name)
+                    if pd.isna(val) or not str(val).strip():
+                        return None
+                    return str(val).strip()
+
+                # Helper to safely parse numbers
+                def get_float(col_name, default=None):
+                    val = row.get(col_name)
+                    if pd.isna(val):
+                        return default
+                    try:
+                        return float(val)
+                    except (ValueError, TypeError):
+                        return default
+
+                def get_int(col_name, default=0):
+                    val = row.get(col_name)
+                    if pd.isna(val):
+                        return default
+                    try:
+                        return int(val)
+                    except (ValueError, TypeError):
+                        return default
+
+                # Safely parse price, which is mandatory
+                try:
+                    price_val = float(row['price'])
+                except (ValueError, TypeError):
+                    price_val = 0.0
+
                 gift, created = Present.objects.update_or_create(
                     asin=asin_clean,
                     defaults={
                         "title": str(row["title"]).strip(),
                         "amazon_url": str(row["amazon_url"]).strip(),
                         "image_url": image_url,
-                        "price": float(row["price"]),
-                        "category": str(row.get("category", "Imported Gifts")).strip() if not pd.isna(
-                            row.get("category")) else "Imported Gifts",
+                        "price": price_val,
+                        "original_price": get_float("original_price"),
+                        "rating": get_float("rating"),
+                        "reviews_count": get_int("reviews_count", 0),
+                        "category": get_str("category") or "Imported Gifts",
+                        "age_group": get_str("age_group"),
+                        "gender_target": get_str("gender_target"),
+                        "occasion": get_str("occasion"),
+                        "interests": get_str("interests"),
+                        "recipient": get_str("recipient"),
                         "is_available": True
                     }
+
                 )
                 if created:
                     success_count += 1

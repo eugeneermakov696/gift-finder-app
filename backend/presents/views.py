@@ -24,13 +24,11 @@ class IsCustomAdminUser(permissions.BasePermission):
 
 
 class IsCustomAdminOrReadOnly(permissions.BasePermission):
-    """Allows read access to authenticated users, but restricts modifications to 'admin' role."""
+    """Allows read access to anyone, but restricts modifications to 'admin' role."""
     def has_permission(self, request, view):
-        if not (request.user and request.user.is_authenticated):
-            return False
         if request.method in permissions.SAFE_METHODS:
             return True
-        return getattr(request.user, "role", "") == "admin"
+        return bool(request.user and request.user.is_authenticated and getattr(request.user, "role", "") == "admin")
 
 
 class PresentViewSet(viewsets.ModelViewSet):

@@ -6,6 +6,6 @@ FROM node:22-alpine
 WORKDIR /app/frontend
 COPY --from=base /app/frontend .
 EXPOSE 3000
-RUN npm ci
+RUN rm -rf package-lock.json node_modules && npm install
 RUN npm run build
 CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]
