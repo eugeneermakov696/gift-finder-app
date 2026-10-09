@@ -15,10 +15,21 @@
 
   background-color: var(--bg-main);
 
-  @include on-phone {
-    height: 72px; /* твоє значення */
-    padding: 0 20px; /* твоє значення */
+  @include on-tablet {
+    height: 60px;
+    padding: 0 24px;
   }
+
+  @include on-phone {
+    height: 45px;
+    padding: 0 16px;
+  }
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 40px;
 }
 
 .rightSection {
@@ -28,7 +39,7 @@
   gap: 52px;
 
   @include on-phone {
-    gap: 16px; /* твоє значення */
+    gap: 12px;
   }
 }
 
@@ -39,7 +50,7 @@
   white-space: nowrap;
 
   @include on-phone {
-    display: none; // Ховаємо лінки, залишаємо для бургера
+    display: none;
   }
 }
 
@@ -49,13 +60,11 @@
   font-family: var(--font-main);
   color: var(--text-main);
   text-decoration: none;
-  
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 10px 18px;
   border-radius: 12px;
-  
   background-color: transparent;
   transition: background-color 0.3s ease;
 
@@ -67,29 +76,29 @@
 .iconWrapper {
   width: 48px;
   height: 48px;
-  
   display: flex;
   align-items: center;
   justify-content: center;
-  
   border-radius: 50%;
-  
   background-color: transparent;
   transition: background-color 0.3s ease;
-  
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  @include on-phone {
+    width: 32px;
+    height: 32px;
   }
 }
 
 .logo {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   
-  max-width: 120px;
-  width: 100%;
-  height: 28px;
+  width: 120px; 
   margin-right: 12px;
   
   transition: transform 0.3s ease;
@@ -99,17 +108,50 @@
   }
 
   @include on-phone {
-    max-width: 90px; /* твоє значення */
+    width: 90px;
     margin-right: 0;
   }
+}
+
+.logoImg {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .wishlistIcon {
   @include icon-mask('/icons/heart.svg', 32px);
   background-color: var(--text-main);
+
+  @include on-phone {
+    @include icon-mask('/icons/heart.svg', 24px);
+  }
+}
+
+.profileLink {
+  @include on-phone {
+    display: none;
+  }
 }
 
 .profileIcon {
   @include icon-mask('/icons/profile.svg', 32px);
+  background-color: var(--text-main);
+}
+
+.burgerBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  @include on-phone {
+    display: flex;
+  }
+}
+
+.burgerIcon {
+  @include icon-mask('/icons/menu.svg', 24px);
   background-color: var(--text-main);
 }

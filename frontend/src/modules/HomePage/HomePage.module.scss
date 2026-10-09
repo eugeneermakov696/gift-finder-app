@@ -8,7 +8,7 @@
   padding: 160px 32px 80px;
 
   @include on-phone {
-    padding: 100px 16px 40px; /* твоє значення */
+    padding: 60px 16px 36px;
   }
 }
 
@@ -21,7 +21,7 @@
   line-height: 100%;
 
   @include on-phone {
-    font-size: 14px; /* твоє значення */
+    font-size: 14px;
     margin-bottom: 24px;
   }
 }
@@ -35,7 +35,23 @@
   line-height: 100%;
 
   @include on-phone {
-    font-size: 16px; /* твоє значення */
+    font-size: 16px;
+  }
+}
+
+.mobileText {
+  display: none;
+
+  @include on-phone {
+    display: inline;
+  }
+}
+
+.desktopText {
+  display: inline;
+
+  @include on-phone {
+    display: none;
   }
 }
 
@@ -60,6 +76,11 @@
 .giftsSection {
   scroll-margin-top: 120px;
   margin-bottom: 92px;
+
+  @include on-phone {
+    scroll-margin-top: 45px;
+    margin-bottom: 24px;
+  }
 }
 
 /* --- HERO SECTION --- */
@@ -69,7 +90,8 @@
   margin-bottom: 92px;
 
   @include on-phone {
-    padding: 0 16px; /* твоє значення */
+    padding: 0;
+    margin-bottom: 24px;
   }
 }
 
@@ -91,9 +113,10 @@
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
+  white-space: nowrap;
 
   @include on-phone {
-    padding: 0 16px;
+    padding: 0;
   }
 }
 
@@ -104,8 +127,8 @@
   margin-bottom: 52px;
 
   @include on-phone {
-    font-size: 18px; /* твоє значення */
-    margin-bottom: 32px;
+    font-size: 16px;
+    margin-bottom: 16px;
   }
 }
 
@@ -116,7 +139,7 @@
   margin-bottom: 32px;
 
   @include on-phone {
-    gap: 12px; /* твоє значення */
+    gap: 20px;
   }
 }
 
@@ -133,7 +156,7 @@
   text-align: left;
 
   @include on-phone {
-    font-size: 16px; /* твоє значення */
+    font-size: 14px;
   }
 }
 
@@ -143,7 +166,6 @@
   flex-direction: column;
   align-items: flex-start;
   max-width: 800px;
-  margin-bottom: 120px;
 
   .description {
     margin-bottom: 10px;
@@ -162,7 +184,7 @@
   }
 
   @include on-phone {
-    flex-direction: column; // Зазвичай на мобілках інфо-блок краще ставити в стовпчик
+    flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
@@ -176,8 +198,8 @@
   margin-top: 40px;
 
   @include on-phone {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px; /* твоє значення */
+    grid-template-columns: 1fr;
+    gap: 16px;
     margin-top: 24px;
   }
 }
@@ -187,12 +209,7 @@
   min-width: 0;
 
   @include on-phone {
-    // Магія для третьої картки по центру
-    &:nth-child(3) {
-      grid-column: 1 / -1;
-      width: calc(50% - 8px); // 50% мінус половина gap, щоб була розміром як верхні
-      margin: 0 auto;
-    }
+    margin: 0 auto;
   }
 
   :global(.bgl-card) {
@@ -200,7 +217,7 @@
     height: 216px;
 
     @include on-phone {
-      height: 160px; /* твоє значення */
+      height: 100%;
     }
   }
 
@@ -210,7 +227,7 @@
     font-family: var(--font-primary);
 
     @include on-phone {
-      font-size: 16px; /* твоє значення */
+      font-size: 16px;
     }
   }
 
@@ -226,7 +243,7 @@
     overflow: hidden;
 
     @include on-phone {
-      padding: 40px 16px 16px; /* твоє значення */
+      padding: 40px 16px 16px;
     }
   }
 }
@@ -237,6 +254,10 @@
     font-size: 16px;
     margin-top: 12px;
     margin-bottom: 76px;
+
+    @include on-phone {
+      margin-bottom: 24px;
+    }
   }
 }
 
@@ -251,6 +272,18 @@
 
   &:last-of-type {
     margin-bottom: 40px;
+  }
+
+  @include on-phone {
+    padding: 0 8px 8px;
+
+    &:first-of-type {
+      margin-top: 24px;
+    }
+
+    &:last-of-type {
+      margin-bottom: 24px;
+    }
   }
 }
 
@@ -269,6 +302,10 @@
   padding: 0;
   text-align: left;
   font-family: inherit;
+
+  @include on-phone {
+    font-size: 14px;
+  }
 }
 
 .upArrowIcon {
@@ -278,6 +315,10 @@
 
   &.rotated {
     transform: rotate(180deg);
+  }
+
+  @include on-phone {
+    @include icon-mask('/icons/upArrow.svg', 20px);
   }
 }
 
@@ -300,6 +341,10 @@
   font-weight: 400;
   padding-top: 12px;
   color: var(--text-secondary);
+
+  @include on-phone {
+    font-size: 14px;
+  }
 }
 
 .contactLink {
@@ -315,11 +360,31 @@
   width: 100%;
   margin-bottom: 52px;
 
-  @include on-phone {
-    column-count: 2;
-    column-gap: 16px; /* твоє значення */
-    margin-bottom: 32px;
+  &.desktopOnly {
+    column-count: 3;
+    column-gap: 24px;
+    margin-bottom: 52px;
+
+    @include on-phone {
+      display: none;
+    }
   }
+
+  &.mobileOnly {
+    display: none;
+
+    @include on-phone {
+      display: block;
+      column-count: 2;
+      column-gap: 16px;
+      margin-bottom: 32px;
+
+      .gridCard:nth-child(6) .cardImage {
+        aspect-ratio: 411 / 404;
+        height: auto;
+      }
+    }
+  } 
 }
 
 .gridCard {
@@ -357,8 +422,9 @@
   padding: 16px;
 
   @include on-phone {
-    height: 90px; /* твоє значення */
-    padding: 12px;
+    height: auto;
+    min-height: 64px;
+    padding: 8px 10px;
   }
 }
 
@@ -367,6 +433,12 @@
   font-weight: 600;
   margin-bottom: 8px;
   color: var(--text-main);
+
+  @include on-phone {
+    font-size: 13px;
+    margin-bottom: 4px;
+    line-height: 1.1;
+  }
 }
 
 .cardDescr {
@@ -374,6 +446,16 @@
   font-weight: 400;
   line-height: 100%;
   color: var(--text-main);
+
+  @include on-phone {
+    font-size: 11px;
+    line-height: 1.25;
+    
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 
 .actionRow {
@@ -404,7 +486,7 @@
   }
 
   @include on-phone {
-    max-width: 100%; // На мобілці хай займає всю ширину
+    max-width: 100%;
   }
 }
 

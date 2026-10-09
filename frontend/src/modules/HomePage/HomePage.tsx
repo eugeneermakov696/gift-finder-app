@@ -30,6 +30,65 @@ export const HomePage = () => {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
+  const renderGridCard = (imgName: string, title: string, desc: string, w: string, h: string) => (
+    <div className={styles.gridCard} key={title}>
+      <img
+        src={`${import.meta.env.BASE_URL}images/${imgName}`}
+        alt={title}
+        width={w}
+        height={h}
+        className={styles.cardImage}
+      />
+      <div className={styles.cardOverlay}>
+        <h3 className={styles.cardTitle}>{title}</h3>
+        <p className={styles.cardDescr}>{desc}</p>
+      </div>
+    </div>
+  );
+
+  const cardLife = renderGridCard(
+    'lifestyle.png',
+    'Personality & Lifestyle Matching',
+    'Target their actual vibe — from Cozy Homebodies and Tech Geeks to Foodies and Outdoor Explorers.',
+    '410',
+    '406',
+  );
+  const cardContext = renderGridCard(
+    'context.png',
+    'Relationship Context',
+    "Calibrate risk and tone for any dynamic — whether it's for a romantic partner, parent, distant cousin, or coworker.",
+    '411',
+    '271',
+  );
+  const cardBudget = renderGridCard(
+    'budget.png',
+    'Strict Budget Limits',
+    'Set precise spending brackets from under $15 to $200+. We never push products outside what you plan to spend.',
+    '411',
+    '271',
+  );
+  const cardOccasion = renderGridCard(
+    'occasion.png',
+    'Cover Every Occasion',
+    'Curated collections ready for Birthdays, Housewarmings, Anniversaries, Holidays, or just because.',
+    '411',
+    '404',
+  );
+  const cardQuality = renderGridCard(
+    'quality.png',
+    'Verified 4★+ Amazon Quality',
+    'We filter out sponsored junk and low-tier knockoffs. Every item comes backed by proven reviews and high ratings.',
+    '411',
+    '402',
+  );
+  const cardCheckout = renderGridCard(
+    'checkout.png',
+    'Frictionless Prime Checkout',
+    'Save your favorite ideas with one tap or buy directly on Amazon with standard Prime perks, fast delivery, and simple returns.',
+    '411',
+    '271',
+  );
+
   return (
     <div className={styles.container}>
       <section className={styles.heroSection}>
@@ -39,7 +98,10 @@ export const HomePage = () => {
 
         <div className={styles.heroContent}>
           <h2 className={styles.heroSubtitle}>
-            Find a Gift They'll Actually Love — In Under 2 Minutes
+            <span className={styles.desktopText}>
+              Find a Gift They'll Actually Love — In Under 2 Minutes
+            </span>
+            <span className={styles.mobileText}>Find a Gift — In Under 2 Minutes</span>
           </h2>
 
           <div className={styles.buttons}>
@@ -101,24 +163,24 @@ export const HomePage = () => {
         </div>
 
         <div className={styles.cards}>
-            <GlowCard
-              eyebrow="STEP 01"
-              title="Share Who You're Celebrating"
-              description="Select their age, hobbies, personality, and your budget. It takes less than 60 seconds to complete."
-              className={styles.card}
-            />
-            <GlowCard
-              eyebrow="STEP 02"
-              title="Get Handpicked Matches"
-              description="Our engine cuts out dropship junk and filters top-rated Amazon items matching their specific vibe."
-              className={styles.card}
-            />
-            <GlowCard
-              eyebrow="STEP 03"
-              title="Buy With Prime Confidence"
-              description="Check real price trends and verified reviews, then checkout seamlessly via your existing Amazon account."
-              className={styles.card}
-            />
+          <GlowCard
+            eyebrow="STEP 01"
+            title="Share Who You're Celebrating"
+            description="Select their age, hobbies, personality, and your budget. It takes less than 60 seconds to complete."
+            className={styles.card}
+          />
+          <GlowCard
+            eyebrow="STEP 02"
+            title="Get Handpicked Matches"
+            description="Our engine cuts out dropship junk and filters top-rated Amazon items matching their specific vibe."
+            className={styles.card}
+          />
+          <GlowCard
+            eyebrow="STEP 03"
+            title="Buy With Prime Confidence"
+            description="Check real price trends and verified reviews, then checkout seamlessly via your existing Amazon account."
+            className={styles.card}
+          />
         </div>
       </section>
 
@@ -178,108 +240,22 @@ export const HomePage = () => {
           using a few simple details about the person you’re shopping for.
         </p>
 
-        <div className={styles.masonryGrid}>
-          <div className={styles.gridCard}>
-            <img
-              src={`${import.meta.env.BASE_URL}images/lifestyle.png`}
-              alt="Lifestyle"
-              width="410"
-              height="406"
-              className={styles.cardImage}
-            />
-            <div className={styles.cardOverlay}>
-              <h3 className={styles.cardTitle}>Personality & Lifestyle Matching</h3>
-              <p className={styles.cardDescr}>
-                Target their actual vibe — from Cozy Homebodies and Tech Geeks to Foodies and
-                Outdoor Explorers.
-              </p>
-            </div>
-          </div>
+        <div className={`${styles.masonryGrid} ${styles.desktopOnly}`}>
+          {cardLife}
+          {cardContext}
+          {cardBudget}
+          {cardOccasion}
+          {cardQuality}
+          {cardCheckout}
+        </div>
 
-          <div className={styles.gridCard}>
-            <img
-              src={`${import.meta.env.BASE_URL}images/context.png`}
-              alt="Context"
-              width="411"
-              height="271"
-              className={styles.cardImage}
-            />
-            <div className={styles.cardOverlay}>
-              <h3 className={styles.cardTitle}>Relationship Context</h3>
-              <p className={styles.cardDescr}>
-                Calibrate risk and tone for any dynamic — whether it's for a romantic partner,
-                parent, distant cousin, or coworker.
-              </p>
-            </div>
-          </div>
-
-          <div className={styles.gridCard}>
-            <img
-              src={`${import.meta.env.BASE_URL}images/budget.png`}
-              alt="Budget"
-              width="411"
-              height="271"
-              className={styles.cardImage}
-            />
-            <div className={styles.cardOverlay}>
-              <h3 className={styles.cardTitle}>Strict Budget Limits</h3>
-              <p className={styles.cardDescr}>
-                Set precise spending brackets from under $15 to $200+. We never push products
-                outside what you plan to spend.
-              </p>
-            </div>
-          </div>
-
-          <div className={styles.gridCard}>
-            <img
-              src={`${import.meta.env.BASE_URL}images/occasion.png`}
-              alt="Occasion"
-              width="411"
-              height="404"
-              className={styles.cardImage}
-            />
-            <div className={styles.cardOverlay}>
-              <h3 className={styles.cardTitle}>Cover Every Occasion</h3>
-              <p className={styles.cardDescr}>
-                Curated collections ready for Birthdays, Housewarmings, Anniversaries, Holidays, or
-                just because.
-              </p>
-            </div>
-          </div>
-
-          <div className={styles.gridCard}>
-            <img
-              src={`${import.meta.env.BASE_URL}/images/quality.png`}
-              alt="Quality"
-              width="411"
-              height="402"
-              className={styles.cardImage}
-            />
-            <div className={styles.cardOverlay}>
-              <h3 className={styles.cardTitle}>Verified 4★+ Amazon Quality</h3>
-              <p className={styles.cardDescr}>
-                We filter out sponsored junk and low-tier knockoffs. Every item comes backed by
-                proven reviews and high ratings.
-              </p>
-            </div>
-          </div>
-
-          <div className={styles.gridCard}>
-            <img
-              src={`${import.meta.env.BASE_URL}images/checkout.png`}
-              alt="Checkout"
-              width="411"
-              height="271"
-              className={styles.cardImage}
-            />
-            <div className={styles.cardOverlay}>
-              <h3 className={styles.cardTitle}>Frictionless Prime Checkout</h3>
-              <p className={styles.cardDescr}>
-                Save your favorite ideas with one tap or buy directly on Amazon with standard Prime
-                perks, fast delivery, and simple returns.
-              </p>
-            </div>
-          </div>
+        <div className={`${styles.masonryGrid} ${styles.mobileOnly}`}>
+          {cardLife}
+          {cardContext}
+          {cardOccasion}
+          {cardBudget}
+          {cardQuality}
+          {cardCheckout}
         </div>
 
         <h3 className={styles.subtitle}>Find the Perfect Present in Minutes</h3>
