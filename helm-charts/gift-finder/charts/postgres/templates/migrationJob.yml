@@ -9,19 +9,35 @@ spec:
       containers:
         - name: {{ .Release.Name }}-postgres-migration-container
           image: {{ .Values.postgres.migrationJobContainer.image }}
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-postgres-migration-job-configmap
+                  key: DB_HOST
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-postgres-migration-job-configmap
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-postgres-migration-job-configmap
+                  key: DB_USER
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-postgres-migration-job-configmap
+                  key: DB_PORT
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgres-migration-job-secret
+                  key: DB_PASSWORD
           command:
             - /bin/sh
             - -c
-            - |
-                until pg_isready \
-                    -h "$DB_HOST" \
-                    -p "$DB_PORT" \
-                    -U "$DB_USER"; do
-                    echo "Waiting for PostgreSQL to be ready..."
-                    sleep 2
-                done
-
-                python manage.py migrate
-
+            - sleep 60 && python manage.py migrate
       restartPolicy: Never
   backoffLimit: 3

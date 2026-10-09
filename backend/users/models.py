@@ -9,13 +9,13 @@ from django.dispatch import receiver
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
-        ('customer', 'Customer'),
-        ('admin', 'Admin'),
+        ("customer", "Customer"),
+        ("admin", "Admin"),
     )
     address = models.CharField(max_length=255, blank=True, null=True)
     image_url = models.TextField(blank=True, null=True)
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer')
+    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="customer")
     email_is_confirmed = models.BooleanField(default=False)
 
     class Meta:
@@ -34,11 +34,14 @@ class VerificationScenario(models.TextChoices):
     PASSWORD_RESET = "password_reset", "Password Reset"
     EMAIL_CONFIRMATION = "email_confirmation", "Email Confirmation"
 
+
 def get_expiry_time():
     return timezone.now() + settings.VERIFICATION_CODE_LIFETIME
 
+
 def generate_numeric_code():
     return f"{random.randint(100000, 999999)}"
+
 
 class UserVerificationCode(models.Model):
     user = models.ForeignKey(

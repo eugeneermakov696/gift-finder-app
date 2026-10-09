@@ -11,7 +11,13 @@ postgres:
       cpu: "500m"
   migrationJobContainer:
     image: eug696/backend:latest
+    configs:
+      DB_HOST: gift-finder-postgres.gf-postgres.svc.cluster.local
+      DB_NAME: config
+      DB_USER: postgres_user
+      DB_PORT: 5432
+      DB_PASSWORD: secure_dev_password_2026
   config:
     POSTGRES_DB: config
     POSTGRES_USER: postgres_user
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: secure_dev_password_2026
