@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import views, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_yasg.utils import swagger_auto_schema, no_body
 from drf_yasg import openapi
@@ -117,9 +118,8 @@ class LogoutView(views.APIView):
 def user_register(request):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
-        user = serializer.save()
-        create_and_send_verification_code(user, VerificationScenario.EMAIL_CONFIRMATION)
-        return Response({"status": "success", "detail": "Registration successful. Verification code dispatched."},
+        serializer.save()
+        return Response({"status": "success", "detail": "Registration successful."},
                         status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -216,7 +216,7 @@ class PasswordResetConfirmView(views.APIView):
             400: "Invalid parameters or token."
         }
     )
-
+    
     def post(self, request, *args, **kwargs):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -233,8 +233,6 @@ class PasswordResetConfirmView(views.APIView):
 
         return Response({"detail": "Invalid parameters or token."}, status=status.HTTP_400_BAD_REQUEST)
 
-
-from rest_framework.parsers import MultiPartParser, FormParser
 
 class AvatarUploadView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
