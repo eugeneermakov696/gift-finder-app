@@ -2,22 +2,33 @@ import { Link } from 'react-router-dom';
 import styles from './ProductCard.module.scss';
 
 interface ProductCardProps {
+  id: string | number;
   title: string;
-  description: string;
+  description?: string;
+  price: number;
   imageUrl: string;
   isFavorite: boolean;
   onToggleFavorite: () => void;
+  variant?: 'horizontal' | 'vertical' | 'profile';
+  className?: string;
 }
 
 export const ProductCard = ({
+  id,
   title,
   description,
+  price,
   imageUrl,
   isFavorite,
   onToggleFavorite,
+  variant = 'horizontal',
+  className = '', 
 }: ProductCardProps) => {
+  
+  const cardClassName = `${styles.card} ${styles[variant]} ${className}`.trim();
+
   return (
-    <div className={styles.card}>
+    <div className={cardClassName}>
       <div className={styles.imageWrapper}>
         <button className={styles.favoriteBtn} onClick={onToggleFavorite}>
           {isFavorite ? (
@@ -33,16 +44,22 @@ export const ProductCard = ({
 
       <div className={styles.content}>
         <h3 className={styles.title}>{title}</h3>
-        <p className={styles.description}>{description}</p>
+        <p className={styles.price}>${price.toFixed(2)}</p>
 
-        <div className={styles.actions}>
-          <button className={styles.amazonBtn}>
-            available at Amazon <span className={styles.amazonIcon} aria-label="Amazon"></span>
-          </button>
-          <Link to={`/product/$id`} className={styles.detailsBtn}>
-            <button>View details</button>
-          </Link>
-        </div>
+        {variant !== 'profile' && description && (
+          <p className={styles.description}>{description}</p>
+        )}
+
+        {variant !== 'profile' && (
+          <div className={styles.actions}>
+            <button className={styles.amazonBtn}>
+              available at Amazon <span className={styles.amazonIcon} aria-label="Amazon"></span>
+            </button>
+            <Link to={`/product/${id}`} className={styles.detailsBtn}>
+              View details
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

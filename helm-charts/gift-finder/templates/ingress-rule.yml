@@ -18,7 +18,7 @@ spec:
         - http:
             paths:
                 - pathType: Prefix
-                  path: /api
+                  path: /swaagger
                   backend:
                     service:
                         name: {{ .Values.namespace }}-backend-service

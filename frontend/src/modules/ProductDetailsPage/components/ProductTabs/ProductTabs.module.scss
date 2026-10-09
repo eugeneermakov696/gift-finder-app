@@ -1,0 +1,154 @@
+@use '../../../../styles/mixins' as *;
+
+.tabsContainer {
+  margin-top: 60px;
+  width: 100%;
+}
+
+.tabHeaders {
+  display: flex;
+  gap: 40px;
+  border-bottom: 1px solid var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.tab {
+  padding: 16px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: var(--text-main);
+  }
+}
+
+.activeTab {
+  color: var(--text-main);
+  border-bottom-color: var(--text-main);
+}
+
+.tabContent {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Details */
+.detailsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mainList, .subList {
+  margin: 0;
+  padding-left: 16px;
+  
+  li {
+    margin-bottom: 8px;
+  }
+
+  strong {
+    color: var(--text-main);
+  }
+}
+
+.subList {
+  list-style-type: disc;
+}
+
+/* Reviews */
+.reviewCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reviewerAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #eaeaea;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.reviewerName {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.reviewRating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.starIcon {
+    @include icon-mask('/icons/star.svg', 20px);
+  }
+
+  .filled {
+    background-color: var(--color-warming-800);
+  }
+
+  .empty {
+    background-color: var(--text-secondary);
+  }
+
+.reviewTitle {
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.reviewMeta {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  
+  p {
+    margin: 0 0 4px 0;
+  }
+}
+
+.reviewText {
+  color: var(--text-main);
+  font-size: 16px;
+  font-weight: 500;
+  margin: 8px 0;
+}
+
+.reviewImage {
+  width: 190px;
+  height: 270px;
+  background-color: #eaeaea;
+  border-radius: 8px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.helpfulText {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 8px;
+}

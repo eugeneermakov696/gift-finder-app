@@ -29,23 +29,23 @@ spec:
               containerPort: 5432
 
           env:
-            - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-postgres-secret
-                  key: POSTGRES_DB
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-postgres-configmap
+                key: POSTGRES_DB
 
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-postgres-secret
-                  key: POSTGRES_USER
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-postgres-configmap
+                key: POSTGRES_USER
 
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-postgres-secret
-                  key: POSTGRES_PASSWORD
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-postgres-secret
+                key: POSTGRES_PASSWORD
 
           volumeMounts:
             - name: postgres-data
