@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-postgres-migration-job-configmap
+  namespace: {{ .Values.postgres.namespace }}
+data:
+  DB_HOST: {{ .Values.postgres.migrationJobContainer.configs.DB_HOST }}
+  DB_NAME: {{ .Values.postgres.migrationJobContainer.configs.DB_NAME }}
+  DB_USER: {{ .Values.postgres.migrationJobContainer.configs.DB_USER }}
+  DB_PORT: {{ .Values.postgres.migrationJobContainer.configs.DB_PORT | quote }}
