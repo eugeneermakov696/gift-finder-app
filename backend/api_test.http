@@ -1,26 +1,73 @@
-### 1. Execute the automated scraper (Will auto-save into DB!)
-POST http://localhost:8000/api/gifts/scrape/
+### 1. Register a new user
+POST http://localhost:8000/api/auth/register/
 Content-Type: application/json
 
 {
-  "amazon_url": "https://amazon.com"
+  "email": "test@example.com",
+  "password": "password123",
+  "confirm_password": "password123",
+  "full_name": "Test User"
 }
 
-### 2. View all wishlists in the system
+### 2. Login (Sets HTTPOnly cookies)
+POST http://localhost:8000/api/auth/login/
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### 3. Get Current User Details
+GET http://localhost:8000/api/auth/me/
+Accept: application/json
+
+### 4. Verify Email (requires Auth cookie)
+POST http://localhost:8000/api/auth/verify-email/
+Content-Type: application/json
+
+{
+  "code": "123456"
+}
+
+### 5. Resend Verification Code (requires Auth cookie)
+POST http://localhost:8000/api/auth/verify-email/resend/
+Content-Type: application/json
+
+### 6. Upload Avatar (Multipart form-data)
+POST http://localhost:8000/api/auth/avatar/
+# Note: Actual file upload via HTTP client requires attaching the file.
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="avatar"; filename="avatar.jpg"
+Content-Type: image/jpeg
+
+< ./test_avatar.jpg
+--WebAppBoundary--
+
+### 7. View Presents (Guest access allowed)
+GET http://localhost:8000/api/gifts/?page=1&items_per_page=10&sort_by=price_low
+Accept: application/json
+
+### 8. Filter Presents
+GET http://localhost:8000/api/gifts/?category=Toys&gender_target=Kids&max_price=50
+Accept: application/json
+
+### 9. View Current User's Wishlists
 GET http://localhost:8000/api/wishlists/
 Accept: application/json
 
-### 3. Initialize a new Wishlist container (Assuming user_id 1 is your admin)
+### 10. Create a new Wishlist
 POST http://localhost:8000/api/wishlists/
 Content-Type: application/json
 
 {
-  "user_id": 1,
-  "name": "Holiday Shopping Ideas"
+  "name": "My Birthday List"
 }
 
-### 4. Append the scraped product to the Wishlist container (Assuming list ID 1 and present ID 1)
-POST http://localhost:8000/api/wishlists/1/
+### 11. Add a gift to the Wishlist (Assuming wishlist ID 1 and present ID 1)
+POST http://localhost:8000/api/wishlists/1/manage-item/
 Content-Type: application/json
 
 {
@@ -28,43 +75,9 @@ Content-Type: application/json
   "action": "add"
 }
 
-### 5. View the final contents inside that specific Wishlist
-GET http://localhost:8000/api/wishlists/1/
-Accept: application/json
-### Register a new separate developer user account
-POST http://localhost:8000/api/auth/register/
-Content-Type: application/json
-
-{
-  "username": "alex_gift_finder",
-  "password": "super_secret_password_123"
-}
-
-### Login with that account to fetch your token string
-POST http://localhost:8000/api/auth/login/
-Content-Type: application/json
-
-{
-  "username": "alex_gift_finder",
-  "password": "super_secret_password_123"
-}
-
-### GET Request: Download your wishlist directly as a clean CSV table file
-# (Open this link in your browser to verify the instant file download)
+### 12. Export Wishlist to CSV
 GET http://localhost:8000/api/wishlists/1/export/csv/
 
-### GET Request: Stream out a clean, structured JSON format of your wishlist data
-GET http://localhost:8000/api/wishlists/1/export/json/
-Accept: application/json
-
-### POST Request: Simulate running the price drop automation on a present (Assuming present ID is 1)
-POST http://localhost:8000/api/gifts/1/price-check/
+### 13. Logout (Clears cookies)
+POST http://localhost:8000/api/auth/logout/
 Content-Type: application/json
-
-### GET Request: View the first page containing only 2 items
-GET http://localhost:8000/api/gifts/?page=1&items_per_page=2
-Accept: application/json
-
-### GET Request: View the second page of data chunks
-GET http://localhost:8000/api/gifts/?page=2&items_per_page=2
-Accept: application/json
