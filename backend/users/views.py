@@ -223,7 +223,6 @@ class PasswordResetConfirmView(views.APIView):
             400: "Invalid parameters or token."
         }
     )
-    
     def post(self, request, *args, **kwargs):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -265,18 +264,17 @@ class AvatarUploadView(views.APIView):
     def post(self, request, *args, **kwargs):
         if 'avatar' not in request.FILES:
             return Response({"detail": "No file provided."}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         avatar_file = request.FILES['avatar']
         user = request.user
-        
+
         # Save the file to the avatar field (this uses django-storages/boto3 automatically)
         user.avatar.save(avatar_file.name, avatar_file, save=True)
-        
+
         # Build absolute URI for the frontend
         avatar_url = request.build_absolute_uri(user.avatar.url) if user.avatar else None
-        
+
         return Response({
             "detail": "Avatar uploaded successfully.",
             "avatar_url": avatar_url
         }, status=status.HTTP_200_OK)
-
