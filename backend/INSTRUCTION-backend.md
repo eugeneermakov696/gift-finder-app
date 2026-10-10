@@ -45,7 +45,6 @@ backend/
 │   │       └── import_excel.py # Importer mapping Excel sheets into PostgreSQL
 │   └── migrations/         # Database migration schemas
 └── users/                  # User identity, authentication & verification application
-    ├── admin.py            # CustomUser and UserVerificationCode admin registrations
     ├── apps.py             # Users application configuration
     ├── authentication.py   # CustomJWTAuthentication (HTTP-only cookies + header fallback)
     ├── models.py           # CustomUser (`auth_users`) & UserVerificationCode models
