@@ -2,8 +2,8 @@ import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../store/hooks';
 import type { RootState } from '../../store/store';
 import { removeGift } from '../../store/wishlist/wishlistSlice';
-import styles from './WishlistPage.module.scss';
 import { Link } from 'react-router-dom';
+import styles from './WishlistPage.module.scss';
 
 export const WishlistPage = () => {
   const dispatch = useAppDispatch();
@@ -38,7 +38,7 @@ export const WishlistPage = () => {
           savedItems.map((item) => (
             <div key={item.id} className={styles.card}>
               <div className={styles.imageWrapper}>
-                <img src={item.imageUrl} alt={item.title} className={styles.image} />
+                <img src={item.image_url ?? ''} alt={item.title} className={styles.image} />
 
                 <button
                   className={styles.favoriteBtn}
@@ -55,7 +55,7 @@ export const WishlistPage = () => {
                 <span className={styles.itemPrice}>${item.price}</span>
 
                 <a
-                  href={item.productUrl}
+                  href={item.amazon_url}
                   target="_blank"
                   rel="noreferrer"
                   className={styles.amazonBtn}
