@@ -14,7 +14,7 @@ export const WishlistSlice = createSlice({
     addGift(state, action: PayloadAction<Product>) {
       state.items.push(action.payload);
     },
-    removeGift(state, action) {
+    removeGift(state, action: PayloadAction<number>) {
       state.items = state.items.filter(item => item.id !== action.payload);
     }
   }
