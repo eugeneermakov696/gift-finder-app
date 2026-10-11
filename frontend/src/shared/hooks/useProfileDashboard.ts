@@ -1,15 +1,12 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
+import { useAppDispatch } from '../../store/hooks';
+import { uploadUserAvatar } from '../../store/auth/authSlice';
+import type { User } from '../../api/auth-service/types/user.type';
 
-export interface UserProfile {
-  avatar?: string;
-  fullName: string;
-  location: string;
-  email: string;
-}
-
-export const useAvatarUpload = (initialUser: UserProfile) => {
-  const [user, setUser] = useState(initialUser);
+export const useAvatarUpload = (user: User) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const dispatch = useAppDispatch();
 
   const triggerFileSelect = () => {
     fileInputRef.current?.click();
@@ -24,17 +21,7 @@ export const useAvatarUpload = (initialUser: UserProfile) => {
       return;
     }
 
-    const reader = new FileReader();
-    
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-      const updatedUser = { ...user, avatar: base64String };
-      
-      setUser(updatedUser);
-      localStorage.setItem('giftly_user', JSON.stringify(updatedUser));
-    };
-    
-    reader.readAsDataURL(file);
+    dispatch(uploadUserAvatar(file));
   };
 
   return { user, fileInputRef, triggerFileSelect, handleFileChange };

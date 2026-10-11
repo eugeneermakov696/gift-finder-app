@@ -1,20 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-
-export interface Product {
-  id: number;
-  productUrl: string;
-  imageUrl: string;
-  title: string;
-  rating: number;
-  reviewsCount: number;
-  price: number;
-  budgetBracket: string;
-  recipient: string;
-  relationship: string;
-  interest: string;
-  occasion: string;
-  description: string;
-}
+import type { Product } from "../../api/gift-service/types/product.type";
 
 interface WishlistState {
   items: Product[];

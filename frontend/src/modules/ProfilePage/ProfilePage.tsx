@@ -4,49 +4,45 @@ import { RegisterModal } from '../RegisterModal';
 import { GlowCard } from '../../shared/components/GlowCard';
 import { ProfileDashboard } from './components/ProfileDashboard';
 import { Button } from '../../shared/components/Button';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from '../../store/hooks';
+import { fetchMe, loginUser, logoutUser } from '../../store/auth/authSlice';
+import type { RootState } from '../../store/store';
 import styles from './ProfilePage.module.scss';
 
 export const ProfilePage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('giftly_isAuth') === 'true';
-  });
-
   const [loginError, setLoginError] = useState('');
-
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleRegisterSuccess = () => {
-    setIsLoggedIn(true);
-  };
+  const { isAuth, user } = useSelector((state: RootState) => state.auth);
+
+  const dispatch = useAppDispatch();
 
   const loginInputRef = useRef<HTMLInputElement>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
 
-    const savedUser = JSON.parse(localStorage.getItem('giftly_user') || 'null');
+    try {
+      await dispatch(
+        loginUser({
+          email,
+          password,
+        }),
+      ).unwrap();
 
-    if (!savedUser) {
-      setLoginError('Account does not exist. Please create one.');
-      return;
-    }
-
-    if (savedUser.email === email && savedUser.password === password) {
-      localStorage.setItem('giftly_isAuth', 'true');
-      setIsLoggedIn(true);
-    } else {
-      setLoginError('Invalid email or password.');
+      await dispatch(fetchMe()).unwrap();
+    } catch (error) {
+      setLoginError(error as string);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('giftly_isAuth');
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    await dispatch(logoutUser());
     setEmail('');
     setPassword('');
   };
@@ -57,8 +53,8 @@ export const ProfilePage = () => {
     }, 100);
   };
 
-  if (isLoggedIn) {
-    return <ProfileDashboard onLogout={handleLogout} />;
+  if (isAuth && user) {
+    return <ProfileDashboard user={user} onLogout={handleLogout} />;
   }
 
   return (
@@ -201,7 +197,6 @@ export const ProfilePage = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSwitchToLogin={handleSwitchToLogin}
-        onSuccess={handleRegisterSuccess}
       />
     </div>
   );

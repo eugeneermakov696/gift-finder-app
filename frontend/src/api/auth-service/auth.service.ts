@@ -91,6 +91,14 @@ class AuthService {
     const response = await this.api.post('auth/verify-email/resend/');
     return response.data;
   };
+
+  /**
+   * Update user profile data
+   */
+  public async updateProfile(data: { first_name: string; last_name: string }): Promise<User> {
+    const response = await this.api.patch('auth/me/', data); // Idk if here must be 'patch' or 'put', change it, if needed (I need at least such method for redux slice)
+    return response.data;
+  };
 }
 
 export const authService = new AuthService(axiosInstance);
