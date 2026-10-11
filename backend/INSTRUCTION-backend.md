@@ -109,7 +109,7 @@ The backend employs a robust authentication architecture:
 *   **Email Verification & Password Recovery:** Secure 6-digit numeric codes generated via `users.services` with configurable expiration lifetimes (`VERIFICATION_CODE_LIFETIME = 15 minutes`). In `DEBUG=True` mode, outgoing emails print to the container console (`ConsoleBackend`).
 *   **Role-Based Access Control (RBAC):**
     *   `IsCustomAdminUser`: Restricts sensitive endpoints (such as scraping and price manipulation) strictly to users with the `admin` role.
-    *   `IsCustomAdminOrReadOnly`: Requires authentication for catalog queries and restricts product mutations to `admin` accounts.
+    *   `IsCustomAdminOrReadOnly`: Allows public read access to catalog queries and restricts product mutations to `admin` accounts.
     *   `IsAuthenticated`: Protects user profile and wishlist management routes, ensuring strict user-ownership validation.
 
 ---
@@ -163,9 +163,9 @@ All endpoints are registered under their respective routing modules:
 | **Auth** | `POST` | `/api/auth/resend-email-code/` | Re-generates and dispatches a new email verification code. | `IsAuthenticated` |
 | **Auth** | `POST` | `/api/auth/password-reset-request/` | Dispatches password reset code (mitigates user enumeration). | `AllowAny` |
 | **Auth** | `POST` | `/api/auth/password-reset-confirm/` | Validates reset code and sets a new account password. | `AllowAny` |
-| **Gifts** | `GET` | `/api/gifts/` | List products with pagination. Supports `?category=`, `?max_price=`, `?search=`, and `?sort_by=price_low\|price_high\|rating`. | Authenticated Users |
+| **Gifts** | `GET` | `/api/gifts/` | List products with pagination. Supports `?category=`, `?max_price=`, `?search=`, and `?sort_by=price_low\|price_high\|rating`. | `AllowAny` |
 | **Gifts** | `POST` | `/api/gifts/` | Create a new gift catalog item. | `Admin` Role Only |
-| **Gifts** | `GET` | `/api/gifts/<id>/` | Retrieve specific gift details. | Authenticated Users |
+| **Gifts** | `GET` | `/api/gifts/<id>/` | Retrieve specific gift details. | `AllowAny` |
 | **Gifts** | `PUT` / `PATCH` | `/api/gifts/<id>/` | Update gift information. | `Admin` Role Only |
 | **Gifts** | `DELETE` | `/api/gifts/<id>/` | Remove a gift from catalog. | `Admin` Role Only |
 | **Gifts** | `POST` | `/api/gifts/scrape/` | Scrapes ASIN from Amazon URL and creates/updates gift. | `Admin` Role Only |

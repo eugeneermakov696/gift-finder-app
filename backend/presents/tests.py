@@ -35,9 +35,23 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertIn("results", response.data)
         self.assertTrue(len(response.data["results"]) > 0)
 
-    def test_get_gifts_list_unauthenticated_returns_401(self):
+    def test_get_gifts_list_unauthenticated_returns_200(self):
         self.client.force_authenticate(user=None)
         response = self.client.get(reverse("gift-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("results", response.data)
+        self.assertTrue(len(response.data["results"]) > 0)
+
+    def test_post_create_gift_unauthenticated_returns_401(self):
+        self.client.force_authenticate(user=None)
+        payload = {
+            "title": "Mechanical Keyboard",
+            "asin": "B08N5LNXCZ",
+            "amazon_url": "https://amazon.com",
+            "price": 89.99,
+            "category": "Computers"
+        }
+        response = self.client.post(reverse("gift-list"), data=payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_post_create_gift(self):
