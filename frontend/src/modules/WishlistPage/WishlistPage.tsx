@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../store/hooks';
 import type { RootState } from '../../store/store';
-import { removeGift } from './wishlistSlice';
+import { removeGift } from '../../store/wishlist/wishlistSlice';
 import styles from './WishlistPage.module.scss';
 import { Link } from 'react-router-dom';
 

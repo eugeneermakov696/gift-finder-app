@@ -3,7 +3,7 @@ import { ProductCard } from '../../shared/components/ProductCard';
 import { useAppDispatch } from '../../store/hooks';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { addGift, removeGift } from '../WishlistPage/wishlistSlice';
+import { addGift, removeGift } from '../../store/wishlist/wishlistSlice';
 import { useEffect, useState } from 'react';
 import { giftService } from '../../api/gift-service/gift.service';
 import type { Product } from '../../api/gift-service/types/product.type';
@@ -35,8 +35,14 @@ export const CatalogPage = () => {
   const isFromGenerate = location.state?.fromGenerate === true;
 
   const [isLoading, setIsLoading] = useState(isFromGenerate);
-  const [, setGifts] = useState<Product[]>([]);
+  const [gifts, setGifts] = useState<Product[]>([]);
   const savedItems = useSelector((state: RootState) => state.wishlist.items);
+
+  useEffect(() => {
+    if (gifts.length > 0) {
+      console.log('Подарунки успішно завантажені:', gifts);
+    }
+  }, [gifts]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +95,7 @@ export const CatalogPage = () => {
       </header>
 
       <div className={styles.productsGrid}>
-        {[mockProduct].map((product) => {
+        {gifts.map((product) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const isFavorite = savedItems.some((item: any) => item.id === product.id);
 
@@ -102,16 +108,22 @@ export const CatalogPage = () => {
             }
           };
 
+          const backendUrl = 'http://localhost:8000';
+          const fullImageUrl = product.image_url?.startsWith('/')
+            ? `${backendUrl}${product.image_url}`
+            : (product.image_url ?? '');
+
           return (
             <ProductCard
               key={product.id}
               id={product.id}
               title={product.title}
               description={product.description ?? ''}
-              imageUrl={product.image_url ?? ''}
-              price={15}
+              imageUrl={fullImageUrl}
+              price={product.price}
               isFavorite={isFavorite}
               onToggleFavorite={handleToggleFavorite}
+              variant="horizontal"
             />
           );
         })}

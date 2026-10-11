@@ -6,22 +6,24 @@ import { useAvatarUpload } from '../../../../shared/hooks/useProfileDashboard';
 import { ProductCard } from '../../../../shared/components/ProductCard';
 import { useAppDispatch } from '../../../../store/hooks';
 import { useSelector } from 'react-redux';
+import { addGift, removeGift } from '../../../../store/wishlist/wishlistSlice';
 import type { RootState } from '../../../../store/store';
-import { addGift, removeGift } from '../../../WishlistPage/wishlistSlice';
+import type { User } from '../../../../api/auth-service/types/user.type';
 import styles from './ProfileDashboard.module.scss';
 
 interface ProfileDashboardProps {
   onLogout: () => void;
+  user: User;
 }
 
-export const ProfileDashboard = ({ onLogout }: ProfileDashboardProps) => {
+export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { user, fileInputRef, triggerFileSelect, handleFileChange } = useAvatarUpload(
-    JSON.parse(localStorage.getItem('giftly_user') || '{}'),
-  );
+  const { fileInputRef, triggerFileSelect, handleFileChange } = useAvatarUpload(user);
 
   const dispatch = useAppDispatch();
   const savedItems = useSelector((state: RootState) => state.wishlist.items);
+
+  console.log("Поточний юзер:", user);
 
   return (
     <div className={styles.container}>
@@ -65,8 +67,8 @@ export const ProfileDashboard = ({ onLogout }: ProfileDashboardProps) => {
             </div>
 
             <div className={styles.profileDetails}>
-              <h2>{user.fullName}</h2>
-              <p className={styles.email}>{user.email}</p>
+              <h2>{user.first_name} {user.last_name}</h2>
+              <p className={styles.email}>{user.username}</p>
               <Button
                 variant="primary"
                 className={styles.editBtn}
@@ -84,7 +86,7 @@ export const ProfileDashboard = ({ onLogout }: ProfileDashboardProps) => {
               <div className={styles.statusHeader}>
                 <span className={styles.dot} /> You're logged in
               </div>
-              <p className={styles.signedInText}>Signed in as {user.email}</p>
+              <p className={styles.signedInText}>Signed in as {user.username}</p>
             </div>
             <button onClick={onLogout} className={styles.logoutBtn}>
               Log out
@@ -100,11 +102,11 @@ export const ProfileDashboard = ({ onLogout }: ProfileDashboardProps) => {
             <div className={styles.infoTable}>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>Full Name</span>
-                <span className={styles.infoValue}>{user.fullName}</span>
+                <span className={styles.infoValue}>{user.first_name} {user.last_name}</span>
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>Email Address</span>
-                <span className={styles.infoValue}>{user.email}</span>
+                <span className={styles.infoValue}>{user.username}</span>
               </div>
             </div>
           </div>

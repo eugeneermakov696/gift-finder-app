@@ -129,27 +129,12 @@
     font-size: 16px;
     margin: 0 0 12px 0;
   }
-
-  .location {
-    color: var(--text-secondary);
-    font-size: 14px;
-    margin: 0 0 22px 0;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-  }
   
   .editBtn {
     width: fit-content;
     flex-shrink: 0;
     white-space: nowrap;
   }
-}
-
-.locationIcon {
-  @include icon-mask('/icons/location.svg', 24px);
-  display: inline-block;
-  background-color: var(--text-main);
 }
 
 .verticalDivider {

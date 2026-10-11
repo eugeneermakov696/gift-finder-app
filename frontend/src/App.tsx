@@ -1,6 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
-import { Layout } from './shared/components/Layout';
+import { useAppDispatch } from './store/hooks.ts';
+import { useEffect } from 'react';
+import { fetchMe } from './store/auth/authSlice.ts';
 
+import { Layout } from './shared/components/Layout';
 import { HomePage } from './modules/HomePage';
 import { ProfilePage } from './modules/ProfilePage';
 import { ProductDetailsPage } from './modules/ProductDetailsPage';
@@ -12,6 +15,12 @@ import { RightsPage } from './modules/RightsPage/RightsPage.tsx';
 import { TermsPage } from './modules/ConditionsPage/TermsPage.tsx';
 
 export const App = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchMe());
+  }, [dispatch]);
+
   return (
     <Routes>
       <Route path="/" element={<Layout />}>

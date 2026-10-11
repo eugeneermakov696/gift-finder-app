@@ -1,18 +1,27 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/components/Button';
+import { useAppDispatch } from '../../store/hooks';
+import { fetchMe, loginUser, registerUser } from '../../store/auth/authSlice';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
 import styles from './RegisterModal.module.scss';
 
 interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSwitchToLogin: () => void;
-  onSuccess: () => void;
 }
 
 export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { isLoading, error } = useSelector((state: RootState) => state.auth);
+
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -47,7 +56,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
     onSwitchToLogin();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
@@ -69,25 +78,37 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
       return;
     }
 
-    const userProfile = {
-      fullName: formData.fullName,
-      email: formData.email,
-      password: formData.password,
-    };
+    try {
+      await dispatch(
+        registerUser({
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          fullname: formData.fullName,
+        }),
+      ).unwrap();
 
-    localStorage.setItem('giftly_user', JSON.stringify(userProfile));
-    localStorage.setItem('giftly_isAuth', 'true');
+      await dispatch(
+        loginUser({
+          email: formData.email,
+          password: formData.password,
+        }),
+      ).unwrap();
 
-    setFormData({
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      agreedToTerms: false,
-    });
-    onClose();
+      await dispatch(fetchMe()).unwrap();
 
-    // TODO: add Redux dispatch
+      setFormData({
+        fullName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        agreedToTerms: false,
+      });
+      onClose();
+      navigate('/profile')
+    } catch (error) {
+      console.error('Registration failed:', error);
+    }
   };
 
   if (!isOpen) return null;
@@ -201,7 +222,15 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
             </label>
           </div>
 
-          <Button variant="secondary" size="extraLarge" type="submit" className={styles.submitBtn}>
+          {error && <p className={styles.errorMessage}>{error}</p>}
+
+          <Button
+            variant="secondary"
+            size="extraLarge"
+            type="submit"
+            className={styles.submitBtn}
+            disabled={isLoading}
+          >
             Create Account
           </Button>
         </form>

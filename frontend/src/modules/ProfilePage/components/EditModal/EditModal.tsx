@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '../../../../shared/components/Button';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../../store/store';
 import styles from './EditModal.module.scss';
 
 interface EditModalProps {
@@ -12,12 +13,13 @@ export const EditModal = ({ isOpen, onClose}: EditModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const { user } = useSelector((state: RootState) => state.auth);
+
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    fullName: user ? `${user.first_name} ${user.last_name}` : '',
+    email: user?.username || '',
     password: '',
     confirmPassword: '',
-    agreedToTerms: false,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -48,13 +50,15 @@ export const EditModal = ({ isOpen, onClose}: EditModalProps) => {
       newErrors.fullName = 'Name must be at least 3 characters.';
     }
 
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password = 'Password must be at least 8 characters, include a letter and a number.';
-    }
+    if (formData.password) {
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      if (!passwordRegex.test(formData.password)) {
+        newErrors.password = 'Password must be at least 8 characters, include a letter and a number.';
+      }
 
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match.';
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match.';
+      }
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -62,25 +66,16 @@ export const EditModal = ({ isOpen, onClose}: EditModalProps) => {
       return;
     }
 
-    const userProfile = {
-      fullName: formData.fullName,
-      email: formData.email,
-      password: formData.password,
-    };
-
-    localStorage.setItem('giftly_user', JSON.stringify(userProfile));
-    localStorage.setItem('giftly_isAuth', 'true');
-
     setFormData({
       fullName: '',
       email: '',
       password: '',
       confirmPassword: '',
-      agreedToTerms: false,
     });
     onClose();
 
-    // TODO: add Redux dispatch
+    console.log('data is ready to be sent to backend', formData);
+    // dispatch(updateProfile(...)); dispatch(changePassword(...))
   };
 
   if (!isOpen) return null;
@@ -138,9 +133,8 @@ export const EditModal = ({ isOpen, onClose}: EditModalProps) => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Password"
+                placeholder="Old password"
                 className={styles.withIconRight}
-                required
               />
               <button
                 type="button"
@@ -160,9 +154,8 @@ export const EditModal = ({ isOpen, onClose}: EditModalProps) => {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                placeholder="Confirmed Password"
+                placeholder="New password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
-                required
               />
               <button
                 type="button"
@@ -174,23 +167,6 @@ export const EditModal = ({ isOpen, onClose}: EditModalProps) => {
             {errors.confirmPassword && (
               <span className={styles.errorMsg}>{errors.confirmPassword}</span>
             )}
-          </div>
-
-          <div className={styles.inputWrapper}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                name="agreedToTerms"
-                checked={formData.agreedToTerms}
-                onChange={handleChange}
-                className={styles.customCheckbox}
-                required
-              />
-              <span>
-                I agree to the <Link to="/terms&conditions">Terms & Conditions</Link> and{' '}
-                <Link to="/privacy-policy">Privacy Policy</Link>
-              </span>
-            </label>
           </div>
 
           <Button variant="secondary" size="extraLarge" type="submit" className={styles.submitBtn}>

@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import wishlistReducer from '../modules/WishlistPage/wishlistSlice';
+import wishlistReducer from './wishlist/wishlistSlice';
+import authReducer from './auth/authSlice';
 
 export const store = configureStore({
   reducer: {
     wishlist: wishlistReducer,
+    auth: authReducer,
   },
 });
 
