@@ -1,3 +1,7 @@
+### 0. Health Check
+GET http://localhost:8000/api/
+Accept: application/json
+
 ### 1. Register a new user
 POST http://localhost:8000/api/auth/register/
 Content-Type: application/json

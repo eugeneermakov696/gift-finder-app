@@ -262,19 +262,32 @@ class AvatarUploadView(views.APIView):
         }
     )
     def post(self, request, *args, **kwargs):
-        if 'avatar' not in request.FILES:
+        if "avatar" not in request.FILES:
             return Response({"detail": "No file provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        avatar_file = request.FILES['avatar']
+        avatar_file = request.FILES["avatar"]
         user = request.user
 
         # Save the file to the avatar field (this uses django-storages/boto3 automatically)
-        user.avatar.save(avatar_file.name, avatar_file, save=True)
+        user.avatar.save(avatar_file.name, avatar_file, save=False)
 
-        # Build absolute URI for the frontend
-        avatar_url = request.build_absolute_uri(user.avatar.url) if user.avatar else None
+        cdn_url = user.avatar.url if user.avatar else ""
+
+        # Validate that the avatar URL is a valid Cloudflare R2 / remote URL and not a localhost fallback
+        if not cdn_url.startswith("http") or "localhost" in cdn_url:
+            return Response(
+                {
+                    "detail": "Cloud storage (Cloudflare R2) is misconfigured or missing environment variables. "
+                              "Localhost avatar storage is not allowed."
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # Save direct CDN URL to image_url in the database
+        user.image_url = cdn_url
+        user.save()
 
         return Response({
             "detail": "Avatar uploaded successfully.",
-            "avatar_url": avatar_url
+            "avatar_url": cdn_url
         }, status=status.HTTP_200_OK)

@@ -1,6 +1,8 @@
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 import environ
 
 
@@ -134,18 +136,32 @@ AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN", default="")  # Optional, for 
 
 # Optional AWS S3 settings
 AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
+    "CacheControl": "max-age=86400",
 }
-AWS_DEFAULT_ACL = 'public-read'
+AWS_DEFAULT_ACL = "public-read"
 AWS_S3_FILE_OVERWRITE = False
 
-if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    if AWS_S3_CUSTOM_DOMAIN:
-        MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+REQUIRED_R2_VARIABLES = [
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_STORAGE_BUCKET_NAME",
+    "AWS_S3_ENDPOINT_URL",
+    "AWS_S3_CUSTOM_DOMAIN",
+]
+
+missing_r2_vars = [var for var in REQUIRED_R2_VARIABLES if not env(var, default="")]
+
+if missing_r2_vars:
+    if "test" in sys.argv:
+        # Fallback to local storage during unit test runs if R2 keys are not supplied
+        DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+        MEDIA_URL = "/media/"
+        MEDIA_ROOT = os.path.join(BASE_DIR, "media")
     else:
-        MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/"
+        raise ImproperlyConfigured(
+            f"Missing required Cloudflare R2 environment variable(s): {', '.join(missing_r2_vars)}. "
+            f"Please define them in your .env file."
+        )
 else:
-    # Fallback to local storage if S3 is not configured
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
