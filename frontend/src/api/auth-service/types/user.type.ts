@@ -1,6 +1,7 @@
 export type User = {
   id: number;
-  username: string; // Used as email in Django
+  email: string;
+  username: string;
   image_url: string | null;
   avatar: string | null;
   role: 'customer' | 'admin';
