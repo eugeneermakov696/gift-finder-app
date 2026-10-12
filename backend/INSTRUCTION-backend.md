@@ -154,6 +154,7 @@ All endpoints are registered under their respective routing modules:
 
 | Domain | HTTP Method | Route Pathway | Description / Scope | Permissions / Auth |
 | :--- | :--- | :--- | :--- | :--- |
+| **Health** | `GET` | `/api/` (or `/api/health/`) | Operational health check confirming API & database connectivity. | `AllowAny` |
 | **Auth** | `POST` | `/api/auth/register/` | Register new account; dispatches 6-digit email verification code. | `AllowAny` |
 | **Auth** | `POST` | `/api/auth/login/` | Authenticate credentials; sets HTTP-only `access_token` and `refresh_token` cookies. | `AllowAny` |
 | **Auth** | `POST` | `/api/auth/refresh/` | Issues refreshed `access_token` cookie using the valid `refresh_token` cookie. | `AllowAny` |
