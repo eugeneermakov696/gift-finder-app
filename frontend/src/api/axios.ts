@@ -1,7 +1,9 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000/api/";
+
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8000/api/",
+  baseURL,
   xsrfCookieName: "csrftoken",
   xsrfHeaderName: "X-CSRFToken",
   withCredentials: true,
@@ -9,7 +11,7 @@ const axiosInstance = axios.create({
 
 // Dedicated client for token refreshing to avoid interceptor recursion
 const refreshClient = axios.create({
-  baseURL: "http://localhost:8000/api/",
+  baseURL,
   withCredentials: true,
 });
 

@@ -4,6 +4,7 @@ __pycache__/
 db.sqlite3
 *.pyc
 backend/.env
+frontend/.env
 node_modules/
 
 # Documentation
