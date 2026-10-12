@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { useAppDispatch } from './store/hooks.ts';
 import { useEffect } from 'react';
 import { fetchMe } from './store/auth/authSlice.ts';
+import { fetchWishlist } from './store/wishlist/wishlistSlice.ts';
 
 import { Layout } from './shared/components/Layout';
 import { HomePage } from './modules/HomePage';
@@ -18,7 +19,9 @@ export const App = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchMe());
+    dispatch(fetchMe()).then(() => {
+      dispatch(fetchWishlist());
+    });
   }, [dispatch]);
 
   return (

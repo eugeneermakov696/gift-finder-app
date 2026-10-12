@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../../../shared/components/Button';
 import { useState } from 'react';
 import { EditModal } from '../EditModal';
-import { useAvatarUpload } from '../../../../shared/hooks/useProfileDashboard';
 import { ProductCard } from '../../../../shared/components/ProductCard';
 import { useAppDispatch } from '../../../../store/hooks';
 import { useSelector } from 'react-redux';
-import { addGift, removeGift } from '../../../../store/wishlist/wishlistSlice';
 import type { RootState } from '../../../../store/store';
 import type { User } from '../../../../api/auth-service/types/user.type';
+import { AvatarUploadModal } from '../AvatarUploadModal';
+import { addGiftToWishlist, removeGiftFromWishlist } from '../../../../store/wishlist/wishlistSlice';
 import styles from './ProfileDashboard.module.scss';
 
 interface ProfileDashboardProps {
@@ -18,12 +18,10 @@ interface ProfileDashboardProps {
 
 export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { fileInputRef, triggerFileSelect, handleFileChange } = useAvatarUpload(user);
+  const [isAvatarOpen, setIsAvatarOpen] = useState(false);
 
   const dispatch = useAppDispatch();
   const savedItems = useSelector((state: RootState) => state.wishlist.items);
-
-  console.log("Поточний юзер:", user);
 
   return (
     <div className={styles.container}>
@@ -52,7 +50,7 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
               <button
                 className={styles.cameraBadge}
                 aria-label="Upload photo"
-                onClick={triggerFileSelect}
+                onClick={() => setIsAvatarOpen(true)}
               >
                 <span className={styles.cameraIcon} />
               </button>
@@ -60,14 +58,14 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
               <input
                 type="file"
                 accept="image/*"
-                ref={fileInputRef}
-                onChange={handleFileChange}
                 style={{ display: 'none' }}
               />
             </div>
 
             <div className={styles.profileDetails}>
-              <h2>{user.first_name} {user.last_name}</h2>
+              <h2>
+                {user.first_name} {user.last_name}
+              </h2>
               <p className={styles.email}>{user.username}</p>
               <Button
                 variant="primary"
@@ -102,7 +100,9 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
             <div className={styles.infoTable}>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>Full Name</span>
-                <span className={styles.infoValue}>{user.first_name} {user.last_name}</span>
+                <span className={styles.infoValue}>
+                  {user.first_name} {user.last_name}
+                </span>
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>Email Address</span>
@@ -123,10 +123,10 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
 
             const handleToggleFavorite = () => {
               if (isFavorite) {
-                dispatch(removeGift(product));
+                dispatch(removeGiftFromWishlist(product));
               } else {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                dispatch(addGift(product as any));
+                dispatch(addGiftToWishlist(product as any));
               }
             };
 
@@ -151,6 +151,9 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
         </Link>
       </div>
       {isModalOpen && <EditModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
+      {isAvatarOpen && (
+        <AvatarUploadModal isOpen={isAvatarOpen} onClose={() => setIsAvatarOpen(false)} />
+      )}
     </div>
   );
 };

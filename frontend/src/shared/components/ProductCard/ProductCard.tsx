@@ -7,6 +7,7 @@ interface ProductCardProps {
   description?: string;
   price: number;
   imageUrl: string;
+  amazonUrl?: string;
   isFavorite: boolean;
   onToggleFavorite: () => void;
   variant?: 'horizontal' | 'vertical' | 'profile';
@@ -19,12 +20,12 @@ export const ProductCard = ({
   description,
   price,
   imageUrl,
+  amazonUrl,
   isFavorite,
   onToggleFavorite,
   variant = 'horizontal',
-  className = '', 
+  className = '',
 }: ProductCardProps) => {
-  
   const cardClassName = `${styles.card} ${styles[variant]} ${className}`.trim();
 
   return (
@@ -52,9 +53,9 @@ export const ProductCard = ({
 
         {variant !== 'profile' && (
           <div className={styles.actions}>
-            <button className={styles.amazonBtn}>
+            <a href={amazonUrl} target="_blank" rel="noreferrer" className={styles.amazonBtn}>
               available at Amazon <span className={styles.amazonIcon} aria-label="Amazon"></span>
-            </button>
+            </a>
             <Link to={`/product/${id}`} className={styles.detailsBtn}>
               View details
             </Link>

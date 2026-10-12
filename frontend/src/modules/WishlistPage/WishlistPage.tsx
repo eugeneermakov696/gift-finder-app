@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../store/hooks';
 import type { RootState } from '../../store/store';
-import { removeGift } from '../../store/wishlist/wishlistSlice';
+import { removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import { Link } from 'react-router-dom';
 import styles from './WishlistPage.module.scss';
 
@@ -42,7 +42,7 @@ export const WishlistPage = () => {
 
                 <button
                   className={styles.favoriteBtn}
-                  onClick={() => dispatch(removeGift(item.id))}
+                  onClick={() => dispatch(removeGiftFromWishlist(item.id))}
                   aria-label="Remove from favorites"
                 >
                   <span className={styles.filledHeartIcon} />

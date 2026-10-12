@@ -20,6 +20,8 @@
     "rc-slider": "^11.1.9",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-dropzone": "^19.3.0",
+    "react-easy-crop": "^6.2.4",
     "react-redux": "^9.3.0",
     "react-router-dom": "^7.18.3",
     "react-router-hash-link": "^2.4.3"
