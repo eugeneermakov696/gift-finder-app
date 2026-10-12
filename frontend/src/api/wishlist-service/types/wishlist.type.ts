@@ -8,9 +8,4 @@ export type Wishlist = {
   items: Product[];
 };
 
-export type WishlistsResponse = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Wishlist[];
-};
+export type WishlistsResponse = Wishlist[];
