@@ -11,6 +11,7 @@ import { Button } from '../../shared/components/Button';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import styles from './CatalogPage.module.scss';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const mockProduct = {
   id: 101,
   title: 'Fleece Weighted Blanket for Adults, 15 lbs, Cozy Sherpa Reversible',
