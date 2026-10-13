@@ -103,12 +103,19 @@ class PresentViewSet(viewsets.ModelViewSet):
         return Response({"status": "success", "new_price": float(gift.price)})
 
 
+class IsWishlistOwner(permissions.BasePermission):
+    """Object-level check: only the wishlist owner may access detail/update/custom actions."""
+
+    def has_object_permission(self, request, view, obj):
+        return obj.user == request.user
+
+
 class WishlistViewSet(viewsets.ModelViewSet):
     serializer_class = WishlistSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsWishlistOwner]
 
     def get_queryset(self):
-        """Filters by owner on list views while allowing detail views to locate objects for authorization checks."""
+        """List is owner-scoped; detail/actions use full queryset so object permissions can return 403."""
         if getattr(self, "swagger_fake_view", False):
             return Wishlist.objects.none()
         if self.action == "list":
@@ -121,12 +128,6 @@ class WishlistViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], url_path="manage-item")
     def manage_item(self, request, pk=None):
         wishlist = self.get_object()
-
-        if wishlist.user != request.user:
-            return Response(
-                {"status": "error", "message": "Permission denied. You do not own this wishlist."},
-                status=status.HTTP_403_FORBIDDEN
-            )
 
         present_id = request.data.get("present_id")
         action_type = request.data.get("action")

@@ -107,6 +107,22 @@ class GiftFinderAPITestCase(APITestCase):
         response = self.client.post(url, data=payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_retrieve_wishlist_wrong_user_returns_403(self):
+        rogue_user = User.objects.create_user(username="rogue_reader", password="password123")
+        self.client.force_authenticate(user=rogue_user)
+
+        url = reverse("wishlist-detail", kwargs={"pk": self.wishlist.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_export_csv_wrong_user_returns_403(self):
+        rogue_user = User.objects.create_user(username="rogue_exporter", password="password123")
+        self.client.force_authenticate(user=rogue_user)
+
+        url = reverse("wishlist-export-csv", kwargs={"pk": self.wishlist.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_wishlist_max_capacity_limit(self):
         for i in range(50):
             mock_gift = Present.objects.create(
