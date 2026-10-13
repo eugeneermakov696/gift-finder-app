@@ -162,6 +162,7 @@ All endpoints are registered under their respective routing modules:
 | **Auth** | `POST` | `/api/auth/refresh/` | Issues refreshed `access_token` cookie using the valid `refresh_token` cookie. | `AllowAny` |
 | **Auth** | `POST` | `/api/auth/logout/` | Logs out user and clears JWT authentication cookies. | `AllowAny` |
 | **Auth** | `GET` | `/api/auth/me/` | Retrieves authenticated user profile information. | `IsAuthenticated` |
+| **Auth** | `PATCH` / `PUT` | `/api/auth/me/` | Updates personal profile information for the authenticated user (e.g., name, address, email). | `IsAuthenticated` |
 | **Auth** | `POST` | `/api/auth/avatar/` | Upload avatar image (`multipart/form-data`, field `avatar`); stores via cloud storage and returns CDN URL. | `IsAuthenticated` |
 | **Auth** | `POST` | `/api/auth/verify-email/` | Validates 6-digit numeric verification code to mark email confirmed. | `IsAuthenticated` |
 | **Auth** | `POST` | `/api/auth/resend-email-code/` | Re-generates and dispatches a new email verification code. | `IsAuthenticated` |
@@ -169,9 +170,9 @@ All endpoints are registered under their respective routing modules:
 | **Auth** | `POST` | `/api/auth/password-reset-confirm/` | Validates reset code and sets a new account password. | `AllowAny` |
 | **Gifts** | `GET` | `/api/gifts/` | List products with pagination (`?items_per_page=`, default 10, max 100). Supports `?category=`, `?max_price=`, `?search=`, `?gender_target=`, `?occasion=`, `?interests=`, `?recipient=`, and `?sort_by=price_low\|price_high\|rating`. | `AllowAny` |
 | **Gifts** | `POST` | `/api/gifts/` | Create a new gift catalog item. | `Admin` Role Only |
-| **Gifts** | `GET` | `/api/gifts/<id>/` | Retrieve specific gift details. | `AllowAny` |
-| **Gifts** | `PUT` / `PATCH` | `/api/gifts/<id>/` | Update gift information. | `Admin` Role Only |
-| **Gifts** | `DELETE` | `/api/gifts/<id>/` | Remove a gift from catalog. | `Admin` Role Only |
+| **Gifts** | `GET` | `/api/gifts/<id>/` (or `<asin>`) | Retrieve specific gift details by database ID or Amazon ASIN. | `AllowAny` |
+| **Gifts** | `PUT` / `PATCH` | `/api/gifts/<id>/` (or `<asin>`) | Update gift information. | `Admin` Role Only |
+| **Gifts** | `DELETE` | `/api/gifts/<id>/` (or `<asin>`) | Remove a gift from catalog. | `Admin` Role Only |
 | **Gifts** | `POST` | `/api/gifts/scrape/` | Scrapes ASIN from Amazon URL and creates/updates gift. | `Admin` Role Only |
 | **Gifts** | `POST` | `/api/gifts/<id>/price-check/` | Simulates scanning an item and logs a 10% price drop. | `Admin` Role Only |
 | **Wishlist** | `GET` | `/api/wishlists/` | List all wishlists owned by the authenticated user. | `IsAuthenticated` |

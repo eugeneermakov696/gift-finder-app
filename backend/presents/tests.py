@@ -35,6 +35,25 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertIn("results", response.data)
         self.assertTrue(len(response.data["results"]) > 0)
 
+    def test_get_gift_by_id(self):
+        url = reverse("gift-detail", kwargs={"pk": self.present.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], self.present.id)
+        self.assertEqual(response.data["asin"], self.present.asin)
+
+    def test_get_gift_by_asin(self):
+        url = reverse("gift-detail", kwargs={"pk": self.present.asin})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], self.present.id)
+        self.assertEqual(response.data["asin"], self.present.asin)
+
+    def test_get_gift_not_found(self):
+        url = reverse("gift-detail", kwargs={"pk": "NONEXISTENT_ASIN"})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_get_gifts_list_unauthenticated_returns_200(self):
         self.client.force_authenticate(user=None)
         response = self.client.get(reverse("gift-list"))

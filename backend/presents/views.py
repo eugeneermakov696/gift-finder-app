@@ -6,6 +6,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import get_object_or_404
 
 from presents.models import Present, Wishlist
 from presents.serializers import PresentSerializer, WishlistSerializer
@@ -73,6 +74,24 @@ class PresentViewSet(viewsets.ModelViewSet):
             queryset = queryset.order_by("-created_at")
 
         return queryset
+
+    def get_object(self):
+        """
+        Retrieves a present by either its numeric primary key (id) or its Amazon ASIN.
+        """
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        lookup_value = self.kwargs.get(lookup_url_kwarg)
+        queryset = self.filter_queryset(self.get_queryset())
+
+        obj = None
+        if str(lookup_value).isdigit():
+            obj = queryset.filter(pk=lookup_value).first()
+
+        if obj is None:
+            obj = get_object_or_404(queryset, asin__iexact=lookup_value)
+
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     @action(detail=False, methods=["post"], url_path="scrape", permission_classes=[IsCustomAdminUser])
     def scrape(self, request):

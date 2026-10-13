@@ -6,14 +6,15 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
         fields = [
             "id", "email", "username", "password", "image_url", "avatar", "role",
-            "email_is_confirmed", "first_name", "last_name"
+            "email_is_confirmed", "first_name", "last_name", "address"
         ]
+        read_only_fields = ["id", "role", "email_is_confirmed"]
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
