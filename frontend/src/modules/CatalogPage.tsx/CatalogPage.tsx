@@ -1,15 +1,14 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { ProductCard } from '../../shared/components/ProductCard';
-import { useAppDispatch } from '../../store/hooks';
-import { useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import type { RootState } from '../../store/store';
 import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import { useEffect, useState } from 'react';
-import { giftService } from '../../api/gift-service/gift.service';
-import type { Product } from '../../api/gift-service/types/product.type';
+import { type GetGiftsParams } from '../../api/gift-service/gift.service';
 import { Button } from '../../shared/components/Button';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import styles from './CatalogPage.module.scss';
+import { fetchFilteredGifts, setAllFilters } from '../../store/filters/filtersSlice';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const mockProduct = {
@@ -32,42 +31,37 @@ export const mockProduct = {
 export const CatalogPage = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
+  const [searchParams] = useSearchParams();
 
   const isFromGenerate = location.state?.fromGenerate === true;
 
-  const [isLoading, setIsLoading] = useState(isFromGenerate);
-  const [gifts, setGifts] = useState<Product[]>([]);
-  const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
+  const { results: gifts, isLoading: isReduxLoading } = useAppSelector(
+    (state: RootState) => state.filters,
+  );
+  const wishlistItems = useAppSelector((state: RootState) => state.wishlist.items);
+
+  const [showLoadingScreen, setShowLoadingScreen] = useState(isFromGenerate);
 
   useEffect(() => {
-    if (gifts.length > 0) {
-      console.log('Gists successfully loaded:', gifts);
-    }
-  }, [gifts]);
+    const currentParams = Object.fromEntries(searchParams.entries());
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await giftService.getGifts();
-        setGifts(data.results);
-      } catch (error) {
-        console.error('Failed to load presents', error);
-      } finally {
-        if (!isFromGenerate) {
-          setIsLoading(false);
-        }
-      }
+    const parsedParams: GetGiftsParams = {
+      ...currentParams,
+      page: currentParams.page ? Number(currentParams.page) : 1,
+      max_price: currentParams.max_price ? Number(currentParams.max_price) : undefined,
     };
 
-    fetchData();
-  }, [isFromGenerate]);
+    dispatch(setAllFilters(parsedParams));
+    dispatch(fetchFilteredGifts(parsedParams));
+  }, [searchParams, dispatch]);
 
-  if (isLoading) {
+  if (showLoadingScreen) {
     return (
       <LoadingScreen
-        onCancel={() => setIsLoading(false)}
+        isLoading={isReduxLoading}
+        onCancel={() => setShowLoadingScreen(false)}
         onComplete={() => {
-          setIsLoading(false);
+          setShowLoadingScreen(false);
           window.history.replaceState({}, document.title);
         }}
       />
@@ -79,16 +73,19 @@ export const CatalogPage = () => {
       <header className={styles.pageHeader}>
         <div className={styles.headerText}>
           <h1 className={styles.pageTitle}>We Found Some Great Gift Ideas for You</h1>
+
           <p className={styles.pageSubtitle}>
             Here are personalized recommendations based on your answers.
           </p>
         </div>
+
         <div className={styles.headerActions}>
           <Link to="/find-a-gift">
             <Button variant="primary" size="large">
               Pick again
             </Button>
           </Link>
+
           <Link to="/" className={styles.backLink}>
             Back to home <span className={styles.arrowIcon} aria-label="Right arrow" />
           </Link>

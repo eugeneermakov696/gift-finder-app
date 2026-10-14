@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import styles from './FiltersPage.module.scss';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/components/Button';
 
 const AGE_OPTIONS = [
@@ -88,6 +88,32 @@ export const FiltersPage = () => {
     } else {
       setList([...currentList, value]);
     }
+  };
+
+  const navigate = useNavigate();
+
+  const handleGenerate = () => {
+    const params = new URLSearchParams();
+
+    if (gender) params.append('gender_target', gender);
+
+    if (relationship) params.append('recipient', relationship);
+
+    if (age) params.append('age_group', age);
+
+    if (budget) params.append('max_price', budget.toString());
+
+    if (interests.length > 0) {
+      params.append('interests', interests.join(','));
+    }
+
+    if (giftTypes.length > 0) {
+      params.append('category', giftTypes.join(','));
+    }
+
+    navigate(`/catalog?${params.toString()}`, {
+      state: { fromGenerate: true },
+    });
   };
 
   return (
@@ -234,11 +260,9 @@ export const FiltersPage = () => {
       </section>
 
       <div className={styles.actionFooter}>
-        <Link to="/catalog" state={{ fromGenerate: true }}>
-          <Button variant="primary" size="large">
-            Generate
-          </Button>
-        </Link>
+        <Button variant="primary" size="large" onClick={handleGenerate}>
+          Generate
+        </Button>
       </div>
     </div>
   );
