@@ -10,43 +10,54 @@ const STATUS_MESSAGES = [
 ];
 
 interface LoadingScreenProps {
+  isLoading?: boolean;
   onCancel: () => void;
   onComplete: () => void;
 }
 
-export const LoadingScreen = ({ onCancel, onComplete }: LoadingScreenProps) => {
+export const LoadingScreen = ({ isLoading = false, onCancel, onComplete }: LoadingScreenProps) => {
   const [progress, setProgress] = useState(0);
   const [activeTextIndex, setActiveTextIndex] = useState(0);
 
   useEffect(() => {
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 50);
-
     const textInterval = setInterval(() => {
       setActiveTextIndex((prev) => {
         if (prev < STATUS_MESSAGES.length - 1) return prev + 1;
         return prev;
       });
-    }, 1500);
+    }, 1000);
 
-    return () => {
-      clearInterval(progressInterval);
-      clearInterval(textInterval);
-    };
+    return () => clearInterval(textInterval);
   }, []);
 
   useEffect(() => {
-    if (progress >= 100) {
-      onComplete();
+    const progressInterval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 90 && isLoading) {
+          return 90;
+        }
+        
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        
+        return prev + 2; 
+      });
+    }, 50);
+
+    return () => clearInterval(progressInterval);
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (progress >= 100 && !isLoading) {
+      const timeout = setTimeout(() => {
+        onComplete();
+      }, 300);
+      
+      return () => clearTimeout(timeout);
     }
-  }, [progress, onComplete]);
+  }, [progress, isLoading, onComplete]);
 
   return (
     <div className={styles.overlay}>

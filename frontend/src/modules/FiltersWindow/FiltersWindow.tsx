@@ -1,75 +1,15 @@
-import { useEffect } from 'react';
 import styles from './FiltersWindow.module.scss';
 import { Button } from '../../shared/components/Button';
-
-const GIFT_CATEGORIES = [
-  {
-    title: 'Gifts for Mom',
-    ideas: ['Birthday', 'Mother\'s Day', 'Christmas', 'Retirement Gifts', 'Just Because', 'Housewarming Gifts']
-  },
-  {
-    title: 'Gifts for Dad',
-    ideas: ['Birthday', 'Father\'s Day Gifts', 'Christmas', 'Retirement Gifts', 'Just Because', 'Housewarming Gifts']
-  },
-  {
-    title: 'Gifts for Boyfriend or Husband',
-    ideas: ['Birthday', 'Anniversary', 'Christmas', 'Housewarming Gifts', 'Wedding Gifts', 'Engagement Gifts']
-  },
-  {
-    title: 'Gifts for Girlfriend or Wife',
-    ideas: ['Birthday', 'Anniversary', 'Christmas', 'Housewarming Gifts', 'Wedding Gifts', 'Engagement Gifts', 'Graduation Gifts', 'Mother\'s Day', 'Just Because']
-  },
-  {
-    title: 'Gifts for Grandparents',
-    ideas: ['Birthday', 'Anniversary', 'Christmas', 'Housewarming Gifts', 'Father\'s Day', 'Mother\'s Day', 'Retirement Gifts', 'Just Because']
-  },
-  {
-    title: 'Gifts for In-Laws',
-    ideas: ['Birthday', 'Anniversary', 'Christmas', 'Housewarming Gifts', 'Father\'s Day', 'Mother\'s Day', 'Retirement Gifts', 'Just Because']
-  },
-  {
-    title: 'Gifts for Friends',
-    ideas: ['Birthday Gifts for Him', 'Birthday Gifts for Her', 'Christmas', 'Housewarming Gifts', 'Wedding Gifts', 'Engagement Gifts', 'Graduation Gifts', 'Just Because']
-  },
-  {
-    title: 'Gifts for Coworker, Boss and Acquaintance',
-    ideas: ['Browse by Occasion']
-  }
-];
-
+import { useScrollLock } from '../../shared/hooks/useScrollLock';
+import { GIFT_CATEGORIES } from '../../shared/constants/options';
 interface PopularGiftsModalProps {
   onClose: () => void;
 }
 
 export const FiltersWindow = ({ onClose }: PopularGiftsModalProps) => {
-  useEffect(() => {
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    
-    document.body.style.overflow = 'hidden';
-    document.body.style.paddingRight = `${scrollbarWidth}px`;
-    
-    return () => {
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
-    };
-  }, []);
+  useScrollLock(true); 
 
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, []);
-
-   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
     }

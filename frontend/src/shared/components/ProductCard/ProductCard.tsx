@@ -10,7 +10,7 @@ interface ProductCardProps {
   amazonUrl?: string;
   isFavorite: boolean;
   onToggleFavorite: () => void;
-  variant?: 'horizontal' | 'vertical' | 'profile';
+  variant?: 'horizontal' | 'profile';
   className?: string;
 }
 
