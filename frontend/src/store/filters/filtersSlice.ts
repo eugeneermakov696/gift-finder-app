@@ -36,7 +36,7 @@ export const filtersSlice = createSlice({
   name: 'filters',
   initialState,
   reducers: {
-    // Action for updaing one exect filter
+    // Action for updating one specific filter
     setFilter(
       state,
       action: PayloadAction<{ key: keyof GetGiftsParams; value: string | number | undefined }>,

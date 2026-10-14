@@ -1,10 +1,5 @@
-import { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
 import Cropper from 'react-easy-crop';
-import { useAppDispatch } from '../../../../store/hooks';
-import getCroppedImg from '../../../../shared/utils/cropUtils';
-import { uploadUserAvatar } from '../../../../store/auth/authSlice';
-import type { Area } from 'react-easy-crop';
+import { useAvatarUpload } from '../../../../shared/hooks/useAvatarUpload';
 import styles from './AvatarUploadModal.module.scss';
 
 interface AvatarUploadModalProps {
@@ -13,60 +8,16 @@ interface AvatarUploadModalProps {
 }
 
 export const AvatarUploadModal = ({ isOpen, onClose }: AvatarUploadModalProps) => {
-  const dispatch = useAppDispatch();
-
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-
-  // --- DROPZONE LOGIC ---
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles && acceptedFiles.length > 0) {
-      const file = acceptedFiles[0];
-      const imageUrl = URL.createObjectURL(file);
-      setImageSrc(imageUrl);
-    }
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: { 'image/*': [] },
-    maxFiles: 1,
-  });
-
-  // --- CROPPER LOGIC ---
-  const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
-  setCroppedAreaPixels(croppedAreaPixels);
-}, []);
-
-  // --- SAVE ---
-  const handleSave = async () => {
-    if (!imageSrc || !croppedAreaPixels) return;
-
-    try {
-      setIsUploading(true);
-      // Get cropped file
-      const croppedFile = await getCroppedImg(imageSrc, croppedAreaPixels);
-
-      if (croppedFile) {
-        // sending to backend
-        await dispatch(uploadUserAvatar(croppedFile)).unwrap();
-        handleClose(); // close if success
-      }
-    } catch (error) {
-      console.error('Помилка обрізки/завантаження:', error);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleClose = () => {
-    setImageSrc(null);
-    setZoom(1);
-    onClose();
-  };
+  const {
+    imageSrc,
+    crop, setCrop,
+    zoom, setZoom,
+    isUploading,
+    dropzone: { getRootProps, getInputProps, isDragActive },
+    onCropComplete,
+    handleSave,
+    handleClose,
+  } = useAvatarUpload(onClose);
 
   if (!isOpen) return null;
 

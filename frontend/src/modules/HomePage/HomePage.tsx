@@ -4,8 +4,17 @@ import { PixelDrift } from './components/PixelDrift';
 import { ContactsWindow } from '../ContactsWindow';
 import { FiltersWindow } from '../FiltersWindow';
 import { Button } from '../../shared/components/Button';
-import styles from './HomePage.module.scss';
 import { GlowCard } from '../../shared/components/GlowCard';
+import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
+import { ProductCard } from '../../shared/components/ProductCard';
+import { useHomePage } from '../../shared/hooks/useHomePage';
+import {
+  DESKTOP_ORDER,
+  FEATURES_DATA,
+  MOBILE_ORDER,
+  type FeatureCardProps,
+} from '../../shared/constants/homePage';
+import styles from './HomePage.module.scss';
 
 const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,68 +35,33 @@ const FaqItem = ({ question, answer }: { question: string; answer: string }) => 
   );
 };
 
-export const HomePage = () => {
-  const [isContactOpen, setIsContactOpen] = useState(false);
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-
-  const renderGridCard = (imgName: string, title: string, desc: string, w: string, h: string) => (
-    <div className={styles.gridCard} key={title}>
-      <img
-        src={`${import.meta.env.BASE_URL}images/${imgName}`}
-        alt={title}
-        width={w}
-        height={h}
-        className={styles.cardImage}
-      />
-      <div className={styles.cardOverlay}>
-        <h3 className={styles.cardTitle}>{title}</h3>
-        <p className={styles.cardDescr}>{desc}</p>
-      </div>
+const FeatureCard = ({ imgName, title, desc, w, h }: FeatureCardProps) => (
+  <div className={styles.gridCard}>
+    <img
+      src={`${import.meta.env.BASE_URL}images/${imgName}`}
+      alt={title}
+      width={w}
+      height={h}
+      className={styles.cardImage}
+    />
+    <div className={styles.cardOverlay}>
+      <h3 className={styles.cardTitle}>{title}</h3>
+      <p className={styles.cardDescr}>{desc}</p>
     </div>
-  );
+  </div>
+);
 
-  const cardLife = renderGridCard(
-    'lifestyle.png',
-    'Personality & Lifestyle Matching',
-    'Target their actual vibe — from Cozy Homebodies and Tech Geeks to Foodies and Outdoor Explorers.',
-    '410',
-    '406',
-  );
-  const cardContext = renderGridCard(
-    'context.png',
-    'Relationship Context',
-    "Calibrate risk and tone for any dynamic — whether it's for a romantic partner, parent, distant cousin, or coworker.",
-    '411',
-    '271',
-  );
-  const cardBudget = renderGridCard(
-    'budget.png',
-    'Strict Budget Limits',
-    'Set precise spending brackets from under $15 to $200+. We never push products outside what you plan to spend.',
-    '411',
-    '271',
-  );
-  const cardOccasion = renderGridCard(
-    'occasion.png',
-    'Cover Every Occasion',
-    'Curated collections ready for Birthdays, Housewarmings, Anniversaries, Holidays, or just because.',
-    '411',
-    '404',
-  );
-  const cardQuality = renderGridCard(
-    'quality.png',
-    'Verified 4★+ Amazon Quality',
-    'We filter out sponsored junk and low-tier knockoffs. Every item comes backed by proven reviews and high ratings.',
-    '411',
-    '402',
-  );
-  const cardCheckout = renderGridCard(
-    'checkout.png',
-    'Frictionless Prime Checkout',
-    'Save your favorite ideas with one tap or buy directly on Amazon with standard Prime perks, fast delivery, and simple returns.',
-    '411',
-    '271',
-  );
+export const HomePage = () => {
+  const {
+    isContactOpen,
+    setIsContactOpen,
+    isFiltersOpen,
+    setIsFiltersOpen,
+    popularGifts,
+    isLoadingGifts,
+    wishlistItems,
+    dispatch,
+  } = useHomePage();
 
   return (
     <div className={styles.container}>
@@ -241,21 +215,15 @@ export const HomePage = () => {
         </p>
 
         <div className={`${styles.masonryGrid} ${styles.desktopOnly}`}>
-          {cardLife}
-          {cardContext}
-          {cardBudget}
-          {cardOccasion}
-          {cardQuality}
-          {cardCheckout}
+          {DESKTOP_ORDER.map((key) => (
+            <FeatureCard key={`desktop-${key}`} {...FEATURES_DATA[key]} />
+          ))}
         </div>
 
         <div className={`${styles.masonryGrid} ${styles.mobileOnly}`}>
-          {cardLife}
-          {cardContext}
-          {cardOccasion}
-          {cardBudget}
-          {cardQuality}
-          {cardCheckout}
+          {MOBILE_ORDER.map((key) => (
+            <FeatureCard key={`mobile-${key}`} {...FEATURES_DATA[key]} />
+          ))}
         </div>
 
         <h3 className={styles.subtitle}>Find the Perfect Present in Minutes</h3>
@@ -301,10 +269,35 @@ export const HomePage = () => {
         </p>
 
         <div className={styles.favGrid}>
-          <h3>
-            Here will be product cards, but first I need real data TO AVOID WASTING time for
-            creating FAKE cards.
-          </h3>
+          {isLoadingGifts ? (
+            <p>Loading popular ideas...</p>
+          ) : (
+            popularGifts.map((product) => {
+              const isFavorite = wishlistItems.some((item) => item.id === product.id);
+
+              const handleToggleFavorite = () => {
+                if (isFavorite) {
+                  dispatch(removeGiftFromWishlist(product.id));
+                } else {
+                  dispatch(addGiftToWishlist(product));
+                }
+              };
+
+              return (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  title={product.title}
+                  price={product.price}
+                  imageUrl={product.image_url ?? ''}
+                  description={product.description ?? undefined}
+                  amazonUrl={product.amazon_url}
+                  isFavorite={isFavorite}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              );
+            })
+          )}
         </div>
       </section>
       {isContactOpen && <ContactsWindow onClose={() => setIsContactOpen(false)} />}

@@ -1,59 +1,24 @@
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import { ProductCard } from '../../shared/components/ProductCard';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import type { RootState } from '../../store/store';
 import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
-import { useEffect, useState } from 'react';
-import { type GetGiftsParams } from '../../api/gift-service/gift.service';
 import { Button } from '../../shared/components/Button';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
+import { Pagination } from './components/Pagination';
+import { useCatalogData } from '../../shared/hooks/useCatalogPage';
 import styles from './CatalogPage.module.scss';
-import { fetchFilteredGifts, setAllFilters } from '../../store/filters/filtersSlice';
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const mockProduct = {
-  id: 101,
-  title: 'Fleece Weighted Blanket for Adults, 15 lbs, Cozy Sherpa Reversible',
-  amazon_url: 'https://www.amazon.com/dp/B08F2QXNG6',
-  image_url: 'https://m.media-amazon.com/images/I/81xU9E+9bXL._AC_SL1500_.jpg',
-  price: 69.99,
-  original_price: 89.99,
-  category: 'Home & Kitchen',
-  description: 'Experience the ultimate comfort with our premium fleece weighted blanket.',
-  age_group: 'Adult',
-  gender_target: 'Unisex',
-  occasion: "Christmas, Birthday, Mother's Day",
-  interests: 'Wellness, Sleep, Home Decor',
-  recipient: 'Partner, Parent, Friend',
-  is_available: true,
-};
 
 export const CatalogPage = () => {
-  const location = useLocation();
-  const dispatch = useAppDispatch();
-  const [searchParams] = useSearchParams();
-
-  const isFromGenerate = location.state?.fromGenerate === true;
-
-  const { results: gifts, isLoading: isReduxLoading } = useAppSelector(
-    (state: RootState) => state.filters,
-  );
-  const wishlistItems = useAppSelector((state: RootState) => state.wishlist.items);
-
-  const [showLoadingScreen, setShowLoadingScreen] = useState(isFromGenerate);
-
-  useEffect(() => {
-    const currentParams = Object.fromEntries(searchParams.entries());
-
-    const parsedParams: GetGiftsParams = {
-      ...currentParams,
-      page: currentParams.page ? Number(currentParams.page) : 1,
-      max_price: currentParams.max_price ? Number(currentParams.max_price) : undefined,
-    };
-
-    dispatch(setAllFilters(parsedParams));
-    dispatch(fetchFilteredGifts(parsedParams));
-  }, [searchParams, dispatch]);
+  const {
+    gifts,
+    isReduxLoading,
+    showLoadingScreen,
+    setShowLoadingScreen,
+    wishlistItems,
+    currentPage,
+    totalPages,
+    handlePageChange,
+    dispatch,
+  } = useCatalogData();
 
   if (showLoadingScreen) {
     return (
@@ -119,6 +84,12 @@ export const CatalogPage = () => {
           );
         })}
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

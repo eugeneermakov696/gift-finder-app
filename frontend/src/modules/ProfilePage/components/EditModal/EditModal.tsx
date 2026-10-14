@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '../../../../shared/components/Button';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../../store/store';
+import { useEditProfileForm } from '../../../../shared/hooks/useEditProfileForm';
 import styles from './EditModal.module.scss';
 
 interface EditModalProps {
@@ -9,73 +8,22 @@ interface EditModalProps {
   onClose: () => void;
 }
 
-export const EditModal = ({ isOpen, onClose}: EditModalProps) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const { user } = useSelector((state: RootState) => state.auth);
-
-  const [formData, setFormData] = useState({
-    fullName: user ? `${user.first_name} ${user.last_name}` : '',
-    email: user?.username || '',
-    password: '',
-    confirmPassword: '',
-  });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
-    }
-  };
+export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
+  const {
+    formData,
+    errors,
+    showPassword,
+    setShowPassword,
+    showConfirmPassword,
+    setShowConfirmPassword,
+    handleChange,
+    handleSubmit,
+  } = useEditProfileForm(onClose);
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newErrors: Record<string, string> = {};
-
-    if (formData.fullName.trim().length < 3) {
-      newErrors.fullName = 'Name must be at least 3 characters.';
-    }
-
-    if (formData.password) {
-      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-      if (!passwordRegex.test(formData.password)) {
-        newErrors.password = 'Password must be at least 8 characters, include a letter and a number.';
-      }
-
-      if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match.';
-      }
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    setFormData({
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    });
-    onClose();
-
-    console.log('data is ready to be sent to backend', formData);
-    // dispatch(updateProfile(...)); dispatch(changePassword(...))
   };
 
   if (!isOpen) return null;
