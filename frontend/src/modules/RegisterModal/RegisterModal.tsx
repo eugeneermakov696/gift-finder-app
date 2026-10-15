@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '../../shared/components/Button';
-import { useAppDispatch } from '../../store/hooks';
-import { fetchMe, loginUser, registerUser } from '../../store/auth/authSlice';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
 import styles from './RegisterModal.module.scss';
+import { useRegisterForm } from '../../shared/hooks/useRegistrationForm';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -14,36 +11,18 @@ interface RegisterModalProps {
 }
 
 export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const { isLoading, error } = useSelector((state: RootState) => state.auth);
-
-  const dispatch = useAppDispatch();
-
-  const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    agreedToTerms: false,
-  });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
-    }
-  };
+  const {
+    formData,
+    errors,
+    showPassword,
+    setShowPassword,
+    showConfirmPassword,
+    setShowConfirmPassword,
+    isLoading,
+    authError,
+    handleChange,
+    handleSubmit,
+  } = useRegisterForm({ onClose });
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
@@ -54,61 +33,6 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
   const handleLoginClick = () => {
     onClose();
     onSwitchToLogin();
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const newErrors: Record<string, string> = {};
-
-    if (formData.fullName.trim().length < 3) {
-      newErrors.fullName = 'Name must be at least 3 characters.';
-    }
-
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password = 'Password must be at least 8 characters, include a letter and a number.';
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match.';
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    try {
-      await dispatch(
-        registerUser({
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          fullname: formData.fullName,
-        }),
-      ).unwrap();
-
-      await dispatch(
-        loginUser({
-          email: formData.email,
-          password: formData.password,
-        }),
-      ).unwrap();
-
-      await dispatch(fetchMe()).unwrap();
-
-      setFormData({
-        fullName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        agreedToTerms: false,
-      });
-      onClose();
-      navigate('/profile')
-    } catch (error) {
-      console.error('Registration failed:', error);
-    }
   };
 
   if (!isOpen) return null;
@@ -222,7 +146,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
             </label>
           </div>
 
-          {error && <p className={styles.errorMessage}>{error}</p>}
+          {authError && <p className={styles.errorMessage}>{authError}</p>}
 
           <Button
             variant="secondary"

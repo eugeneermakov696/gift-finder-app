@@ -1,94 +1,34 @@
-import { useState } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import styles from './FiltersPage.module.scss';
 import { Link } from 'react-router-dom';
 import { Button } from '../../shared/components/Button';
-
-const AGE_OPTIONS = [
-  '0-2 years',
-  '3-5 years',
-  '6-12 years',
-  '13-17 years',
-  '18-24 years',
-  '25-34 years',
-  '35-44 years',
-  '45-54 years',
-  '55-64 years',
-  '65+ years',
-];
-const GENDER_OPTIONS = ['Male', 'Female'];
-const RELATIONSHIP_OPTIONS = [
-  'Parent',
-  'Friend',
-  'Child',
-  'Grandparent',
-  'Boss',
-  'Relative',
-  'Partner',
-  'Sibling',
-  'Grandchild',
-  'Colleague',
-  'Neighbor',
-  'Other',
-];
-const INTEREST_OPTIONS = [
-  'Sports',
-  'Gaming',
-  'Art',
-  'Beauty',
-  'Travel',
-  'Movies',
-  'Fitness',
-  'Music',
-  'Fashion',
-  'Cooking',
-  'Books',
-  'Photography',
-  'Pets',
-  'Jewelry',
-  'Wine',
-  'Coffee',
-  'Wellness',
-  'Outdoor',
-  'Tech',
-  'Crafts',
-  'Experiences',
-  'Home & Decor',
-  'Other',
-];
-const GIFT_TYPE_OPTIONS = [
-  'Practical / Useful',
-  'Romantic',
-  'Entertaining / Fun',
-  'Luxurious',
-  'Creative',
-  'Educational',
-  'Adventurous',
-  'Other',
-];
+import { useFiltersForm } from '../../shared/hooks/useFiltersPage';
+import styles from './FiltersPage.module.scss';
+import {
+  AGE_OPTIONS,
+  GENDER_OPTIONS,
+  GIFT_TYPE_OPTIONS,
+  INTEREST_OPTIONS,
+  RELATIONSHIP_OPTIONS,
+} from '../../shared/constants/options';
 
 export const FiltersPage = () => {
-  const [age, setAge] = useState('');
-  const [gender, setGender] = useState('');
-  const [relationship, setRelationship] = useState('');
-
-  const [interests, setInterests] = useState<string[]>([]);
-  const [giftTypes, setGiftTypes] = useState<string[]>([]);
-
-  const [budget, setBudget] = useState(450);
-
-  const toggleSelection = (
-    value: string,
-    currentList: string[],
-    setList: (val: string[]) => void,
-  ) => {
-    if (currentList.includes(value)) {
-      setList(currentList.filter((item) => item !== value));
-    } else {
-      setList([...currentList, value]);
-    }
-  };
+  const {
+    age,
+    setAge,
+    gender,
+    setGender,
+    relationship,
+    setRelationship,
+    interests,
+    setInterests,
+    giftTypes,
+    setGiftTypes,
+    budget,
+    setBudget,
+    toggleSelection,
+    handleGenerate,
+  } = useFiltersForm();
 
   return (
     <div className={styles.container}>
@@ -234,11 +174,9 @@ export const FiltersPage = () => {
       </section>
 
       <div className={styles.actionFooter}>
-        <Link to="/catalog" state={{ fromGenerate: true }}>
-          <Button variant="primary" size="large">
-            Generate
-          </Button>
-        </Link>
+        <Button variant="primary" size="large" onClick={handleGenerate}>
+          Generate
+        </Button>
       </div>
     </div>
   );
