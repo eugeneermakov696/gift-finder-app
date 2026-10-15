@@ -5,6 +5,8 @@ import { removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import { Link } from 'react-router-dom';
 import styles from './WishlistPage.module.scss';
 
+const FALLBACK_IMAGE = 'https://placehold.co/400x300/e2e8f0/1e293b?text=No+Image';
+
 export const WishlistPage = () => {
   const dispatch = useAppDispatch();
   const savedItems = useSelector((state: RootState) => state.wishlist.items);
@@ -38,7 +40,17 @@ export const WishlistPage = () => {
           savedItems.map((item) => (
             <div key={item.id} className={styles.card}>
               <div className={styles.imageWrapper}>
-                <img src={item.image_url ?? ''} alt={item.title} className={styles.image} />
+                <img
+                  src={item.image_url && item.image_url.trim() !== '' ? item.image_url : FALLBACK_IMAGE}
+                  alt={item.title}
+                  className={styles.image}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== FALLBACK_IMAGE) {
+                      target.src = FALLBACK_IMAGE;
+                    }
+                  }}
+                />
 
                 <button
                   className={styles.favoriteBtn}
