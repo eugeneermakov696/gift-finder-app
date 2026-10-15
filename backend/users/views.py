@@ -25,6 +25,28 @@ from users.services import (
 User = get_user_model()
 
 
+def set_auth_cookie(response, key, value, request, max_age):
+    is_secure = request.is_secure() or request.headers.get("x-forwarded-proto") == "https"
+    samesite = "None" if is_secure else "Lax"
+    response.set_cookie(
+        key,
+        value,
+        httponly=True,
+        secure=is_secure,
+        samesite=samesite,
+        max_age=max_age,
+    )
+
+
+def delete_auth_cookie(response, key, request):
+    is_secure = request.is_secure() or request.headers.get("x-forwarded-proto") == "https"
+    samesite = "None" if is_secure else "Lax"
+    response.delete_cookie(
+        key,
+        samesite=samesite,
+    )
+
+
 class CookieTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
@@ -51,8 +73,8 @@ class CookieTokenObtainPairView(TokenObtainPairView):
         access_token = response.data.get("access")
         refresh_token = response.data.get("refresh")
 
-        response.set_cookie("access_token", access_token, httponly=True, secure=False, max_age=60 * 15)
-        response.set_cookie("refresh_token", refresh_token, httponly=True, secure=False, max_age=60 * 60 * 24 * 7)
+        set_auth_cookie(response, "access_token", access_token, request, max_age=60 * 15)
+        set_auth_cookie(response, "refresh_token", refresh_token, request, max_age=60 * 60 * 24 * 7)
 
         del response.data["access"]
         del response.data["refresh"]
@@ -85,7 +107,7 @@ class CookieTokenRefreshView(TokenRefreshView):
         response = super().post(request, *args, **kwargs)
         access_token = response.data.get("access")
 
-        response.set_cookie("access_token", access_token, httponly=True, secure=False, max_age=60 * 15)
+        set_auth_cookie(response, "access_token", access_token, request, max_age=60 * 15)
         del response.data["access"]
 
         response.data["message"] = "Token refreshed successfully"
@@ -100,8 +122,8 @@ class LogoutView(views.APIView):
     )
     def post(self, request, *args, **kwargs):
         response = Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
-        response.delete_cookie("access_token")
-        response.delete_cookie("refresh_token")
+        delete_auth_cookie(response, "access_token", request)
+        delete_auth_cookie(response, "refresh_token", request)
         return response
 
 
@@ -136,13 +158,29 @@ def user_register(request):
         401: "Unauthorized"
     }
 )
-@api_view(["GET"])
+@swagger_auto_schema(
+    method="patch",
+    operation_summary="Update Current User Profile",
+    operation_description="Updates fields of the currently authenticated user (e.g. first_name, last_name).",
+    request_body=UserSerializer,
+    responses={
+        200: UserSerializer,
+        400: "Validation errors",
+        401: "Unauthorized"
+    }
+)
+@api_view(["GET", "PATCH"])
 @permission_classes([permissions.IsAuthenticated])
 def get_me(request):
     """
-    Returns data of the currently authenticated user.
-    Used by the frontend during application initialization to check auth state.
+    Returns data of the currently authenticated user or updates profile fields.
     """
+    if request.method == "PATCH":
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
