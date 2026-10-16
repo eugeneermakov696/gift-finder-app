@@ -150,7 +150,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
 
           <Button
             variant="secondary"
-            size="extraLarge"
+            size="large"
             type="submit"
             className={styles.submitBtn}
             disabled={isLoading}

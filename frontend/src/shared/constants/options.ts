@@ -153,3 +153,4 @@ export const GIFT_CATEGORIES = [
     ideas: ['Browse by Occasion'],
   },
 ];
+

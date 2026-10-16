@@ -117,7 +117,7 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
             )}
           </div>
 
-          <Button variant="secondary" size="extraLarge" type="submit" className={styles.submitBtn}>
+          <Button variant="secondary" size="large" type="submit" className={styles.submitBtn}>
             Save changes
           </Button>
         </form>

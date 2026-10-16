@@ -46,7 +46,7 @@ export const CatalogPage = () => {
 
         <div className={styles.headerActions}>
           <Link to="/find-a-gift">
-            <Button variant="primary" size="large">
+            <Button variant="primary" size="default">
               Pick again
             </Button>
           </Link>

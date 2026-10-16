@@ -11,6 +11,7 @@ import { ProductDetailsPage } from './modules/ProductDetailsPage';
 import { WishlistPage } from './modules/WishlistPage';
 import { NotFoundPage } from './modules/NotFoundPage';
 import { FiltersPage } from './modules/FiltersPage';
+import { ReadyIdeasPage } from './modules/ReadyIdeasPage';
 import { CatalogPage } from './modules/CatalogPage.tsx';
 import { RightsPage } from './modules/RightsPage/RightsPage.tsx';
 import { TermsPage } from './modules/ConditionsPage/TermsPage.tsx';
@@ -31,6 +32,7 @@ export const App = () => {
         <Route path="profile" element={<ProfilePage />} />
         <Route path="wishlist" element={<WishlistPage />} />
         <Route path="find-a-gift" element={<FiltersPage />} />
+        <Route path="/ready-ideas/:recipient/:occasion" element={<ReadyIdeasPage />} />
         <Route path="catalog" element={<CatalogPage />} />
         <Route path="product/:productId" element={<ProductDetailsPage />} />
         <Route path="privacy-policy" element={<RightsPage />} />
