@@ -174,7 +174,7 @@ export const FiltersPage = () => {
       </section>
 
       <div className={styles.actionFooter}>
-        <Button variant="primary" size="large" onClick={handleGenerate}>
+        <Button variant="primary" size="default" onClick={handleGenerate}>
           Generate
         </Button>
       </div>

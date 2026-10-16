@@ -312,6 +312,9 @@
   @include icon-mask('/icons/upArrow.svg', 24px);
   transition: transform 0.3s ease;
   background-color: var(--text-main);
+  
+  flex-shrink: 0;
+  margin-left: 12px;
 
   &.rotated {
     transform: rotate(180deg);
@@ -341,6 +344,7 @@
   font-weight: 400;
   padding-top: 12px;
   color: var(--text-secondary);
+  max-width: 90%;
 
   @include on-phone {
     font-size: 14px;
@@ -415,16 +419,13 @@
   left: 0;
   width: 100%;
   height: 130px;
-
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(224, 224, 224, 0.4) 100%);
   backdrop-filter: blur(4px);
-
   padding: 16px;
 
   @include on-phone {
-    height: auto;
-    min-height: 64px;
-    padding: 8px 10px;
+    height: 50%;
+    padding: 10px 8px;
   }
 }
 

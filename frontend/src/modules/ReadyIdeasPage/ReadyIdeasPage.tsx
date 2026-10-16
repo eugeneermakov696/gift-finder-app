@@ -77,7 +77,7 @@ export const ReadyIdeasPage = () => {
 
               <Button
                 variant='primary'
-                size='large'
+                size='default'
                 className={styles.seeIdeasBtn}
                 onClick={() => handleSeeIdeas(tier.minPrice, tier.maxPrice)}
               >

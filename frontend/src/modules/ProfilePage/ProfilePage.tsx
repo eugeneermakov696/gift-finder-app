@@ -87,11 +87,11 @@ export const ProfilePage = () => {
             </p>
 
             <div className={styles.actionButtons}>
-              <Button variant="primary" size="large" onClick={() => setIsModalOpen(true)}>
+              <Button variant="primary" size="default" onClick={() => setIsModalOpen(true)}>
                 Create Account
               </Button>
               <Link to="/">
-                <Button variant="select" size="large">
+                <Button variant="select" size="default">
                   Browse as Guest
                 </Button>
               </Link>
@@ -154,7 +154,7 @@ export const ProfilePage = () => {
               </a>
             </div>
 
-            <Button variant="select" size="extraLarge" type="submit" className={styles.loginBtn}>
+            <Button variant="select" size="large" type="submit" className={styles.loginBtn}>
               Log In
             </Button>
           </form>
