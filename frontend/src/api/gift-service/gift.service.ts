@@ -1,7 +1,6 @@
 import axiosInstance from "../axios";
 import type { AxiosInstance } from "axios";
 import type { GiftsResponse } from "./types/gifts-response.type";
-import type { Product } from "./types/product.type";
 
 export type GetGiftsParams = {
   page?: number;
