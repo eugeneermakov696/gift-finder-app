@@ -30,14 +30,6 @@ class GiftService {
     const response = await this.api.get('gifts/', { params });
     return response.data;
   }
-
-  /**
-   * Fetch a single gift by ID or ASIN.
-   */
-  public async getGift(idOrAsin: string | number): Promise<Product> {
-    const response = await this.api.get(`gifts/${idOrAsin}/`);
-    return response.data;
-  }
 }
 
 export const giftService = new GiftService(axiosInstance);
