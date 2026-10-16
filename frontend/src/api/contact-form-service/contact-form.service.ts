@@ -1,6 +1,7 @@
 import axiosInstance from "../axios";
 
 import type { AxiosInstance } from "axios";
+import type { ContactFormRequest, ContactFormResponse } from "./types/contact-form.type";
 
 class ContactFormService {
     private readonly api: AxiosInstance;
@@ -12,12 +13,8 @@ class ContactFormService {
     /**
      * Attention: Do not use it for now
      */
-    public async sendMessage(name: string, email: string, message: string): Promise<{ detail: string }> {
-        const response = await this.api.post('contact-form/', {
-            name,
-            email,
-            message,
-        });
+    public async sendMessage(data: ContactFormRequest): Promise<ContactFormResponse> {
+        const response = await this.api.post('contact-form/', data);
 
         return response.data;
     }
