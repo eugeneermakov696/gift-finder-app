@@ -183,12 +183,21 @@ def filter_presents_queryset(queryset, query_params):
             )
         else:
             # Partner, Friend, Colleague, Boss, Neighbor, Relative, Other
-            queryset = queryset.filter(
-                Q(recipient__icontains=recipient_param)
-                | Q(recipient__icontains="Unisex")
-                | Q(recipient__icontains="For Him")
-                | Q(recipient__icontains="For Her")
-            )
+            if gender_param and gender_param.strip().lower() in ["male", "men", "man", "boy", "him"]:
+                queryset = queryset.filter(
+                    Q(recipient__icontains="For Him") | Q(recipient__icontains="Unisex")
+                )
+            elif gender_param and gender_param.strip().lower() in ["female", "women", "woman", "girl", "her"]:
+                queryset = queryset.filter(
+                    Q(recipient__icontains="For Her") | Q(recipient__icontains="Unisex")
+                )
+            else:
+                queryset = queryset.filter(
+                    Q(recipient__icontains=recipient_param)
+                    | Q(recipient__icontains="Unisex")
+                    | Q(recipient__icontains="For Him")
+                    | Q(recipient__icontains="For Her")
+                )
 
     # 6. Interests (comma-separated support + archetype mapping)
     if interests_param:
