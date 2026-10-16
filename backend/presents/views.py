@@ -6,6 +6,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import get_object_or_404
 
 from presents.models import Present, Wishlist
 from presents.serializers import PresentSerializer, WishlistSerializer
@@ -36,6 +37,7 @@ class PresentViewSet(viewsets.ModelViewSet):
     serializer_class = PresentSerializer
     pagination_class = StandardResultsSetPagination
     permission_classes = [IsCustomAdminOrReadOnly]
+    lookup_field = "asin"
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -74,6 +76,17 @@ class PresentViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+    def get_object(self):
+        """
+        Retrieves a present strictly by its Amazon ASIN.
+        """
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        lookup_value = self.kwargs.get(lookup_url_kwarg)
+        queryset = self.filter_queryset(self.get_queryset())
+        obj = get_object_or_404(queryset, asin__iexact=lookup_value)
+        self.check_object_permissions(self.request, obj)
+        return obj
+
     @action(detail=False, methods=["post"], url_path="scrape", permission_classes=[IsCustomAdminUser])
     def scrape(self, request):
         amazon_url = request.data.get("amazon_url", "")
@@ -94,7 +107,7 @@ class PresentViewSet(viewsets.ModelViewSet):
         return Response({"status": "success", "action": "created" if created else "updated", "id": gift.id})
 
     @action(detail=True, methods=["post"], url_path="price-check", permission_classes=[IsCustomAdminUser])
-    def price_check(self, request, pk=None):
+    def price_check(self, request, asin=None, **kwargs):
         gift = self.get_object()
         old_price = float(gift.price)
         gift.original_price = gift.price
@@ -103,12 +116,19 @@ class PresentViewSet(viewsets.ModelViewSet):
         return Response({"status": "success", "new_price": float(gift.price)})
 
 
+class IsWishlistOwner(permissions.BasePermission):
+    """Object-level check: only the wishlist owner may access detail/update/custom actions."""
+
+    def has_object_permission(self, request, view, obj):
+        return obj.user == request.user
+
+
 class WishlistViewSet(viewsets.ModelViewSet):
     serializer_class = WishlistSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsWishlistOwner]
 
     def get_queryset(self):
-        """Filters by owner on list views while allowing detail views to locate objects for authorization checks."""
+        """List is owner-scoped; detail/actions use full queryset so object permissions can return 403."""
         if getattr(self, "swagger_fake_view", False):
             return Wishlist.objects.none()
         if self.action == "list":
@@ -121,12 +141,6 @@ class WishlistViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], url_path="manage-item")
     def manage_item(self, request, pk=None):
         wishlist = self.get_object()
-
-        if wishlist.user != request.user:
-            return Response(
-                {"status": "error", "message": "Permission denied. You do not own this wishlist."},
-                status=status.HTTP_403_FORBIDDEN
-            )
 
         present_id = request.data.get("present_id")
         action_type = request.data.get("action")

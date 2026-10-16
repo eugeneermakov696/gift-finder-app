@@ -29,6 +29,7 @@ backend/
 │   ├── __init__.py
 │   ├── settings.py         # Global Django & DRF settings (JWT, CORS, DB, Email)
 │   ├── urls.py             # Root URL routing (Swagger, Admin, Presents, Users)
+│   ├── views.py            # Health-check endpoint (API + DB connectivity)
 │   └── wsgi.py             # WSGI application entry point
 ├── presents/               # Product catalog & wishlist domain application
 │   ├── admin.py            # Django admin interface registrations for Presents & Wishlists
@@ -36,9 +37,9 @@ backend/
 │   ├── models.py           # Present and Wishlist database models
 │   ├── serializers.py      # DRF serializers for gifts and wishlist transformations
 │   ├── services.py         # Mock Amazon scraper pattern processing utilities
-│   ├── tests.py            # Automated integration unit test suite (9 test vectors)
+│   ├── tests.py            # Automated integration unit test suite (12 test vectors)
 │   ├── urls.py             # Presents and Wishlists router endpoints
-│   ├── views.py            # ModelViewSets with role-based permissions and CSV export
+│   ├── views.py            # ModelViewSets with RBAC, wishlist ownership, and CSV export
 │   ├── management/         # Custom Django management commands
 │   │   └── commands/
 │   │       ├── __init__.py
@@ -51,8 +52,8 @@ backend/
     ├── serializers.py      # User registration, token, and verification serializers
     ├── services.py         # Verification code generator, email dispatcher & validators
     ├── tests.py            # Authentication & verification test suite (3 test vectors)
-    ├── urls.py             # Auth endpoints (login, register, reset, verify)
-    ├── views.py            # Cookie-based JWT views, email verification, password reset
+    ├── urls.py             # Auth endpoints (login, register, reset, verify, avatar)
+    ├── views.py            # Cookie JWT, email verify, password reset, avatar upload
     └── migrations/         # User and verification code database schemas
 ```
 
@@ -106,11 +107,11 @@ The backend employs a robust authentication architecture:
 *   **Dual Authentication Support:** `CustomJWTAuthentication` automatically reads JWT access tokens from HTTP-only cookies (`access_token`, `refresh_token`) for browser frontend security and also supports `Authorization: Bearer <token>` and `Authorization: Token <token>` request headers for direct API calls.
 *   **Custom User Model:** Inherits from `AbstractUser` stored in the `auth_users` table with configurable roles (`customer` and `admin`) and `email_is_confirmed` tracking.
 *   **Automated Wishlist Provisioning:** A `post_save` signal automatically creates a default "Liked Ideas" wishlist container for every newly registered user.
-*   **Email Verification & Password Recovery:** Secure 6-digit numeric codes generated via `users.services` with configurable expiration lifetimes (`VERIFICATION_CODE_LIFETIME = 15 minutes`). In `DEBUG=True` mode, outgoing emails print to the container console (`ConsoleBackend`).
+*   **Email Verification & Password Recovery:** Secure 6-digit numeric codes generated via `users.services` with configurable expiration lifetimes (`VERIFICATION_CODE_LIFETIME = 15 minutes`). Outgoing mail uses the configured SMTP backend (`EMAIL_BACKEND`); see `.env.example` for host/credentials.
 *   **Role-Based Access Control (RBAC):**
     *   `IsCustomAdminUser`: Restricts sensitive endpoints (such as scraping and price manipulation) strictly to users with the `admin` role.
     *   `IsCustomAdminOrReadOnly`: Allows public read access to catalog queries and restricts product mutations to `admin` accounts.
-    *   `IsAuthenticated`: Protects user profile and wishlist management routes, ensuring strict user-ownership validation.
+    *   `IsAuthenticated` + `IsWishlistOwner`: Protects wishlist routes; object-level ownership is enforced on retrieve, update, destroy, manage-item, and CSV export (non-owners receive `403`).
 
 ---
 
@@ -124,7 +125,7 @@ docker compose exec backend python manage.py test
 ```
 
 ### Run Domain-Specific Test Suites
-*   **Presents & Wishlists Suite (9 tests):**
+*   **Presents & Wishlists Suite (12 tests):**
     ```bash
     docker compose exec backend python manage.py test presents
     ```
@@ -160,20 +161,24 @@ All endpoints are registered under their respective routing modules:
 | **Auth** | `POST` | `/api/auth/refresh/` | Issues refreshed `access_token` cookie using the valid `refresh_token` cookie. | `AllowAny` |
 | **Auth** | `POST` | `/api/auth/logout/` | Logs out user and clears JWT authentication cookies. | `AllowAny` |
 | **Auth** | `GET` | `/api/auth/me/` | Retrieves authenticated user profile information. | `IsAuthenticated` |
+| **Auth** | `PATCH` / `PUT` | `/api/auth/me/` | Updates personal profile information for the authenticated user (e.g., name, email, avatar, password). | `IsAuthenticated` |
+| **Auth** | `POST` | `/api/auth/avatar/` | Upload avatar image (`multipart/form-data`, field `avatar`); stores via cloud storage and returns CDN URL. | `IsAuthenticated` |
 | **Auth** | `POST` | `/api/auth/verify-email/` | Validates 6-digit numeric verification code to mark email confirmed. | `IsAuthenticated` |
 | **Auth** | `POST` | `/api/auth/resend-email-code/` | Re-generates and dispatches a new email verification code. | `IsAuthenticated` |
 | **Auth** | `POST` | `/api/auth/password-reset-request/` | Dispatches password reset code (mitigates user enumeration). | `AllowAny` |
 | **Auth** | `POST` | `/api/auth/password-reset-confirm/` | Validates reset code and sets a new account password. | `AllowAny` |
-| **Gifts** | `GET` | `/api/gifts/` | List products with pagination. Supports `?category=`, `?max_price=`, `?search=`, and `?sort_by=price_low\|price_high\|rating`. | `AllowAny` |
+| **Gifts** | `GET` | `/api/gifts/` | List products with pagination (`?items_per_page=`, default 10, max 100). Supports `?category=`, `?max_price=`, `?search=`, `?gender_target=`, `?occasion=`, `?interests=`, `?recipient=`, and `?sort_by=price_low\|price_high\|rating`. | `AllowAny` |
 | **Gifts** | `POST` | `/api/gifts/` | Create a new gift catalog item. | `Admin` Role Only |
-| **Gifts** | `GET` | `/api/gifts/<id>/` | Retrieve specific gift details. | `AllowAny` |
-| **Gifts** | `PUT` / `PATCH` | `/api/gifts/<id>/` | Update gift information. | `Admin` Role Only |
-| **Gifts** | `DELETE` | `/api/gifts/<id>/` | Remove a gift from catalog. | `Admin` Role Only |
+| **Gifts** | `GET` | `/api/gifts/<asin>/` | Retrieve specific gift details strictly by Amazon ASIN. | `AllowAny` |
+| **Gifts** | `PUT` / `PATCH` | `/api/gifts/<asin>/` | Update gift information by Amazon ASIN. | `Admin` Role Only |
+| **Gifts** | `DELETE` | `/api/gifts/<asin>/` | Remove a gift from catalog by Amazon ASIN. | `Admin` Role Only |
 | **Gifts** | `POST` | `/api/gifts/scrape/` | Scrapes ASIN from Amazon URL and creates/updates gift. | `Admin` Role Only |
-| **Gifts** | `POST` | `/api/gifts/<id>/price-check/` | Simulates scanning an item and logs a 10% price drop. | `Admin` Role Only |
+| **Gifts** | `POST` | `/api/gifts/<asin>/price-check/` | Simulates scanning an item and logs a 10% price drop. | `Admin` Role Only |
 | **Wishlist** | `GET` | `/api/wishlists/` | List all wishlists owned by the authenticated user. | `IsAuthenticated` |
 | **Wishlist** | `POST` | `/api/wishlists/` | Create a new wishlist container for the authenticated user. | `IsAuthenticated` |
 | **Wishlist** | `GET` | `/api/wishlists/<id>/` | Retrieve wishlist details and contained items. | `IsAuthenticated` (Owner) |
+| **Wishlist** | `PUT` / `PATCH` | `/api/wishlists/<id>/` | Update wishlist metadata (e.g. name). | `IsAuthenticated` (Owner) |
+| **Wishlist** | `DELETE` | `/api/wishlists/<id>/` | Delete a wishlist owned by the authenticated user. | `IsAuthenticated` (Owner) |
 | **Wishlist** | `POST` | `/api/wishlists/<id>/manage-item/` | Add or remove items (`{"present_id": <id>, "action": "add\|remove"}`). Max 50 items. | `IsAuthenticated` (Owner) |
 | **Wishlist** | `GET` | `/api/wishlists/<id>/export/csv/` | Download wishlist items as an attached CSV file. | `IsAuthenticated` (Owner) |
 | **Docs** | `GET` | `/swagger/` | Interactive Swagger UI API sandbox. | `AllowAny` |

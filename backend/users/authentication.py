@@ -1,4 +1,5 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
 
 
 class CustomJWTAuthentication(JWTAuthentication):
@@ -10,8 +11,11 @@ class CustomJWTAuthentication(JWTAuthentication):
         raw_token = request.COOKIES.get("access_token")
 
         if raw_token is not None:
-            validated_token = self.get_validated_token(raw_token.encode("utf-8"))
+            try:
+                validated_token = self.get_validated_token(raw_token.encode("utf-8"))
+                return self.get_user(validated_token), validated_token
+            except (InvalidToken, AuthenticationFailed):
 
-            return self.get_user(validated_token), validated_token
+                return None
 
         return None

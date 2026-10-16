@@ -35,6 +35,23 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertIn("results", response.data)
         self.assertTrue(len(response.data["results"]) > 0)
 
+    def test_get_gift_by_asin(self):
+        url = reverse("gift-detail", kwargs={"asin": self.present.asin})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], self.present.id)
+        self.assertEqual(response.data["asin"], self.present.asin)
+
+    def test_get_gift_by_id_fails_404(self):
+        url = reverse("gift-detail", kwargs={"asin": str(self.present.id)})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_gift_not_found(self):
+        url = reverse("gift-detail", kwargs={"asin": "NONEXISTENT_ASIN"})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_get_gifts_list_unauthenticated_returns_200(self):
         self.client.force_authenticate(user=None)
         response = self.client.get(reverse("gift-list"))
@@ -83,7 +100,7 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertTrue(self.wishlist.items.filter(id=self.present.id).exists())
 
     def test_trigger_price_tracker_calculation(self):
-        url = reverse("gift-price-check", kwargs={"pk": self.present.id})
+        url = reverse("gift-price-check", kwargs={"asin": self.present.asin})
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -105,6 +122,22 @@ class GiftFinderAPITestCase(APITestCase):
         url = reverse("wishlist-manage-item", kwargs={"pk": self.wishlist.id})
         payload = {"present_id": self.present.id, "action": "add"}
         response = self.client.post(url, data=payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_retrieve_wishlist_wrong_user_returns_403(self):
+        rogue_user = User.objects.create_user(username="rogue_reader", password="password123")
+        self.client.force_authenticate(user=rogue_user)
+
+        url = reverse("wishlist-detail", kwargs={"pk": self.wishlist.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_export_csv_wrong_user_returns_403(self):
+        rogue_user = User.objects.create_user(username="rogue_exporter", password="password123")
+        self.client.force_authenticate(user=rogue_user)
+
+        url = reverse("wishlist-export-csv", kwargs={"pk": self.wishlist.id})
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_wishlist_max_capacity_limit(self):

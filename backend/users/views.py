@@ -13,7 +13,8 @@ from users.serializers import (
     CustomTokenObtainPairSerializer,
     VerifyEmailSerializer,
     PasswordResetRequestSerializer,
-    PasswordResetConfirmSerializer
+    PasswordResetConfirmSerializer,
+    UserProfileUpdateSerializer
 )
 from users.models import VerificationScenario
 from users.services import (
@@ -149,40 +150,67 @@ def user_register(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(
-    method="get",
-    operation_summary="Get Current User",
-    operation_description="Returns the details of the currently authenticated user based on the access token.",
-    responses={
-        200: UserSerializer,
-        401: "Unauthorized"
-    }
-)
-@swagger_auto_schema(
-    method="patch",
-    operation_summary="Update Current User Profile",
-    operation_description="Updates fields of the currently authenticated user (e.g. first_name, last_name).",
-    request_body=UserSerializer,
-    responses={
-        200: UserSerializer,
-        400: "Validation errors",
-        401: "Unauthorized"
-    }
-)
-@api_view(["GET", "PATCH"])
-@permission_classes([permissions.IsAuthenticated])
-def get_me(request):
-    """
-    Returns data of the currently authenticated user or updates profile fields.
-    """
-    if request.method == "PATCH":
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+class UserMeView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
+    @swagger_auto_schema(
+        operation_summary="Get Current User",
+        operation_description="Returns the details of the currently authenticated user based on the access token.",
+        responses={
+            200: UserSerializer,
+            401: "Unauthorized"
+        }
+    )
+    def get(self, request):
+        """
+        Returns data of the currently authenticated user.
+        Used by the frontend during application initialization to check auth state.
+        """
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        operation_summary="Update Current User Profile",
+        operation_description="Partially updates personal profile information of the currently authenticated user.",
+        request_body=UserProfileUpdateSerializer,
+        responses={
+            200: UserSerializer,
+            400: "Validation errors",
+            401: "Unauthorized"
+        }
+    )
+    def patch(self, request):
+        """
+        Partially updates user details (such as first_name, last_name, full_name, email, password, image_url).
+        """
+        serializer = UserProfileUpdateSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(UserSerializer(request.user).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_summary="Update Current User Profile (Full)",
+        operation_description="Updates personal profile information of the currently authenticated user.",
+        request_body=UserProfileUpdateSerializer,
+        responses={
+            200: UserSerializer,
+            400: "Validation errors",
+            401: "Unauthorized"
+        }
+    )
+    def put(self, request):
+        """
+        Updates full user details.
+        """
+        serializer = UserProfileUpdateSerializer(request.user, data=request.data, partial=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(UserSerializer(request.user).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+get_me = UserMeView.as_view()
 
 
 class VerifyEmailView(views.APIView):

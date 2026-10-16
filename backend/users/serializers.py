@@ -105,3 +105,48 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
     def validate_email(self, value):
         return value.lower().strip()
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(write_only=True, required=False)
+    password = serializers.CharField(
+        write_only=True,
+        required=False,
+        validators=[validate_password]
+    )
+    email = serializers.EmailField(required=False)
+
+    class Meta:
+        model = User
+        fields = [
+            "id", "email", "username", "first_name", "last_name", "full_name",
+            "password", "image_url", "avatar", "role", "email_is_confirmed"
+        ]
+        read_only_fields = ["id", "role", "email_is_confirmed"]
+
+    def validate_email(self, value):
+        normalized_email = value.lower().strip()
+        user = self.instance
+        if user and User.objects.filter(email=normalized_email).exclude(pk=user.pk).exists():
+            raise serializers.ValidationError("User with this email already exists.")
+        return normalized_email
+
+    def validate_username(self, value):
+        normalized_username = value.strip()
+        user = self.instance
+        if user and User.objects.filter(username=normalized_username).exclude(pk=user.pk).exists():
+            raise serializers.ValidationError("User with this username already exists.")
+        return normalized_username
+
+    def update(self, instance, validated_data):
+        full_name = validated_data.pop("full_name", None)
+        if full_name is not None:
+            name_parts = full_name.strip().split(" ", 1)
+            instance.first_name = name_parts[0]
+            instance.last_name = name_parts[1] if len(name_parts) > 1 else ""
+
+        password = validated_data.pop("password", None)
+        if password:
+            instance.set_password(password)
+
+        return super().update(instance, validated_data)
