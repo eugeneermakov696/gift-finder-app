@@ -159,7 +159,7 @@ class UserMeView(views.APIView):
     )
     def patch(self, request):
         """
-        Partially updates user details (such as first_name, last_name, full_name, email, address, password, image_url).
+        Partially updates user details (such as first_name, last_name, full_name, email, password, image_url).
         """
         serializer = UserProfileUpdateSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():

@@ -6,15 +6,13 @@ interface ProductCardProps {
   title: string;
   description?: string;
   price: number;
-  imageUrl?: string;
+  imageUrl: string;
   amazonUrl?: string;
   isFavorite: boolean;
   onToggleFavorite: () => void;
   variant?: 'horizontal' | 'profile';
   className?: string;
 }
-
-const FALLBACK_IMAGE = 'https://placehold.co/400x300/e2e8f0/1e293b?text=No+Image';
 
 export const ProductCard = ({
   id,
@@ -41,16 +39,7 @@ export const ProductCard = ({
           )}
         </button>
         <div className={styles.imagePlaceholder}>
-          <img
-            src={imageUrl && imageUrl.trim() !== '' ? imageUrl : FALLBACK_IMAGE}
-            alt={title}
-            onError={(e) => {
-              const target = e.currentTarget;
-              if (target.src !== FALLBACK_IMAGE) {
-                target.src = FALLBACK_IMAGE;
-              }
-            }}
-          />
+          <img src={imageUrl} alt={title} />
         </div>
       </div>
 

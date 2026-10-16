@@ -86,16 +86,17 @@ class AuthenticationVerificationTests(APITestCase):
         self.assertEqual(self.user.first_name, "John")
         self.assertEqual(self.user.last_name, "Doe Junior")
 
-    def test_patch_me_address_and_email(self):
+    def test_patch_me_image_url_and_email(self):
         self.client.force_authenticate(user=self.user)
-        payload = {"address": "123 Innovation Way", "email": "new.dev@example.com"}
+        payload = {"image_url": "https://example.com/avatar.png", "email": "new.dev@example.com"}
         response = self.client.patch(self.me_url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["address"], "123 Innovation Way")
+        self.assertEqual(response.data["image_url"], "https://example.com/avatar.png")
         self.assertEqual(response.data["email"], "new.dev@example.com")
+        self.assertNotIn("address", response.data)
 
         self.user.refresh_from_db()
-        self.assertEqual(self.user.address, "123 Innovation Way")
+        self.assertEqual(self.user.image_url, "https://example.com/avatar.png")
         self.assertEqual(self.user.email, "new.dev@example.com")
 
     def test_patch_me_email_duplicate_fails(self):

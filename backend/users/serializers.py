@@ -120,7 +120,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "id", "email", "username", "first_name", "last_name", "full_name",
-            "password", "address", "image_url", "avatar", "role", "email_is_confirmed"
+            "password", "image_url", "avatar", "role", "email_is_confirmed"
         ]
         read_only_fields = ["id", "role", "email_is_confirmed"]
 

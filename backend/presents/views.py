@@ -37,6 +37,7 @@ class PresentViewSet(viewsets.ModelViewSet):
     serializer_class = PresentSerializer
     pagination_class = StandardResultsSetPagination
     permission_classes = [IsCustomAdminOrReadOnly]
+    lookup_field = "asin"
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -77,19 +78,12 @@ class PresentViewSet(viewsets.ModelViewSet):
 
     def get_object(self):
         """
-        Retrieves a present by either its numeric primary key (id) or its Amazon ASIN.
+        Retrieves a present strictly by its Amazon ASIN.
         """
         lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
         lookup_value = self.kwargs.get(lookup_url_kwarg)
         queryset = self.filter_queryset(self.get_queryset())
-
-        obj = None
-        if str(lookup_value).isdigit():
-            obj = queryset.filter(pk=lookup_value).first()
-
-        if obj is None:
-            obj = get_object_or_404(queryset, asin__iexact=lookup_value)
-
+        obj = get_object_or_404(queryset, asin__iexact=lookup_value)
         self.check_object_permissions(self.request, obj)
         return obj
 
@@ -113,7 +107,7 @@ class PresentViewSet(viewsets.ModelViewSet):
         return Response({"status": "success", "action": "created" if created else "updated", "id": gift.id})
 
     @action(detail=True, methods=["post"], url_path="price-check", permission_classes=[IsCustomAdminUser])
-    def price_check(self, request, pk=None):
+    def price_check(self, request, asin=None, **kwargs):
         gift = self.get_object()
         old_price = float(gift.price)
         gift.original_price = gift.price

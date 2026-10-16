@@ -32,8 +32,7 @@ Content-Type: application/json
 
 {
   "first_name": "Updated",
-  "last_name": "User",
-  "address": "456 Main Avenue"
+  "last_name": "User"
 }
 
 ### 4. Verify Email (requires Auth cookie)
@@ -64,7 +63,7 @@ Content-Type: image/jpeg
 GET http://localhost:8000/api/gifts/?page=1&items_per_page=10&sort_by=price_low
 Accept: application/json
 
-### 7a. View Specific Present by ID or ASIN
+### 7a. View Specific Present by ASIN
 GET http://localhost:8000/api/gifts/B09B8V1VHC/
 Accept: application/json
 
