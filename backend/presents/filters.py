@@ -82,6 +82,12 @@ def filter_presents_queryset(queryset, query_params):
     if gender_param:
         g = gender_param.strip().lower()
         if g in ["male", "men", "man", "boy", "him"]:
+            # Exclude items that are explicitly female clothing/accessories
+            female_kw = ["women", "womens", "woman", "ladies", "blouse", "bra", "bralette", "skirt", "dressy"]
+            female_title_q = Q()
+            for kw in female_kw:
+                female_title_q |= Q(title__icontains=kw)
+
             queryset = queryset.filter(
                 (
                     Q(gender_target__iexact="Men")
@@ -91,17 +97,29 @@ def filter_presents_queryset(queryset, query_params):
                 )
                 & ~Q(gender_target__iexact="Women")
                 & ~Q(recipient__iexact="For Her")
+                & ~female_title_q
             )
         elif g in ["female", "women", "woman", "girl", "her"]:
+            female_kw = ["women", "womens", "woman", "ladies", "blouse", "bra", "bralette", "skirt", "dressy"]
+            female_title_q = Q()
+            for kw in female_kw:
+                female_title_q |= Q(title__icontains=kw)
+
+            male_kw = ["beard", "mustache", "boxer", "boxers", "aftershave", "men's underwear"]
+            male_title_q = Q()
+            for kw in male_kw:
+                male_title_q |= Q(title__icontains=kw)
+
             queryset = queryset.filter(
                 (
                     Q(gender_target__iexact="Women")
                     | Q(gender_target__iexact="Unisex")
                     | Q(recipient__icontains="For Her")
                     | Q(recipient__icontains="Unisex")
+                    | female_title_q
                 )
                 & ~Q(gender_target__iexact="Men")
-                & ~Q(recipient__iexact="For Him")
+                & ~male_title_q
             )
         elif g in ["kids", "children", "child"]:
             queryset = queryset.filter(
