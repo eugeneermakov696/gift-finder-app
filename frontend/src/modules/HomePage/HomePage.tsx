@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { PixelDrift } from './components/PixelDrift';
 import { ContactsWindow } from '../ContactsWindow';
-import { FiltersWindow } from '../FiltersWindow';
+import { ReadyIdeasWindow } from '../ReadyIdeasWindow';
 import { Button } from '../../shared/components/Button';
 import { GlowCard } from '../../shared/components/GlowCard';
 import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
@@ -302,7 +302,7 @@ export const HomePage = () => {
       </section>
       {isContactOpen && <ContactsWindow onClose={() => setIsContactOpen(false)} />}
 
-      {isFiltersOpen && <FiltersWindow onClose={() => setIsFiltersOpen(false)} />}
+      {isFiltersOpen && <ReadyIdeasWindow onClose={() => setIsFiltersOpen(false)} />}
     </div>
   );
 };

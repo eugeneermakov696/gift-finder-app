@@ -1,13 +1,15 @@
-import styles from './FiltersWindow.module.scss';
 import { Button } from '../../shared/components/Button';
 import { useScrollLock } from '../../shared/hooks/useScrollLock';
 import { GIFT_CATEGORIES } from '../../shared/constants/options';
+import { useNavigate } from 'react-router-dom';
+import styles from './ReadyIdeasWindow.module.scss';
+
 interface PopularGiftsModalProps {
   onClose: () => void;
 }
 
-export const FiltersWindow = ({ onClose }: PopularGiftsModalProps) => {
-  useScrollLock(true); 
+export const ReadyIdeasWindow = ({ onClose }: PopularGiftsModalProps) => {
+  useScrollLock(true);
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
@@ -15,12 +17,21 @@ export const FiltersWindow = ({ onClose }: PopularGiftsModalProps) => {
     }
   };
 
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (recipient: string, occasion: string) => {
+    onClose();
+
+    const urlRecipient = recipient.toLowerCase();
+    const urlOccasion = occasion.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    navigate(`/ready-ideas/${urlRecipient}/${urlOccasion}`);
+  };
+
   return (
     <div className={styles.overlay} onMouseDown={handleOverlayClick}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        
         <div className={styles.innerWrapper}>
-          
           <div className={styles.header}>
             <div className={styles.headerTop}>
               <span className={styles.label}>Ready Ideas</span>
@@ -40,7 +51,12 @@ export const FiltersWindow = ({ onClose }: PopularGiftsModalProps) => {
                 <h3 className={styles.categoryTitle}>{category.title}</h3>
                 <div className={styles.buttonsGrid}>
                   {category.ideas.map((idea, i) => (
-                    <Button variant='select' size='large' key={i}>
+                    <Button
+                      variant="select"
+                      size="large"
+                      key={i}
+                      onClick={() => handleCategoryClick(category.title, idea)}
+                    >
                       {idea}
                     </Button>
                   ))}

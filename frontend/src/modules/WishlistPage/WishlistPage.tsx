@@ -1,8 +1,9 @@
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../store/hooks';
-import type { RootState } from '../../store/store';
 import { removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import { Link } from 'react-router-dom';
+import { ProductCard } from '../../shared/components/ProductCard';
+import type { RootState } from '../../store/store';
 import styles from './WishlistPage.module.scss';
 
 export const WishlistPage = () => {
@@ -36,36 +37,17 @@ export const WishlistPage = () => {
           <p className={styles.emptyState}>Your favourites list is empty.</p>
         ) : (
           savedItems.map((item) => (
-            <div key={item.id} className={styles.card}>
-              <div className={styles.imageWrapper}>
-                <img src={item.image_url ?? ''} alt={item.title} className={styles.image} />
-
-                <button
-                  className={styles.favoriteBtn}
-                  onClick={() => dispatch(removeGiftFromWishlist(item.id))}
-                  aria-label="Remove from favorites"
-                >
-                  <span className={styles.filledHeartIcon} />
-                </button>
-              </div>
-
-              <div className={styles.details}>
-                <h3 className={styles.itemTitle}>{item.title}</h3>
-                <p className={styles.itemDescription}>{item.description}</p>
-                <span className={styles.itemPrice}>${item.price}</span>
-
-                <a
-                  href={item.amazon_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.amazonBtn}
-                >
-                  available at Amazon <span className={styles.amazonIcon}>a</span>
-                </a>
-
-                <button className={styles.viewDetailsBtn}>View details</button>
-              </div>
-            </div>
+            <ProductCard
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              price={item.price}
+              imageUrl={item.image_url ?? ''}
+              description={item.description ?? undefined}
+              amazonUrl={item.amazon_url}
+              isFavorite={true} 
+              onToggleFavorite={() => dispatch(removeGiftFromWishlist(item.id))} 
+            />
           ))
         )}
       </div>
