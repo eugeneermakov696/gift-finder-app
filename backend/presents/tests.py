@@ -124,3 +124,57 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["status"], "error")
         self.assertIn("Wishlist capacity limit reached", response.data["message"])
+
+    def test_smart_filters_matching(self):
+        Present.objects.create(
+            title="Men Running Shoes",
+            asin="BMEN123456",
+            amazon_url="https://amazon.com/men",
+            price=75.00,
+            category="Clothing & Accessories",
+            gender_target="Men",
+            recipient="For Him",
+            age_group="Adults",
+            interests="The Active & Outdoor Explorer",
+            occasion="Birthday, Christmas",
+            is_available=True
+        )
+        Present.objects.create(
+            title="Women Floral Blouse",
+            asin="BWOM123456",
+            amazon_url="https://amazon.com/women",
+            price=45.00,
+            category="Clothing & Accessories",
+            gender_target="Women",
+            recipient="For Her",
+            age_group="Adults",
+            interests="The Creative & Artsy Soul",
+            occasion="Mother’s Day, Birthday",
+            is_available=True
+        )
+
+        # Test gender mapping (Male should match Men and exclude Women)
+        res = self.client.get(reverse("gift-list"), {"gender_target": "Male"})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        asins = [p["asin"] for p in res.data["results"]]
+        self.assertIn("BMEN123456", asins)
+        self.assertNotIn("BWOM123456", asins)
+
+        # Test gift type mapping (Practical / Useful maps to Clothing & Accessories)
+        res_cat = self.client.get(reverse("gift-list"), {"category": "Practical / Useful"})
+        self.assertEqual(res_cat.status_code, status.HTTP_200_OK)
+        asins_cat = [p["asin"] for p in res_cat.data["results"]]
+        self.assertIn("BMEN123456", asins_cat)
+
+        # Test interest mapping (Sports maps to The Active & Outdoor Explorer)
+        res_int = self.client.get(reverse("gift-list"), {"interests": "Sports"})
+        self.assertEqual(res_int.status_code, status.HTTP_200_OK)
+        asins_int = [p["asin"] for p in res_int.data["results"]]
+        self.assertIn("BMEN123456", asins_int)
+
+        # Test occasion matching with apostrophe normalization ("Mother's Day" vs "Mother’s Day")
+        res_occ = self.client.get(reverse("gift-list"), {"occasion": "Mother's Day"})
+        self.assertEqual(res_occ.status_code, status.HTTP_200_OK)
+        asins_occ = [p["asin"] for p in res_occ.data["results"]]
+        self.assertIn("BWOM123456", asins_occ)
+

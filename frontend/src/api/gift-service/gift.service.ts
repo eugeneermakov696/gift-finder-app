@@ -13,6 +13,7 @@ export type GetGiftsParams = {
   occasion?: string;
   interests?: string;
   recipient?: string;
+  age_group?: string;
 };
 
 class GiftService {
