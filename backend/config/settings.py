@@ -17,14 +17,21 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-dev-key-change-this-in-production")
 DEBUG = env("DEBUG", default=True)
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "0.0.0.0",
-    "backend",
-    ".ngrok-free.app",
-    ".localhost",
-]
+ALLOWED_HOSTS = env.list(
+    "ALLOWED_HOSTS",
+    default=[
+        "localhost",
+        "127.0.0.1",
+        "0.0.0.0",
+        "backend",
+        ".ngrok-free.app",
+        ".localhost",
+        ".railway.app",
+        ".up.railway.app",
+    ]
+)
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -88,15 +95,28 @@ DATABASES = {
     )
 }
 
-
 CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS",
-    default=["http://localhost:3000"]
+    default=[
+        "http://localhost:3000",
+        "https://gift-finderfrontend-production.up.railway.app",
+    ]
 )
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.railway\.app$",
+    r"^https://.*\.up\.railway\.app$",
+    r"^http://localhost:[0-9]+$",
+    r"^http://127\.0\.0\.1:[0-9]+$",
+]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = env.list(
     "CSRF_TRUSTED_ORIGINS",
-    default=["http://localhost:3000"]
+    default=[
+        "http://localhost:3000",
+        "https://gift-finderfrontend-production.up.railway.app",
+        "https://*.railway.app",
+        "https://*.up.railway.app",
+    ]
 )
 CSRF_COOKIE_HTTPONLY = False
 

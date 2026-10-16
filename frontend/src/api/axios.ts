@@ -1,6 +1,16 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
-const baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000/api/";
+const getBaseURL = () => {
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+  if (typeof window !== "undefined" && window.location.hostname.includes("railway.app")) {
+    return "https://gift-finder-app-production.up.railway.app/api/";
+  }
+  return "http://localhost:8000/api/";
+};
+
+const baseURL = getBaseURL();
 
 const axiosInstance = axios.create({
   baseURL,
