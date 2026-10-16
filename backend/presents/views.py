@@ -10,6 +10,7 @@ from rest_framework.generics import get_object_or_404
 
 from presents.models import Present, Wishlist
 from presents.serializers import PresentSerializer, WishlistSerializer
+from presents.filters import filter_presents_queryset
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -41,40 +42,7 @@ class PresentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        category = self.request.query_params.get("category")
-        max_price = self.request.query_params.get("max_price")
-        search = self.request.query_params.get("search")
-        sort_by = self.request.query_params.get("sort_by")
-        gender_target = self.request.query_params.get("gender_target")
-        occasion = self.request.query_params.get("occasion")
-        interests = self.request.query_params.get("interests")
-        recipient = self.request.query_params.get("recipient")
-
-        if category:
-            queryset = queryset.filter(category__iexact=category)
-        if max_price:
-            queryset = queryset.filter(price__lte=float(max_price))
-        if search:
-            queryset = queryset.filter(Q(title__icontains=search) | Q(asin__icontains=search))
-        if gender_target:
-            queryset = queryset.filter(gender_target__iexact=gender_target)
-        if occasion:
-            queryset = queryset.filter(occasion__iexact=occasion)
-        if interests:
-            queryset = queryset.filter(interests__icontains=interests)
-        if recipient:
-            queryset = queryset.filter(recipient__iexact=recipient)
-
-        if sort_by == "price_low":
-            queryset = queryset.order_by("price")
-        elif sort_by == "price_high":
-            queryset = queryset.order_by("-price")
-        elif sort_by == "rating":
-            queryset = queryset.order_by("-rating")
-        else:
-            queryset = queryset.order_by("-created_at")
-
-        return queryset
+        return filter_presents_queryset(queryset, self.request.query_params)
 
     def get_object(self):
         """
