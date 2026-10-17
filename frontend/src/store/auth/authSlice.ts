@@ -86,7 +86,16 @@ export const logoutUser = createAsyncThunk('auth/logout', async (_, thunkAPI) =>
 
 export const updateProfile = createAsyncThunk(
   'auth/updateProfile',
-  async (payload: { first_name: string; last_name: string }, thunkAPI) => {
+  async (
+    payload: {
+      first_name?: string;
+      last_name?: string;
+      full_name?: string;
+      email?: string;
+      password?: string;
+    },
+    thunkAPI,
+  ) => {
     try {
       const response = await authService.updateProfile(payload);
       return response;

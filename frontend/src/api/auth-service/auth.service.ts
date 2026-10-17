@@ -95,8 +95,14 @@ class AuthService {
   /**
    * Update user profile data
    */
-  public async updateProfile(data: { first_name: string; last_name: string }): Promise<User> {
-    const response = await this.api.patch('auth/me/', data); // Idk if here must be 'patch' or 'put', change it, if needed (I need at least such method for redux slice)
+  public async updateProfile(data: {
+    first_name?: string;
+    last_name?: string;
+    full_name?: string;
+    email?: string;
+    password?: string;
+  }): Promise<User> {
+    const response = await this.api.patch('auth/me/', data);
     return response.data;
   };
 }

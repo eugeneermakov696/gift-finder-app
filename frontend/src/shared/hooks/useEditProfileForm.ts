@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-// import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch } from '../../store/hooks';
+import { updateProfile } from '../../store/auth/authSlice';
 
 export const useEditProfileForm = (onClose: () => void) => {
-  const { user } = useSelector((state: RootState) => state.auth);
-  // const dispatch = useAppDispatch();
+  const { user, isLoading, error: authError } = useSelector((state: RootState) => state.auth);
+  const dispatch = useAppDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
-    fullName: user ? `${user.first_name} ${user.last_name}` : '',
-    email: user?.username || '',
+    fullName: user ? `${user.first_name} ${user.last_name}`.trim() : '',
+    email: user?.email || user?.username || '',
     password: '',
     confirmPassword: '',
   });
@@ -31,7 +32,7 @@ export const useEditProfileForm = (onClose: () => void) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
@@ -55,11 +56,34 @@ export const useEditProfileForm = (onClose: () => void) => {
       return;
     }
 
-    // dispatch(updateProfile(...));
-    console.log('data is ready to be sent to backend', formData);
-    
-    setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
-    onClose();
+    const payload: {
+      full_name: string;
+      email?: string;
+      password?: string;
+    } = {
+      full_name: formData.fullName.trim(),
+    };
+
+    if (formData.email.trim()) {
+      payload.email = formData.email.trim();
+    }
+
+    if (formData.password) {
+      payload.password = formData.password;
+    }
+
+    try {
+      await dispatch(updateProfile(payload)).unwrap();
+      setFormData({
+        fullName: user ? `${user.first_name} ${user.last_name}`.trim() : '',
+        email: user?.email || user?.username || '',
+        password: '',
+        confirmPassword: '',
+      });
+      onClose();
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+    }
   };
 
   return {
@@ -69,6 +93,8 @@ export const useEditProfileForm = (onClose: () => void) => {
     setShowPassword,
     showConfirmPassword,
     setShowConfirmPassword,
+    isLoading,
+    authError,
     handleChange,
     handleSubmit,
   };

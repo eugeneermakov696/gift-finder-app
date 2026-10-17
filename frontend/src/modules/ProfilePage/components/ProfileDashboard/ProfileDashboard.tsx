@@ -66,7 +66,7 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
               <h2>
                 {user.first_name} {user.last_name}
               </h2>
-              <p className={styles.email}>{user.username}</p>
+              <p className={styles.email}>{user.email || user.username}</p>
               <Button
                 variant="primary"
                 className={styles.editBtn}
@@ -84,7 +84,7 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
               <div className={styles.statusHeader}>
                 <span className={styles.dot} /> You're logged in
               </div>
-              <p className={styles.signedInText}>Signed in as {user.username}</p>
+              <p className={styles.signedInText}>Signed in as {user.email || user.username}</p>
             </div>
             <button onClick={onLogout} className={styles.logoutBtn}>
               Log out
@@ -106,7 +106,7 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>Email Address</span>
-                <span className={styles.infoValue}>{user.username}</span>
+                <span className={styles.infoValue}>{user.email || user.username}</span>
               </div>
             </div>
           </div>

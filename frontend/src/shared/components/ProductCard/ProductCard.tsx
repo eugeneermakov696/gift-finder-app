@@ -6,7 +6,7 @@ interface ProductCardProps {
   title: string;
   description?: string;
   price: number;
-  imageUrl: string;
+  imageUrl?: string;
   amazonUrl?: string;
   isFavorite: boolean;
   onToggleFavorite: () => void;
@@ -39,7 +39,7 @@ export const ProductCard = ({
           )}
         </button>
         <div className={styles.imagePlaceholder}>
-          <img src={imageUrl} alt={title} />
+          {imageUrl ? <img src={imageUrl} alt={title} /> : null}
         </div>
       </div>
 

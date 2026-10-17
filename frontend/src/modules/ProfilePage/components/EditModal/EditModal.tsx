@@ -16,6 +16,8 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
     setShowPassword,
     showConfirmPassword,
     setShowConfirmPassword,
+    isLoading,
+    authError,
     handleChange,
     handleSubmit,
   } = useEditProfileForm(onClose);
@@ -117,8 +119,16 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
             )}
           </div>
 
-          <Button variant="secondary" size="large" type="submit" className={styles.submitBtn}>
-            Save changes
+          {authError && <div className={styles.errorMsg}>{authError}</div>}
+
+          <Button
+            variant="secondary"
+            size="large"
+            type="submit"
+            className={styles.submitBtn}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Saving...' : 'Save changes'}
           </Button>
         </form>
       </div>
