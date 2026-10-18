@@ -41,7 +41,6 @@ class Command(BaseCommand):
                 image_url = row.get("image_url")
                 if pd.isna(image_url) or not str(image_url).strip():
                     image_url = f"https://m.media-amazon.com/images/I/{asin_clean}.jpg"
-                   # image_url = f"https://ssl-images-amazon.com{asin_clean}.jpg"
                 else:
                     image_url = str(image_url).strip()
 

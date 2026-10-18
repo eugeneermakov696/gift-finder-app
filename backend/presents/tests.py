@@ -210,4 +210,3 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertEqual(res_occ.status_code, status.HTTP_200_OK)
         asins_occ = [p["asin"] for p in res_occ.data["results"]]
         self.assertIn("BWOM123456", asins_occ)
-
