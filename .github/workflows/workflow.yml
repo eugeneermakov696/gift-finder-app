@@ -4,6 +4,8 @@ run-name: ${{ github.actor }}-frontend-ci-${{ github.sha }}
 on:
     pull_request:
         branches: ["develop"]
+    push:
+        branches: ["develop"]
 
 permissions:
     contents: read
