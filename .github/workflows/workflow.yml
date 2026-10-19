@@ -1,5 +1,5 @@
 name: frontend-workflow
-run-name: ${{ github.actor }}-frontend-ci-${{ github.sha }}
+run-name: ${{ github.actor }}-${{ github.sha }}
 
 on:
     pull_request:
