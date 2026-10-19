@@ -2,7 +2,7 @@ name: frontend-workflow
 run-name: ${{ github.actor }}-${{ github.sha }}
 
 on:
-    pull_request:
+    push:
         branches: ["develop"]
 
 jobs:
