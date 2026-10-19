@@ -78,7 +78,9 @@ export const ProductTabs = ({ product }: ProductTabsProps) => {
               <div key={review.id} className={styles.reviewCard}>
                 <div className={styles.reviewHeader}>
                   <div className={styles.reviewerAvatar}>
-                    <img src={review.reviewer_avatar} alt={review.reviewer_name} />
+                    {review.reviewer_avatar ? (
+                      <img src={review.reviewer_avatar} alt={review.reviewer_name} />
+                    ) : null}
                   </div>
                   <span className={styles.reviewerName}>{review.reviewer_name}</span>
                 </div>

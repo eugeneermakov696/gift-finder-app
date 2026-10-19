@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { PixelDrift } from './components/PixelDrift';
 import { ContactsWindow } from '../ContactsWindow';
-import { FiltersWindow } from '../FiltersWindow';
+import { ReadyIdeasWindow } from '../ReadyIdeasWindow';
 import { Button } from '../../shared/components/Button';
 import { GlowCard } from '../../shared/components/GlowCard';
 import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
@@ -80,11 +80,11 @@ export const HomePage = () => {
 
           <div className={styles.buttons}>
             <Link to="/find-a-gift">
-              <Button variant="primary" size="large">
+              <Button variant="primary" size="default">
                 Start Gift Search
               </Button>
             </Link>
-            <Button variant="secondary" size="extraLarge" onClick={() => setIsFiltersOpen(true)}>
+            <Button variant="secondary" size="large" onClick={() => setIsFiltersOpen(true)}>
               Explore Ready Ideas
             </Button>
           </div>
@@ -241,7 +241,7 @@ export const HomePage = () => {
             </p>
           </div>
           <Link to="/find-a-gift">
-            <Button variant="primary" size="large">
+            <Button variant="primary" size="default">
               Start Gift Search
             </Button>
           </Link>
@@ -255,7 +255,7 @@ export const HomePage = () => {
               and holidays.
             </p>
           </div>
-          <Button variant="secondary" size="extraLarge" onClick={() => setIsFiltersOpen(true)}>
+          <Button variant="secondary" size="large" onClick={() => setIsFiltersOpen(true)}>
             Explore Ready Ideas
           </Button>
         </div>
@@ -302,7 +302,7 @@ export const HomePage = () => {
       </section>
       {isContactOpen && <ContactsWindow onClose={() => setIsContactOpen(false)} />}
 
-      {isFiltersOpen && <FiltersWindow onClose={() => setIsFiltersOpen(false)} />}
+      {isFiltersOpen && <ReadyIdeasWindow onClose={() => setIsFiltersOpen(false)} />}
     </div>
   );
 };

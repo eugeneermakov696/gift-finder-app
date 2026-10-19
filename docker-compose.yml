@@ -48,11 +48,10 @@ services:
     container_name: react_frontend
     networks:
       - my-docker-network
-    # Explicitly commented out volume mounts to bypass the 'C:\Mate academy' space bug
+    command: npm run dev -- --host 0.0.0.0 --port 3000
     volumes:
       - ./frontend:/app/frontend
       - /app/frontend/node_modules
-      - /app/frontend/dist
     ports:
       - "3000:3000"
     depends_on:

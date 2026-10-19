@@ -15,7 +15,6 @@ class CustomJWTAuthentication(JWTAuthentication):
                 validated_token = self.get_validated_token(raw_token.encode("utf-8"))
                 return self.get_user(validated_token), validated_token
             except (InvalidToken, AuthenticationFailed):
-
                 return None
 
         return None
