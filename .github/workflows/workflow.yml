@@ -4,13 +4,14 @@ run-name: ${{ github.actor }}-frontend-ci-${{ github.sha }}
 on:
     pull_request:
         branches: ["develop"]
+        paths:
+            - 'frontend/**'
+            - 'backend/**'
     push:
         branches: ["develop"]
-
-permissions:
-    contents: read
-    pages: write
-    id-token: write
+        paths:
+            - 'frontend/**'
+            - 'backend/**'
 
 jobs:
 
