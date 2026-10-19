@@ -11,5 +11,3 @@ EXPOSE 3000
 RUN rm -rf package-lock.json node_modules && npm install
 RUN npm run build
 CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]
-
-
