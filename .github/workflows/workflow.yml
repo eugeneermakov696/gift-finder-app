@@ -4,6 +4,8 @@ run-name: ${{ github.actor }}-frontend-ci-${{ github.sha }}
 on:
     pull_request:
         branches: ["develop"]
+    push:
+        branches: ["develop"]
 
 permissions:
     contents: read
@@ -64,50 +66,6 @@ jobs:
               with:
                 name: frontend-artifact
                 path: ./frontend
-
-    frontend-deploy:
-
-        needs:
-          - changes-frontend
-          - frontend-ci
-
-        if: needs.changes-frontend.outputs.frontend == 'true'
-
-        runs-on: ubuntu-latest
-        environment:
-            name: github-pages
-            url: ${{ steps.deployment.outputs.page_url }}
-
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v6
-
-            - name: Set up Node.js
-              uses: actions/setup-node@v6
-              with:
-                  node-version: 20
-                  cache: npm
-                  cache-dependency-path: ./frontend/package-lock.json
-
-            - name: Install dependencies
-              working-directory: ./frontend
-              run: npm ci
-
-            - name: Build frontend
-              working-directory: ./frontend
-              run: npm run build
-
-            - name: Setup GitHub Pages
-              uses: actions/configure-pages@v5
-
-            - name: Upload GitHub Pages artifact
-              uses: actions/upload-pages-artifact@v4
-              with:
-                path: ./frontend/dist
-
-            - name: Deploy to GitHub Pages
-              id: deployment
-              uses: actions/deploy-pages@v4
 
     build-frontend-image:
 
@@ -205,3 +163,37 @@ jobs:
                   context: ./backend
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/backend:latest
+
+    frontend-deploy:
+        needs:
+          - build-frontend-image
+
+        if: needs.build-frontend-image.result == 'success'
+
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Install Railway CLI
+              run: npm install -g @railway/cli
+
+            - name: Redploy frontend to Railway
+              env:
+                  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+              run: railway redeploy --service frontend --yes
+
+    backend-deploy:
+      needs:
+        - build-backend-image
+
+      if: needs.build-backend-image.result == 'success'
+
+      runs-on: ubuntu-latest
+
+      steps:
+          - name: Install Railway CLI
+            run: npm install -g @railway/cli
+
+          - name: Redeploy backend to Railway
+            env:
+                RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+            run: railway redeploy --service backend --yes
