@@ -5,6 +5,10 @@
   margin: 0 auto;
   padding: 28px 32px 80px;
   width: 100%;
+
+  @include on-phone {
+    padding: 20px 16px 48px;
+  }
 }
 
 /* --- Breadcrumbs --- */
@@ -19,6 +23,12 @@
   .separator {
     font-size: 16px;
   }
+
+  @include on-phone {
+    font-size: 12px;
+    margin-bottom: 16px;
+    gap: 6px;
+  }
 }
 
 /* --- Header --- */
@@ -30,8 +40,10 @@
   gap: 24px;
 
   @include on-phone {
-    flex-direction: column;
-    gap: 16px;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 24px;
   }
 }
 
@@ -41,6 +53,11 @@
   color: var(--text-primary);
   margin: 0 0 12px 0;
   line-height: 1.2;
+
+  @include on-phone {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
 }
 
 .subtitle {
@@ -48,6 +65,11 @@
   font-weight: 400;
   color: var(--text-secondary);
   margin: 0;
+
+  @include on-phone {
+    font-size: 12px;
+    line-height: 1.35;
+  }
 }
 
 .backLink {
@@ -62,12 +84,26 @@
   &:hover span {
     transform: translateX(4px);
   }
+
+  @include on-phone {
+    padding: 0;
+    gap: 6px;
+    flex-shrink: 0;
+
+    span {
+      font-size: 12px;
+    }
+  }
 }
 
 .arrowIcon {
   @include icon-mask('/icons/rightArrow.svg', 16px);
   background-color: var(--text-main);
   transition: all 0.3s ease;
+
+  @include on-phone {
+    @include icon-mask('/icons/rightArrow.svg', 14px);
+  }
 }
 
 /* --- Cards Grid --- */
@@ -81,7 +117,8 @@
   }
 
   @include on-phone {
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 }
 
@@ -100,6 +137,11 @@
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   }
+
+  @include on-phone {
+    padding: 8px;
+    border-radius: 12px;
+  }
 }
 
 .imageWrapper {
@@ -110,6 +152,11 @@
   overflow: hidden;
   background-color: #cecece;
   margin-bottom: 12px;
+
+  @include on-phone {
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
 }
 
 .cardImage {
@@ -132,6 +179,14 @@
   padding: 4px 10px;
   border-radius: 6px;
   letter-spacing: 0.2px;
+
+  @include on-phone {
+    font-size: 10px;
+    padding: 2px 6px;
+    bottom: 6px;
+    right: 6px;
+    border-radius: 4px;
+  }
 }
 
 .cardContent {
@@ -146,16 +201,32 @@
   color: var(--text-main);
   margin: 0 0 8px 0;
   line-height: 1.3;
+
+  @include on-phone {
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
 }
 
 .cardSubtitle {
   font-size: 12px;
   color: var(--text-secondary);
   margin: 0 0 10px 0;
+
+  @include on-phone {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
 }
 
 .seeIdeasBtn {
   margin-top: auto;
   width: 100%;
   max-height: 38px;
+
+  @include on-phone {
+    height: 34px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
 }

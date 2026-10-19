@@ -64,7 +64,7 @@
   color: var(--text-secondary);
 
   @include on-phone {
-    font-size: 14px; /* твоє значення */
+    font-size: 12px;
     margin-bottom: 24px;
   }
 }
@@ -105,6 +105,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  @include on-phone {
+    height: 100px;
+    margin-bottom: 32px;
+    max-width: 360px;
+  }
+
+  canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+  }
 }
 
 .heroContent {
@@ -184,9 +197,19 @@
   }
 
   @include on-phone {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+
+    .description {
+      flex: 1;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    > a {
+      flex-shrink: 0;
+    }
   }
 }
 
@@ -411,6 +434,10 @@
   display: block;
   height: auto;
   object-fit: cover;
+
+  @include on-phone {
+    aspect-ratio: 1 / 1; 
+  }
 }
 
 .cardOverlay {
@@ -425,7 +452,8 @@
 
   @include on-phone {
     height: 50%;
-    padding: 10px 8px;
+    padding: 12px 8px;
+    overflow: hidden;
   }
 }
 
@@ -436,9 +464,33 @@
   color: var(--text-main);
 
   @include on-phone {
-    font-size: 13px;
+    font-size: 14px;
     margin-bottom: 4px;
-    line-height: 1.1;
+    margin-top: 0;
+    line-height: 1.2;
+    
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.cardDescr {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 100%;
+  color: var(--text-main);
+
+  @include on-phone {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.25;
+    
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
 
@@ -450,12 +502,14 @@
 
   @include on-phone {
     font-size: 11px;
-    line-height: 1.25;
+    line-height: 1.2;
     
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    
+    max-height: 2.4em;
   }
 }
 
@@ -465,12 +519,19 @@
   align-items: center;
   margin-bottom: 40px;
   border-top: solid 1px #bfbfbf;
+  padding-top: 24px;
 
   @include on-phone {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 24px;
+    padding-top: 16px;
+
+    > a,
+    > button {
+      flex-shrink: 0;
+    }
   }
 }
 
@@ -487,7 +548,18 @@
   }
 
   @include on-phone {
-    max-width: 100%;
+    max-width: none;
+    flex: 1;
+
+    .subtitle {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .description {
+      font-size: 12px;
+      line-height: 1.3;
+    }
   }
 }
 

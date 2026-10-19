@@ -9,6 +9,10 @@
   justify-content: center;
   align-items: center;
   padding: 20px;
+
+  @include on-phone {
+    padding: 16px;
+  }
 }
 
 .modalContent {
@@ -19,6 +23,12 @@
   padding: 48px;
   position: relative;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+  @include on-phone {
+    padding: 24px 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
 }
 
 .closeBtn {
@@ -43,21 +53,40 @@
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
   }
+
+  @include on-phone {
+    top: 20px;
+    right: 20px;
+  }
 }
 
 .closeIcon {
   @include icon-mask('/icons/close.svg', 18px);
   background-color: var(--text-main);
+
+  @include on-phone {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 .header {
   margin-bottom: 32px;
+
+  @include on-phone {
+    margin-bottom: 20px;
+  }
 
   .label {
     font-size: 14px;
     color: var(--text-main);
     display: block;
     margin-bottom: 12px;
+
+    @include on-phone {
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
   }
 
   .title {
@@ -65,6 +94,11 @@
     font-weight: 600;
     margin: 0 0 8px 0;
     color: var(--text-main);
+
+    @include on-phone {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
   }
 
   .description {
@@ -72,6 +106,11 @@
     color: var(--text-secondary);
     line-height: 1.5;
     margin: 0;
+
+    @include on-phone {
+      font-size: 13px;
+      line-height: 1.4;
+    }
   }
 }
 
@@ -79,6 +118,10 @@
   display: flex;
   flex-direction: column;
   gap: 40px;
+
+  @include on-phone {
+    gap: 20px;
+  }
 }
 
 .inputGroup {
@@ -118,6 +161,11 @@
       border-color: var(--color-primary-2);
       box-shadow: 0 0 0 1px var(--color-primary-2);
     }
+
+    @include on-phone {
+      padding: 12px 14px;
+      font-size: 14px;
+    }
   }
 
   textarea {
@@ -125,6 +173,10 @@
     min-height: 120px;
     max-height: 250px; 
     overflow-y: auto;
+
+    @include on-phone {
+      min-height: 80px;
+    }
   }
 
   .helperText {
@@ -154,5 +206,12 @@
 
   &:hover {
     background-color: var(--color-primary-1);
+  }
+
+  @include on-phone {
+    height: 40px;
+    padding: 10px 24px;
+    font-size: 14px;
+    margin-top: 0;
   }
 }

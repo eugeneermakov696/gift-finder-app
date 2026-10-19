@@ -138,8 +138,8 @@ export const GIFT_CATEGORIES = [
   {
     title: 'Gifts for Friends',
     ideas: [
-      'Birthday Gifts for Him',
-      'Birthday Gifts for Her',
+      'Birthday for Him',
+      'Birthday for Her',
       'Christmas',
       'Housewarming Gifts',
       'Wedding Gifts',

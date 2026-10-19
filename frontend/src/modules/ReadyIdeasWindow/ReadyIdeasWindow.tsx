@@ -55,9 +55,10 @@ export const ReadyIdeasWindow = ({ onClose }: PopularGiftsModalProps) => {
                       variant="select"
                       size="large"
                       key={i}
+                      className={styles.ideaBtn}
                       onClick={() => handleCategoryClick(category.title, idea)}
                     >
-                      {idea}
+                      {idea.replace(/\s*Gifts$/i, '')}
                     </Button>
                   ))}
                 </div>

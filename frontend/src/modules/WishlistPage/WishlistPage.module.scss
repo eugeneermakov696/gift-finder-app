@@ -4,17 +4,31 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 24px;
+
+  @include on-phone {
+    padding: 24px 16px 48px;
+  }
 }
 
 .header {
- display: flex;
+  display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 40px;
+
+  @include on-phone {
+    align-items: flex-end;
+    margin-bottom: 24px;
+    gap: 12px;
+  }
 }
 
 .headerActions {
   align-self: flex-end;
+
+  @include on-phone {
+    flex-shrink: 0;
+  }
 }
 
 .backLink {
@@ -29,22 +43,42 @@
   &:hover span {
     transform: translateX(4px);
   }
+
+  @include on-phone {
+    gap: 6px;
+
+    span {
+      font-size: 13px;
+    }
+  }
 }
 
 .arrowIcon {
   @include icon-mask('/icons/rightArrow.svg', 16px);
   background-color: var(--text-main);
   transition: all 0.3s ease;
+
+  @include on-phone {
+    @include icon-mask('/icons/rightArrow.svg', 14px);
+  }
 }
 
 .heartIcon {
   @include icon-mask('/icons/heart.svg', 32px);
   background-color: var(--color-primary-1);
+
+  @include on-phone {
+    @include icon-mask('/icons/heart.svg', 20px);
+  }
 }
 
 .filledHeartIcon {
   @include icon-mask('/icons/filledHeart.svg', 22px);
   background-color: var(--color-primary-1);
+
+  @include on-phone {
+    @include icon-mask('/icons/filledHeart.svg', 18px);
+  }
 }
 
 .breadcrumb {
@@ -54,6 +88,12 @@
   font-size: 14px;
   color: var(--text-primary);
   margin-bottom: 24px;
+
+  @include on-phone {
+    font-size: 13px;
+    margin-bottom: 12px;
+    gap: 6px;
+  }
 }
 
 .title {
@@ -61,16 +101,30 @@
   font-weight: 600;
   color: var(--text-main);
   margin: 0 0 8px 0;
+
+  @include on-phone {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
 }
 
 .subtitle {
   font-size: 16px;
   color: var(--text-primary);
   margin: 0;
+
+  @include on-phone {
+    font-size: 12px;
+    line-height: 1.35;
+  }
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
+
+  @include on-phone {
+    gap: 16px;
+  }
 }

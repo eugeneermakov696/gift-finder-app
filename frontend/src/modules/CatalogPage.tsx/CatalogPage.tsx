@@ -1,4 +1,4 @@
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ProductCard } from '../../shared/components/ProductCard';
 import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import { Button } from '../../shared/components/Button';
@@ -52,7 +52,10 @@ export const CatalogPage = () => {
           </Link>
 
           <Link to="/" className={styles.backLink}>
-            Back to home <span className={styles.arrowIcon} aria-label="Right arrow" />
+            <span>
+              Back<span className={styles.desktopText}> to home</span>
+            </span>
+            <span className={styles.arrowIcon} aria-label="Right arrow" />
           </Link>
         </div>
       </header>

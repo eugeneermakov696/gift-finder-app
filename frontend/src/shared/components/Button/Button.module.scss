@@ -41,7 +41,8 @@
   height: 44px;
 
   @include on-phone {
-    padding: 0 24px;
+    white-space: nowrap;
+    padding: 0 20px;
     height: 40px;
   }
 }
