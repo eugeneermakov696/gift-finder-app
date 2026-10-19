@@ -5,6 +5,10 @@
   width: 100%;
   margin: 0 auto;
   padding: 40px 16px;
+
+  @include on-phone {
+    padding: 24px 16px 48px;
+  }
 }
 
 .pageHeader {
@@ -12,10 +16,21 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 40px;
+
+  @include on-phone {
+    gap: 12px;
+    margin-bottom: 24px;
+  }
 }
 
 .headerText {
   max-width: 60%;
+
+  @include on-phone {
+    max-width: 100%;
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 .pageTitle {
@@ -23,40 +38,90 @@
   font-weight: 500;
   color: var(--text-main);
   margin: 0 0 8px 0;
+  word-break: break-word;
+
+  @include on-phone {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
 }
 
 .pageSubtitle {
   font-size: 16px;
   color: var(--text-secondary);
   margin: 0;
+
+  @include on-phone {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+
+  @include on-phone {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 20px;
+    flex-shrink: 0;
+  }
 }
 
 .backLink {
   display: flex;
   align-items: center;
-  justify-content: center;
-  align-self: flex-end;
-  padding: 10px 0;
-  gap: 12px;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 16px;
   transition: all 0.3s ease;
 
-  &:hover span {
+  &:hover .arrowIcon {
     transform: translateX(4px);
+  }
+
+  @include on-phone {
+    gap: 4px;
+    font-size: 14px;
+
+    span {
+      font-size: 12px;
+    }
+  }
+}
+
+.desktopText {
+  @include on-phone {
+    display: none;
   }
 }
 
 .arrowIcon {
   @include icon-mask('/icons/rightArrow.svg', 16px);
   background-color: var(--text-main);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
+
+  @include on-phone {
+    @include icon-mask('/icons/rightArrow.svg', 14px);
+  }
 }
 
-
 .headerActions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  justify-self: flex-end;
+  align-self: flex-end;
+
+  @include on-phone {
+    grid-column: 1 / -1;
+    grid-row: 2 / 3;
+    justify-self: flex-end;
+    margin-top: 8px;
+  }
 }
 
 .backBtn {
@@ -67,10 +132,19 @@
   display: flex;
   align-items: center;
   gap: 8px;
+
+  @include on-phone {
+    gap: 4px;
+    font-size: 13px;
+  }
 }
 
 .productsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
+
+  @include on-phone {
+    gap: 16px;
+  }
 }

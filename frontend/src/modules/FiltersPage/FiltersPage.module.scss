@@ -6,22 +6,30 @@
   margin: 0 auto;
   padding: 40px 24px 116px;
   color: var(--text-main);
+
+  @include on-phone {
+    padding: 20px 16px 28px;
+  }
 }
 
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 40px;
+
+  @include on-phone {
+    margin-bottom: 24px;
+  }
 }
 
 .backLink {
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: flex-end;
   cursor: pointer;
-  margin-bottom: 24px;
   gap: 12px;
+  white-space: nowrap;
   transition: all 0.3s ease;
 
   &:hover span {
@@ -42,18 +50,32 @@
 
 .filterSection {
   margin-bottom: 48px;
+
+  @include on-phone {
+    margin-bottom: 28px;
+  }
 }
 
 .sectionTitle {
   font-size: 20px;
   font-weight: 500;
   margin-bottom: 24px;
+
+  @include on-phone {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 24px;
+
+  @include on-phone {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
 }
 
 .customLabel {
@@ -85,6 +107,7 @@
   background-color: #fff;
   border: 1px solid var(--color-primary-2);
   color: var(--text-main);
+  text-align: center;
 
   &:hover {
     background-color: var(--color-primary-3);
@@ -97,6 +120,14 @@
 
   &:active {
     transform: scale(0.97);
+  }
+
+  @include on-phone {
+    padding: 0 4px;
+    font-size: 12px;
+    height: 36px;
+    line-height: 1.1;
+    border-radius: 4px;
   }
 }
 
@@ -148,13 +179,16 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 64px;
+
+  @include on-phone {
+    margin-top: 40px;
+  }
 }
 
 .generateBtn {
   height: 44px;
   background-color: var(--color-primary-2);
   color: #fff;
-  border: solid 1px var(--text-main);
   border: none;
   border-radius: 8px;
   padding: 12px 48px;

@@ -14,7 +14,7 @@ import { FiltersPage } from './modules/FiltersPage';
 import { ReadyIdeasPage } from './modules/ReadyIdeasPage';
 import { CatalogPage } from './modules/CatalogPage.tsx';
 import { RightsPage } from './modules/RightsPage/RightsPage.tsx';
-import { TermsPage } from './modules/ConditionsPage/TermsPage.tsx';
+import { TermsPage } from './modules/TermsPage/TermsPage.tsx';
 
 export const App = () => {
   const dispatch = useAppDispatch();

@@ -2,9 +2,10 @@
 
 .header {
   position: sticky;
+  top: 0;
+  left: 0;
   width: 100%;
   z-index: 100;
-  top: 0;
 
   display: flex;
   align-items: center;
@@ -26,15 +27,18 @@
   }
 }
 
-.leftSection {
+.leftSection,
+.rightSection {
   display: flex;
   align-items: center;
+  height: 100%;
+}
+
+.leftSection {
   gap: 40px;
 }
 
 .rightSection {
-  display: flex;
-  align-items: center;
   justify-content: center;
   gap: 52px;
 
@@ -48,6 +52,8 @@
   align-items: center;
   gap: 16px;
   white-space: nowrap;
+  margin: 0;
+  padding: 0;
 
   @include on-phone {
     display: none;

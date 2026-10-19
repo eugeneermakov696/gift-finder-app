@@ -12,13 +12,14 @@ export const TermsPage = () => {
 
       <div className={styles.introSection}>
         <p className={styles.introText}>
-          Welcome to Giftly (accessible at [https://eugeneermakov696.github.io/gift-finder-app/] /
-          "the Website"). These Terms of Service ("Terms") govern your access to and use of Giftly,
-          including our gift-discovery quiz, curated guides, product recommendations, and related
-          services.
+          Welcome to Giftly. These Terms govern your use of our gift quiz, recommendations, guides,
+          and related services.
         </p>
         <Link to="/" className={styles.backLink}>
-          Back to home <span className={styles.arrowIcon} />
+          <span>
+            Back<span className={styles.desktopText}> to home</span>
+          </span>
+          <div className={styles.arrowIcon} />
         </Link>
       </div>
 

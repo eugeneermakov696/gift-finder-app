@@ -12,18 +12,15 @@ export const RightsPage = () => {
 
       <div className={styles.introSection}>
         <p className={styles.introText}>
-          At Giftly (accessible at{' '}
-          <a href="https://eugeneermakov696.github.io/gift-finder-app/">
-            github.io/gift-finder-app
-          </a>
-          , "we," "us," or "our"), we respect your privacy and are committed to protecting your
-          personal data. This Privacy Policy explains how we collect, use, store, and safeguard your
-          information when you visit our website, register for an account, create and manage gift
-          wishlists, and interact with our affiliate links.
+          At Giftly, we respect your privacy. This Policy explains how we collect, use, store, and
+          protect your data when you use our website, account features and affiliate links.
         </p>
 
         <Link to="/" className={styles.backLink}>
-          Back to home <span className={styles.arrowIcon} />
+          <span>
+            Back<span className={styles.desktopText}> to home</span>
+          </span>
+          <div className={styles.arrowIcon} />
         </Link>
       </div>
 
