@@ -4,14 +4,10 @@ run-name: ${{ github.actor }}-${{ github.sha }}
 on:
     pull_request:
         branches: ["develop"]
-        paths:
-            - 'frontend/**'
-            - 'backend/**'
+
     push:
         branches: ["develop"]
-        paths:
-            - 'frontend/**'
-            - 'backend/**'
+        
 
 jobs:
 
