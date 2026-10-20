@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { clearContactState, submitContactForm } from '../../store/contact/contactSlice';
 import styles from './ContactsWindow.module.scss';
 
 interface ContactWindowProps {
@@ -6,6 +8,9 @@ interface ContactWindowProps {
 }
 
 export const ContactsWindow = ({ onClose }: ContactWindowProps) => {
+  const dispatch = useAppDispatch();
+  const { isLoading, successMessage, error } = useAppSelector((state) => state.contact);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [name, setName] = useState(() => localStorage.getItem('draftName') || '');
@@ -14,22 +19,16 @@ export const ContactsWindow = ({ onClose }: ContactWindowProps) => {
 
   useEffect(() => {
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    
+
     document.body.style.overflow = 'hidden';
     document.body.style.paddingRight = `${scrollbarWidth}px`;
-    
+
     return () => {
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
+      dispatch(clearContactState());
     };
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, []);
+  }, [dispatch]);
 
   const handleAutoResize = () => {
     const textarea = textareaRef.current;
@@ -43,20 +42,25 @@ export const ContactsWindow = ({ onClose }: ContactWindowProps) => {
     handleAutoResize();
   }, [message]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('send:', { name, email, message });
+    try {
+      await dispatch(submitContactForm({ name, email, message })).unwrap();
 
-    setName('');
-    setEmail('');
-    setMessage('');
+      setName('');
+      setEmail('');
+      setMessage('');
+      localStorage.removeItem('draftName');
+      localStorage.removeItem('draftEmail');
+      localStorage.removeItem('draftMessage');
 
-    localStorage.removeItem('draftName');
-    localStorage.removeItem('draftEmail');
-    localStorage.removeItem('draftMessage');
-
-    onClose();
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+    } catch (err) {
+      console.error('Помилка відправки:', err);
+    }
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -66,10 +70,7 @@ export const ContactsWindow = ({ onClose }: ContactWindowProps) => {
   };
 
   return (
-    <div
-      className={styles.overlay}
-      onMouseDown={handleOverlayClick}
-    >
+    <div className={styles.overlay} onMouseDown={handleOverlayClick}>
       <div className={styles.modalContent}>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
           <span className={styles.closeIcon} />
@@ -96,6 +97,7 @@ export const ContactsWindow = ({ onClose }: ContactWindowProps) => {
                 localStorage.setItem('draftName', e.target.value);
               }}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -110,6 +112,7 @@ export const ContactsWindow = ({ onClose }: ContactWindowProps) => {
                 localStorage.setItem('draftEmail', e.target.value);
               }}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -124,12 +127,22 @@ export const ContactsWindow = ({ onClose }: ContactWindowProps) => {
                 localStorage.setItem('draftMessage', e.target.value);
               }}
               required
+              disabled={isLoading}
             />
             <span className={styles.helperText}>Tell us how we can help.</span>
           </div>
 
-          <button type="submit" className={styles.submitBtn}>
-            Send message
+          {error && <div style={{ color: 'red', fontSize: '14px' }}>{error}</div>}
+          {successMessage && (
+            <div style={{ color: 'green', fontSize: '14px' }}>{successMessage}</div>
+          )}
+
+          <button
+            type="submit"
+            className={styles.submitBtn}
+            disabled={isLoading || !!successMessage}
+          >
+            {isLoading ? 'Sending...' : 'Send message'}
           </button>
         </form>
       </div>

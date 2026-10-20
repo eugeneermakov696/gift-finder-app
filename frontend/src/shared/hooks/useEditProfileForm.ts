@@ -1,66 +1,82 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { useAppDispatch } from '../../store/hooks';
-import { updateProfile } from '../../store/auth/authSlice';
+import { clearError, updateProfile, type UpdateProfilePayload } from '../../store/auth/authSlice';
+
+const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
 export const useEditProfileForm = (onClose: () => void) => {
   const { user, isLoading, error: authError } = useSelector((state: RootState) => state.auth);
   const dispatch = useAppDispatch();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const getInitialData = () => ({
     fullName: user ? `${user.first_name} ${user.last_name}`.trim() : '',
     email: user?.email || user?.username || '',
-    password: '',
-    confirmPassword: '',
+    oldPassword: '',
+    newPassword: '',
   });
 
+  const [formData, setFormData] = useState(getInitialData);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    dispatch(clearError());
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const validate = () => {
     const newErrors: Record<string, string> = {};
 
     if (formData.fullName.trim().length < 3) {
       newErrors.fullName = 'Name must be at least 3 characters.';
     }
 
-    if (formData.password) {
-      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-      if (!passwordRegex.test(formData.password)) {
-        newErrors.password = 'Password must be at least 8 characters, include a letter and a number.';
+    const hasOld = Boolean(formData.oldPassword);
+    const hasNew = Boolean(formData.newPassword);
+
+    if (hasOld || hasNew) {
+      if (!hasOld) {
+        newErrors.oldPassword = 'Enter your current password.';
       }
 
-      if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match.';
+      if (!hasNew) {
+        newErrors.newPassword = 'Enter a new password.';
+      } else if (!PASSWORD_REGEX.test(formData.newPassword)) {
+        newErrors.newPassword =
+          'Password must be at least 8 characters, include a letter and a number.';
+      } else if (hasOld && formData.oldPassword === formData.newPassword) {
+        newErrors.newPassword = 'New password must be different from the old one.';
       }
     }
 
+    return newErrors;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    const payload: {
-      full_name: string;
-      email?: string;
-      password?: string;
-    } = {
+    const payload: UpdateProfilePayload = {
       full_name: formData.fullName.trim(),
     };
 
@@ -68,18 +84,14 @@ export const useEditProfileForm = (onClose: () => void) => {
       payload.email = formData.email.trim();
     }
 
-    if (formData.password) {
-      payload.password = formData.password;
+    if (formData.oldPassword && formData.newPassword) {
+      payload.old_password = formData.oldPassword;
+      payload.new_password = formData.newPassword;
     }
 
     try {
       await dispatch(updateProfile(payload)).unwrap();
-      setFormData({
-        fullName: user ? `${user.first_name} ${user.last_name}`.trim() : '',
-        email: user?.email || user?.username || '',
-        password: '',
-        confirmPassword: '',
-      });
+      setFormData(getInitialData());
       onClose();
     } catch (err) {
       console.error('Failed to update profile:', err);
@@ -89,10 +101,10 @@ export const useEditProfileForm = (onClose: () => void) => {
   return {
     formData,
     errors,
-    showPassword,
-    setShowPassword,
-    showConfirmPassword,
-    setShowConfirmPassword,
+    showOldPassword,
+    setShowOldPassword,
+    showNewPassword,
+    setShowNewPassword,
     isLoading,
     authError,
     handleChange,

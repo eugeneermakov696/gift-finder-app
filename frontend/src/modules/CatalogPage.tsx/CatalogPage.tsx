@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '../../shared/components/ProductCard';
 import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import { Button } from '../../shared/components/Button';
@@ -8,6 +8,8 @@ import { useCatalogData } from '../../shared/hooks/useCatalogPage';
 import styles from './CatalogPage.module.scss';
 
 export const CatalogPage = () => {
+  const navigate = useNavigate();
+
   const {
     gifts,
     isReduxLoading,
@@ -18,13 +20,17 @@ export const CatalogPage = () => {
     totalPages,
     handlePageChange,
     dispatch,
+    cancelGeneration,
   } = useCatalogData();
 
   if (showLoadingScreen) {
     return (
       <LoadingScreen
         isLoading={isReduxLoading}
-        onCancel={() => setShowLoadingScreen(false)}
+        onCancel={() => {
+          cancelGeneration();
+          navigate('/find-a-gift', { replace: true });
+        }}
         onComplete={() => {
           setShowLoadingScreen(false);
           window.history.replaceState({}, document.title);
@@ -32,6 +38,7 @@ export const CatalogPage = () => {
       />
     );
   }
+
 
   return (
     <div className={styles.container}>

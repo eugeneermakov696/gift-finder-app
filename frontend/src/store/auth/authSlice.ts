@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { authService } from '../../api/auth-service/auth.service';
 import { isAxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import type { User } from '../../api/auth-service/types/user.type';
 
 export interface AuthState {
@@ -8,6 +9,7 @@ export interface AuthState {
   isAuth: boolean;
   isLoading: boolean;
   error: string | null;
+  successMessage?: string | null;
 }
 
 const initialState: AuthState = {
@@ -15,6 +17,7 @@ const initialState: AuthState = {
   isAuth: false,
   isLoading: false,
   error: null,
+  successMessage: null,
 };
 
 interface RegisterPayload {
@@ -84,18 +87,16 @@ export const logoutUser = createAsyncThunk('auth/logout', async (_, thunkAPI) =>
   }
 });
 
+export interface UpdateProfilePayload {
+  full_name?: string;
+  email?: string;
+  old_password?: string;
+  new_password?: string;
+}
+
 export const updateProfile = createAsyncThunk(
   'auth/updateProfile',
-  async (
-    payload: {
-      first_name?: string;
-      last_name?: string;
-      full_name?: string;
-      email?: string;
-      password?: string;
-    },
-    thunkAPI,
-  ) => {
+  async (payload: UpdateProfilePayload, thunkAPI) => {
     try {
       const response = await authService.updateProfile(payload);
       return response;
@@ -123,10 +124,70 @@ export const uploadUserAvatar = createAsyncThunk(
   },
 );
 
+export const requestPasswordReset = createAsyncThunk(
+  'auth/requestPasswordReset',
+  async (email: string, { rejectWithValue }) => {
+    try {
+      return await authService.forgotPassword(email);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(error.response?.data?.detail || 'Error sending request');
+      }
+      return rejectWithValue('Unknown error');
+    }
+  },
+);
+
+export const confirmPasswordReset = createAsyncThunk(
+  'auth/confirmPasswordReset',
+  async (data: { token: string; password: string }, { rejectWithValue }) => {
+    try {
+      return await authService.resetPasswordConfirm(data);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(error.response?.data?.detail || 'Error password reseting');
+      }
+      return rejectWithValue('Unknown error');
+    }
+  },
+);
+
+export const verifyEmailCode = createAsyncThunk(
+  'auth/verifyEmailCode',
+  async (code: string, { rejectWithValue }) => {
+    try {
+      return await authService.verifyEmail(code);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(error.response?.data?.detail || 'Server error');
+      }
+      return rejectWithValue('Unknown error');
+    }
+  },
+);
+
+export const resendEmailCode = createAsyncThunk(
+  'auth/resendEmailCode',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await authService.resendVerificationCode();
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(error.response?.data?.detail || 'Sending code error');
+      }
+      return rejectWithValue('Unknown error');
+    }
+  },
+);
+
 export const AuthSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
@@ -149,6 +210,7 @@ export const AuthSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.error = action.payload as string;
+        state.isLoading = false
       })
       .addCase(fetchMe.pending, (state) => {
         state.isLoading = true;
@@ -161,21 +223,58 @@ export const AuthSlice = createSlice({
       })
       .addCase(fetchMe.rejected, (state, action) => {
         state.error = action.payload as string;
+        state.isLoading = false
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.isAuth = false;
         state.user = null;
       })
+      .addCase(updateProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
       .addCase(updateProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.user = action.payload;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
       })
       .addCase(uploadUserAvatar.fulfilled, (state, action) => {
         if (state.user) {
           state.user.avatar = action.payload.avatar_url;
           state.user.image_url = action.payload.avatar_url;
         }
+      })
+      .addCase(verifyEmailCode.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(verifyEmailCode.fulfilled, (state) => {
+        state.isLoading = false;
+        if (state.user) {
+          state.user.email_is_confirmed = true;
+        }
+      })
+      .addCase(verifyEmailCode.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(requestPasswordReset.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(requestPasswordReset.fulfilled, (state) => {
+        state.isLoading = false;
+        state.successMessage = 'Mail for restoration sent';
+      })
+      .addCase(requestPasswordReset.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
       });
   },
 });
 
 export default AuthSlice.reducer;
+export const { clearError } = AuthSlice.actions;

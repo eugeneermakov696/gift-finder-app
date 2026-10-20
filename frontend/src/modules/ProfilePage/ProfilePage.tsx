@@ -7,6 +7,7 @@ import { Button } from '../../shared/components/Button';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../store/hooks';
 import { fetchMe, loginUser, logoutUser } from '../../store/auth/authSlice';
+import { ForgotPasswordModal } from './components/ForgotPasswordModal';
 import type { RootState } from '../../store/store';
 import styles from './ProfilePage.module.scss';
 
@@ -16,6 +17,7 @@ export const ProfilePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
 
   const { isAuth, user } = useSelector((state: RootState) => state.auth);
 
@@ -68,7 +70,10 @@ export const ProfilePage = () => {
           </p>
         </div>
         <Link to="/" className={styles.backLink}>
-          Back to home <span className={styles.arrowIcon} />
+          <span>
+            Back<span className={styles.desktopText}> to home</span>
+          </span>
+          <div className={styles.arrowIcon} />
         </Link>
       </div>
 
@@ -149,9 +154,13 @@ export const ProfilePage = () => {
                 <input type="checkbox" className={styles.customCheckbox} />
                 <span>Keep me signed in</span>
               </label>
-              <a href="#forgot" className={styles.forgotLink}>
+              <button
+                type="button"
+                className={styles.forgotLink}
+                onClick={() => setIsForgotModalOpen(true)}
+              >
                 Forgot password?
-              </a>
+              </button>
             </div>
 
             <Button variant="select" size="large" type="submit" className={styles.loginBtn}>
@@ -198,6 +207,8 @@ export const ProfilePage = () => {
         onClose={() => setIsModalOpen(false)}
         onSwitchToLogin={handleSwitchToLogin}
       />
+
+      <ForgotPasswordModal isOpen={isForgotModalOpen} onClose={() => setIsForgotModalOpen(false)} />
     </div>
   );
 };
