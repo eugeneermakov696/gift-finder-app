@@ -12,10 +12,10 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
   const {
     formData,
     errors,
-    showPassword,
-    setShowPassword,
-    showConfirmPassword,
-    setShowConfirmPassword,
+    showOldPassword,
+    setShowOldPassword,
+    showNewPassword,
+    setShowNewPassword,
     isLoading,
     authError,
     handleChange,
@@ -39,9 +39,7 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
 
         <div className={styles.header}>
           <h2>Edit Profile</h2>
-          <p>
-            Update your personal information and account details.
-          </p>
+          <p>Update your personal information and account details.</p>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -78,45 +76,47 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
 
           <div className={styles.inputWrapper}>
             <div className={styles.inputGroup}>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Old password"
-                className={styles.withIconRight}
-              />
-              <button
-                type="button"
-                className={`${styles.iconRight} ${styles.eyeIcon}`}
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label="Toggle password"
-              />
-            </div>
-            {errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
-          </div>
-
-          <div className={styles.inputWrapper}>
-            <div className={styles.inputGroup}>
               <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
               <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                type={showOldPassword ? 'text' : 'password'}
+                name="oldPassword"
+                value={formData.oldPassword}
                 onChange={handleChange}
-                placeholder="New password"
+                placeholder="Old password"
+                autoComplete="current-password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
               />
               <button
                 type="button"
                 className={`${styles.iconRight} ${styles.eyeIcon}`}
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                aria-label="Toggle confirm password"
+                onClick={() => setShowOldPassword(!showOldPassword)}
+                aria-label="Toggle old password visibility"
               />
             </div>
-            {errors.confirmPassword && (
-              <span className={styles.errorMsg}>{errors.confirmPassword}</span>
-            )}
+            {errors.oldPassword && <span className={styles.errorMsg}>{errors.oldPassword}</span>}
+          </div>
+
+          {/* New password */}
+          <div className={styles.inputWrapper}>
+            <div className={styles.inputGroup}>
+              <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
+              <input
+                type={showNewPassword ? 'text' : 'password'}
+                name="newPassword"
+                value={formData.newPassword}
+                onChange={handleChange}
+                placeholder="New password"
+                autoComplete="new-password"
+                className={`${styles.withIconLeft} ${styles.withIconRight}`}
+              />
+              <button
+                type="button"
+                className={`${styles.iconRight} ${styles.eyeIcon}`}
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                aria-label="Toggle new password visibility"
+              />
+            </div>
+            {errors.newPassword && <span className={styles.errorMsg}>{errors.newPassword}</span>}
           </div>
 
           {authError && <div className={styles.errorMsg}>{authError}</div>}

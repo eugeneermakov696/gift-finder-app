@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchFilteredGifts, setAllFilters, setFilter } from '../../store/filters/filtersSlice';
@@ -27,6 +27,8 @@ export const useCatalogData = () => {
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
 
+  const requestRef = useRef<{ abort: () => void } | null>(null);
+
   const isFromGenerate = location.state?.fromGenerate === true;
   const [showLoadingScreen, setShowLoadingScreen] = useState(isFromGenerate);
 
@@ -49,8 +51,13 @@ export const useCatalogData = () => {
     };
 
     dispatch(setAllFilters(parsedParams));
-    dispatch(fetchFilteredGifts(parsedParams));
+    requestRef.current = dispatch(fetchFilteredGifts(parsedParams));
   }, [searchParams, dispatch]);
+
+  const cancelGeneration = () => {
+    requestRef.current?.abort();
+    setShowLoadingScreen(false);
+  };
 
   const ITEMS_PER_PAGE = 10;
   const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
@@ -78,5 +85,6 @@ export const useCatalogData = () => {
     totalPages,
     handlePageChange,
     dispatch,
+    cancelGeneration,
   };
 };
