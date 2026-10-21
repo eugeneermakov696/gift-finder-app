@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import styles from './ProductCard.module.scss';
 
 interface ProductCardProps {
-  id: string | number;
+  asin: string | number;
   title: string;
   description?: string;
   price: number;
@@ -15,7 +15,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({
-  id,
+  asin,
   title,
   description,
   price,
@@ -56,7 +56,7 @@ export const ProductCard = ({
             <a href={amazonUrl} target="_blank" rel="noreferrer" className={styles.amazonBtn}>
               available at Amazon <span className={styles.amazonIcon} aria-label="Amazon"></span>
             </a>
-            <Link to={`/product/${id}`} className={styles.detailsBtn}>
+            <Link to={`/product/${asin}`} className={styles.detailsBtn}>
               View details
             </Link>
           </div>

@@ -238,6 +238,8 @@
   :global(.bgl-card) {
     width: 100%;
     height: 216px;
+    border-radius: 12px !important;
+    --bgl-radius: 12px !important;
 
     @include on-phone {
       height: 100%;

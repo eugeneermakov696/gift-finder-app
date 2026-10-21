@@ -171,7 +171,7 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
               <ProductCard
                 variant="profile"
                 key={item.id}
-                id={item.id}
+                asin={item.asin}
                 title={item.title}
                 imageUrl={item.image_url ?? ''}
                 description={item.description ?? undefined}
