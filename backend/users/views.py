@@ -295,9 +295,8 @@ class PasswordResetConfirmView(views.APIView):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            user = User.objects.get(email=serializer.validated_data["email"].lower())
-        except User.DoesNotExist:
+        user = User.objects.filter(email__iexact=serializer.validated_data["email"].strip()).first()
+        if not user:
             return Response({"detail": "Invalid parameters or token."}, status=status.HTTP_400_BAD_REQUEST)
 
         if verify_code(user, serializer.validated_data["code"], VerificationScenario.PASSWORD_RESET):

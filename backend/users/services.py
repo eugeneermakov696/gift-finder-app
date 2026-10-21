@@ -19,13 +19,16 @@ def create_and_send_verification_code(user, scenario: VerificationScenario) -> U
         subject = "Reset Your Password"
         message = f"Your password reset code is: {verification_entry.code}. Valid for 15 minutes."
 
-    send_mail(
-        subject=subject,
-        message=message,
-        from_email=None,
-        recipient_list=[user.email],
-        fail_silently=False,
-    )
+    try:
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
+            recipient_list=[user.email],
+            fail_silently=True,
+        )
+    except Exception:
+        pass
     return verification_entry
 
 
@@ -47,11 +50,9 @@ def verify_code(user, code: str, scenario: VerificationScenario) -> bool:
 
 def request_password_reset_code(email: str) -> bool:
     """Fetches user context safely. Returns True unconditionally to neutralize enumeration attacks."""
-    try:
-        user = User.objects.get(email=email)
+    user = User.objects.filter(email__iexact=email.strip()).first()
+    if user:
         create_and_send_verification_code(user, VerificationScenario.PASSWORD_RESET)
-    except User.DoesNotExist:
-        pass
     return True
 
 

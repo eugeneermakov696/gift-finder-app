@@ -51,6 +51,33 @@ class AuthenticationVerificationTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 0)
 
+    def test_password_reset_confirm_success(self):
+        code_entry = create_and_send_verification_code(self.user, VerificationScenario.PASSWORD_RESET)
+        payload = {
+            "email": self.user.email.upper(),
+            "code": code_entry.code,
+            "new_password": "NewSecretPassword2026!"
+        }
+        response = self.client.post(self.password_reset_confirm_url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("detail"), "Password updated successfully.")
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("NewSecretPassword2026!"))
+
+    def test_password_reset_confirm_missing_fields(self):
+        payload = {
+            "email": self.user.email,
+            "token": "123456",
+            "password": "SecretPassword123!"
+        }
+        response = self.client.post(self.password_reset_confirm_url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("code", response.data)
+        self.assertIn("new_password", response.data)
+
+
+
     def test_get_me_authenticated(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.me_url)

@@ -66,15 +66,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         password = attrs.get("password")
 
         if email and password:
-            try:
-                user = User.objects.get(email=email.lower().strip())
-            except User.DoesNotExist:
-                raise AuthenticationFailed(
-                    "No active account found with the given credentials",
-                    code="no_active_account"
-                )
-
-            if not user.check_password(password):
+            user = User.objects.filter(email__iexact=email.strip()).first()
+            if not user or not user.check_password(password):
                 raise AuthenticationFailed(
                     "No active account found with the given credentials",
                     code="no_active_account"
