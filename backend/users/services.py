@@ -51,7 +51,7 @@ def verify_code(user, code: str, scenario: VerificationScenario) -> bool:
 def request_password_reset_code(email: str) -> bool:
     """Fetches user context safely. Returns True unconditionally to neutralize enumeration attacks."""
     user = User.objects.filter(email__iexact=email.strip()).first()
-    if user:
+    if user and user.email_is_confirmed:
         create_and_send_verification_code(user, VerificationScenario.PASSWORD_RESET)
     return True
 

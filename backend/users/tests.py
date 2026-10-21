@@ -52,6 +52,9 @@ class AuthenticationVerificationTests(APITestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_password_reset_confirm_success(self):
+        self.user.email_is_confirmed = True
+        self.user.save()
+
         code_entry = create_and_send_verification_code(self.user, VerificationScenario.PASSWORD_RESET)
         payload = {
             "email": self.user.email.upper(),
@@ -65,6 +68,26 @@ class AuthenticationVerificationTests(APITestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password("NewSecretPassword2026!"))
 
+    def test_unconfirmed_user_cannot_reset_password(self):
+        self.user.email_is_confirmed = False
+        self.user.save()
+
+        # Request reset: safe 200 response, but no email or code dispatched
+        response = self.client.post(self.password_reset_request_url, {"email": self.user.email})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertFalse(UserVerificationCode.objects.filter(user=self.user, scenario=VerificationScenario.PASSWORD_RESET).exists())
+
+        # Direct confirm attempt should fail with 400
+        payload = {
+            "email": self.user.email,
+            "code": "123456",
+            "new_password": "NewSecretPassword2026!"
+        }
+        response = self.client.post(self.password_reset_confirm_url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get("detail"), "Invalid parameters or token.")
+
     def test_password_reset_confirm_missing_fields(self):
         payload = {
             "email": self.user.email,
@@ -75,6 +98,7 @@ class AuthenticationVerificationTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("code", response.data)
         self.assertIn("new_password", response.data)
+
 
 
 
