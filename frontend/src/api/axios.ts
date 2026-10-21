@@ -1,13 +1,13 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
-const getBaseURL = () => {
-  if (import.meta.env.VITE_BACKEND_URL) {
-    return import.meta.env.VITE_BACKEND_URL;
+const getBaseURL = (): string => {
+  const url = import.meta.env.VITE_BACKEND_URL;
+
+  if (!url || url.length === 0) {
+    throw new Error("Error at the axios.ts: The VITE_BACKEND_URL was not provided");
   }
-  if (typeof window !== "undefined" && window.location.hostname.includes("railway.app")) {
-    return "https://gift-finder-app-production.up.railway.app/api/";
-  }
-  return "http://localhost:8000/api/";
+
+  return url;
 };
 
 const baseURL = getBaseURL();
