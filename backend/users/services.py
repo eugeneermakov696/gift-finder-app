@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
-from users.models import UserVerificationCode, VerificationScenario
+from users.models import UserVerificationCode, VerificationScenario, ContactMessage
 
 User = get_user_model()
 
@@ -52,3 +53,28 @@ def request_password_reset_code(email: str) -> bool:
     except User.DoesNotExist:
         pass
     return True
+
+
+def send_contact_form_notification(contact_message: ContactMessage) -> None:
+    """Sends notification about contact form submission to administrators."""
+    subject = f"New Contact Message from {contact_message.name}"
+    body = (
+        f"You received a new contact message:\n\n"
+        f"Name: {contact_message.name}\n"
+        f"Email: {contact_message.email}\n"
+        f"Submitted at: {contact_message.created_at}\n\n"
+        f"Message:\n{contact_message.message}\n"
+    )
+    recipient = getattr(settings, "CONTACT_FORM_RECIPIENT_EMAIL", None) or getattr(settings, "DEFAULT_FROM_EMAIL", "admin@giftfinder.com")
+    try:
+        send_mail(
+            subject=subject,
+            message=body,
+            from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
+            recipient_list=[recipient],
+            fail_silently=True,
+        )
+    except Exception:
+        # Fallback to silent error handling to avoid disrupting user experience
+        pass
+

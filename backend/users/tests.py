@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from datetime import timedelta
 
-from users.models import UserVerificationCode, VerificationScenario
+from users.models import UserVerificationCode, VerificationScenario, ContactMessage
 from users.services import create_and_send_verification_code
 
 User = get_user_model()
@@ -120,3 +120,70 @@ class AuthenticationVerificationTests(APITestCase):
         payload = {"first_name": "Hacker"}
         response = self.client.patch(self.me_url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class ContactFormAPITests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse("contact-form")
+        self.valid_payload = {
+            "name": "Jane Doe",
+            "email": "jane.doe@example.com",
+            "message": "We would like to partner with Gift Finder to showcase our products."
+        }
+
+    def test_submit_contact_form_success(self):
+        response = self.client.post(self.url, self.valid_payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data.get("detail"), "Your message has been sent successfully!")
+
+        # Verify DB entry
+        message_obj = ContactMessage.objects.filter(email="jane.doe@example.com").first()
+        self.assertIsNotNone(message_obj)
+        self.assertEqual(message_obj.name, "Jane Doe")
+        self.assertEqual(message_obj.message, self.valid_payload["message"])
+        self.assertFalse(message_obj.is_resolved)
+
+        # Verify email dispatch
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Jane Doe", mail.outbox[0].subject)
+        self.assertIn(self.valid_payload["message"], mail.outbox[0].body)
+
+    def test_submit_contact_form_missing_fields(self):
+        # Missing message
+        response = self.client.post(self.url, {"name": "Jane", "email": "jane@example.com"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("detail", response.data)
+
+        # Missing name
+        response = self.client.post(self.url, {"email": "jane@example.com", "message": "Hello"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("detail", response.data)
+
+        # Missing email
+        response = self.client.post(self.url, {"name": "Jane", "message": "Hello"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("detail", response.data)
+
+    def test_submit_contact_form_blank_strings(self):
+        response = self.client.post(self.url, {"name": "   ", "email": "jane@example.com", "message": "   "}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("detail", response.data)
+
+    def test_submit_contact_form_invalid_email(self):
+        payload = {
+            "name": "Jane Doe",
+            "email": "not-an-email",
+            "message": "Hello there"
+        }
+        response = self.client.post(self.url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("detail", response.data)
+
+    def test_submit_contact_form_authenticated_user(self):
+        user = User.objects.create_user(username="auth_user", email="auth@example.com", password="Password123!")
+        self.client.force_authenticate(user=user)
+        response = self.client.post(self.url, self.valid_payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data.get("detail"), "Your message has been sent successfully!")
+

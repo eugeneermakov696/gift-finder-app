@@ -14,13 +14,15 @@ from users.serializers import (
     VerifyEmailSerializer,
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
-    UserProfileUpdateSerializer
+    UserProfileUpdateSerializer,
+    ContactFormSerializer
 )
 from users.models import VerificationScenario
 from users.services import (
     verify_code,
     create_and_send_verification_code,
-    request_password_reset_code
+    request_password_reset_code,
+    send_contact_form_notification
 )
 
 User = get_user_model()
@@ -357,3 +359,62 @@ class AvatarUploadView(views.APIView):
             "detail": "Avatar uploaded successfully.",
             "avatar_url": cdn_url
         }, status=status.HTTP_200_OK)
+
+
+class ContactFormView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    @swagger_auto_schema(
+        operation_summary="Submit Contact Form",
+        operation_description="Submit a contact inquiry or message from the website contact form. "
+                              "Saves the message and sends an email notification to site administrators.",
+        request_body=ContactFormSerializer,
+        responses={
+            201: openapi.Response(
+                description="Message submitted successfully",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "detail": openapi.Schema(type=openapi.TYPE_STRING, example="Your message has been sent successfully!")
+                    }
+                )
+            ),
+            400: openapi.Response(
+                description="Invalid contact form data",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "detail": openapi.Schema(type=openapi.TYPE_STRING, example="Enter a valid email address."),
+                        "errors": openapi.Schema(type=openapi.TYPE_OBJECT)
+                    }
+                )
+            )
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = ContactFormSerializer(data=request.data)
+        if not serializer.is_valid():
+            first_error_msg = None
+            for field, errors in serializer.errors.items():
+                if errors and isinstance(errors, list):
+                    first_error_msg = f"{errors[0]}"
+                    break
+                elif errors:
+                    first_error_msg = f"{errors}"
+                    break
+            return Response(
+                {
+                    "detail": first_error_msg or "Invalid form data.",
+                    "errors": serializer.errors
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        contact_message = serializer.save()
+        send_contact_form_notification(contact_message)
+
+        return Response(
+            {"detail": "Your message has been sent successfully!"},
+            status=status.HTTP_201_CREATED
+        )
+

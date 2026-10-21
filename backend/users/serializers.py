@@ -4,6 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from users.models import ContactMessage
 
 User = get_user_model()
 
@@ -150,3 +151,29 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             instance.set_password(password)
 
         return super().update(instance, validated_data)
+
+
+class ContactFormSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(max_length=150, required=True, allow_blank=False)
+    email = serializers.EmailField(max_length=254, required=True)
+    message = serializers.CharField(required=True, allow_blank=False)
+
+    class Meta:
+        model = ContactMessage
+        fields = ["name", "email", "message"]
+
+    def validate_name(self, value):
+        cleaned = value.strip()
+        if not cleaned:
+            raise serializers.ValidationError("Name cannot be empty.")
+        return cleaned
+
+    def validate_email(self, value):
+        return value.lower().strip()
+
+    def validate_message(self, value):
+        cleaned = value.strip()
+        if not cleaned:
+            raise serializers.ValidationError("Message cannot be empty.")
+        return cleaned
+
