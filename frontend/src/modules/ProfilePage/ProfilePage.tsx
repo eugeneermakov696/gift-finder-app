@@ -196,7 +196,7 @@ export const ProfilePage = () => {
           />
 
           <GlowCard
-            title="Pick Up Where You Left Off"
+            title="Continue Exploring"
             description="Sign in anytime and continue exploring all of your saved gift."
             className={styles.card}
           />

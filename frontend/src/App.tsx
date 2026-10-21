@@ -34,7 +34,7 @@ export const App = () => {
         <Route path="find-a-gift" element={<FiltersPage />} />
         <Route path="/ready-ideas/:recipient/:occasion" element={<ReadyIdeasPage />} />
         <Route path="catalog" element={<CatalogPage />} />
-        <Route path="product/:productId" element={<ProductDetailsPage />} />
+        <Route path="product/:asin" element={<ProductDetailsPage />} />
         <Route path="privacy-policy" element={<RightsPage />} />
         <Route path="terms&conditions" element={<TermsPage />} />
 

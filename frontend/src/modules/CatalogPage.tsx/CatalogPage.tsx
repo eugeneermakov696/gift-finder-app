@@ -39,7 +39,6 @@ export const CatalogPage = () => {
     );
   }
 
-
   return (
     <div className={styles.container}>
       <header className={styles.pageHeader}>
@@ -82,7 +81,7 @@ export const CatalogPage = () => {
           return (
             <ProductCard
               key={product.id}
-              id={product.id}
+              asin={product.asin}
               title={product.title}
               price={product.price}
               imageUrl={product.image_url ?? ''}
