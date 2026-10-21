@@ -1,14 +1,8 @@
 export const AGE_OPTIONS = [
-  '0-2 years',
-  '3-5 years',
-  '6-12 years',
-  '13-17 years',
-  '18-24 years',
-  '25-34 years',
-  '35-44 years',
-  '45-54 years',
-  '55-64 years',
-  '65+ years',
+  '0-10 years',
+  '11-18 years',
+  '19-45 years',
+  '49+ years',
 ];
 export const GENDER_OPTIONS = ['Male', 'Female'];
 export const RELATIONSHIP_OPTIONS = [
