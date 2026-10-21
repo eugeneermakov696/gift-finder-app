@@ -10,9 +10,6 @@ class ContactFormService {
         this.api = api;
     }
 
-    /**
-     * Attention: Do not use it for now
-     */
     public async sendMessage(data: ContactFormRequest): Promise<ContactFormResponse> {
         const response = await this.api.post('contact-form/', data);
 

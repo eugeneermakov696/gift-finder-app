@@ -65,3 +65,21 @@ class UserVerificationCode(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.scenario} - {self.code}"
+
+
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=150)
+    email = models.EmailField(max_length=254)
+    message = models.TextField()
+    is_resolved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "contact_messages"
+        ordering = ["-created_at"]
+        verbose_name = "Contact Message"
+        verbose_name_plural = "Contact Messages"
+
+    def __str__(self):
+        return f"Message from {self.name} ({self.email}) - {self.created_at.strftime('%Y-%m-%d %H:%M') if self.created_at else ''}"
+
