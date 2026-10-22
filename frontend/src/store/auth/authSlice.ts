@@ -207,10 +207,13 @@ export const AuthSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state) => {
         state.isLoading = false;
+        state.isAuth = true;
+        localStorage.setItem('has_session', 'true');
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.error = action.payload as string;
-        state.isLoading = false
+        state.isLoading = false;
+        localStorage.removeItem('has_session');
       })
       .addCase(fetchMe.pending, (state) => {
         state.isLoading = true;
@@ -220,14 +223,24 @@ export const AuthSlice = createSlice({
         state.isLoading = false;
         state.isAuth = true;
         state.user = action.payload;
+        localStorage.setItem('has_session', 'true');
       })
       .addCase(fetchMe.rejected, (state, action) => {
         state.error = action.payload as string;
-        state.isLoading = false
+        state.isLoading = false;
+        state.isAuth = false;
+        state.user = null;
+        localStorage.removeItem('has_session');
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.isAuth = false;
         state.user = null;
+        localStorage.removeItem('has_session');
+      })
+      .addCase(logoutUser.rejected, (state) => {
+        state.isAuth = false;
+        state.user = null;
+        localStorage.removeItem('has_session');
       })
       .addCase(updateProfile.pending, (state) => {
         state.isLoading = true;
