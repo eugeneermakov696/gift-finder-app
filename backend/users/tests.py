@@ -238,3 +238,79 @@ class ContactFormAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data.get("detail"), "Your message has been sent successfully!")
 
+
+class SwaggerDocumentationTests(APITestCase):
+
+    def test_swagger_tags_categorization(self):
+        from config.urls import schema_view
+        from rest_framework.test import APIRequestFactory
+
+        factory = APIRequestFactory()
+        request = factory.get('/swagger/?format=openapi', HTTP_HOST='localhost')
+        response = schema_view.without_ui(cache_timeout=0)(request, format='.json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        paths = response.data.get("paths", {})
+
+        # Verify auth endpoints are under api/auth tag
+        auth_paths = [
+            "/api/auth/login/",
+            "/api/auth/refresh/",
+            "/api/auth/logout/",
+            "/api/auth/register/",
+            "/api/auth/me/",
+            "/api/auth/verify-email/",
+            "/api/auth/resend-email-code/",
+            "/api/auth/password-reset-request/",
+            "/api/auth/password-reset-confirm/",
+            "/api/auth/avatar/",
+        ]
+        for p in auth_paths:
+            self.assertIn(p, paths)
+            for method, spec in paths[p].items():
+                if isinstance(spec, dict) and "tags" in spec:
+                    self.assertIn("api/auth", spec["tags"])
+
+        # Verify gifts endpoints are under api/gifts tag
+        gifts_paths = [
+            "/api/gifts/",
+            "/api/gifts/{asin}/",
+            "/api/gifts/scrape/",
+            "/api/gifts/{asin}/price-check/",
+        ]
+        for p in gifts_paths:
+            self.assertIn(p, paths)
+            for method, spec in paths[p].items():
+                if isinstance(spec, dict) and "tags" in spec:
+                    self.assertIn("api/gifts", spec["tags"])
+
+        # Verify wishlist endpoints are under api/wishlist tag
+        wishlist_paths = [
+            "/api/wishlists/",
+            "/api/wishlists/{id}/",
+            "/api/wishlists/{id}/manage-item/",
+            "/api/wishlists/{id}/export/csv/",
+        ]
+        for p in wishlist_paths:
+            self.assertIn(p, paths)
+            for method, spec in paths[p].items():
+                if isinstance(spec, dict) and "tags" in spec:
+                    self.assertIn("api/wishlist", spec["tags"])
+
+    def test_swagger_error_responses(self):
+        from config.urls import schema_view
+        from rest_framework.test import APIRequestFactory
+
+        factory = APIRequestFactory()
+        request = factory.get('/swagger/?format=openapi', HTTP_HOST='localhost')
+        response = schema_view.without_ui(cache_timeout=0)(request, format='.json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        paths = response.data.get("paths", {})
+
+        # Check that error responses are documented for key endpoints
+        self.assertIn("400", paths["/api/auth/register/"]["post"]["responses"])
+        self.assertIn("401", paths["/api/auth/me/"]["get"]["responses"])
+        self.assertIn("404", paths["/api/gifts/{asin}/"]["get"]["responses"])
+        self.assertIn("401", paths["/api/wishlists/"]["get"]["responses"])
+
