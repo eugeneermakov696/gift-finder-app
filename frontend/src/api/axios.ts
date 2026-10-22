@@ -54,9 +54,17 @@ axiosInstance.interceptors.response.use(
     const isAuthEndpoint =
       originalRequest.url?.includes("auth/login/") ||
       originalRequest.url?.includes("auth/refresh/") ||
-      originalRequest.url?.includes("auth/register/");
+      originalRequest.url?.includes("auth/register/") ||
+      originalRequest.url?.includes("auth/logout/");
 
-    if (error.response.status === 401 && !originalRequest._isRetry && !isAuthEndpoint) {
+    const hasSession = localStorage.getItem("has_session") === "true";
+
+    if (
+      error.response.status === 401 &&
+      !originalRequest._isRetry &&
+      !isAuthEndpoint &&
+      hasSession
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -73,6 +81,7 @@ axiosInstance.interceptors.response.use(
         processQueue(null);
         return axiosInstance.request(originalRequest);
       } catch (refreshError) {
+        localStorage.removeItem("has_session");
         processQueue(refreshError);
         return Promise.reject(refreshError);
       } finally {

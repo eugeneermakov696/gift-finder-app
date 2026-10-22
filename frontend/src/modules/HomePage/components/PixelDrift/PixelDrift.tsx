@@ -510,10 +510,15 @@ export default function PixelDrift() {
       ease: 'linear',
     };
 
+    let instance: { destroy: () => void } | null = null;
     const viewport = __q('.pdt-viewport');
     if (viewport) {
-      buildPixelDrift(gsap, viewport, config);
+      instance = buildPixelDrift(gsap, viewport, config);
     }
+
+    return () => {
+      instance?.destroy();
+    };
   }, []);
 
   return (
