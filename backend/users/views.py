@@ -7,6 +7,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_yasg.utils import swagger_auto_schema, no_body
 from drf_yasg import openapi
 
+from config.swagger import (
+    ERROR_400_BAD_REQUEST,
+    ERROR_401_UNAUTHORIZED,
+    ERROR_500_INTERNAL_SERVER_ERROR,
+)
+
 from presents.serializers import UserSerializer
 from users.serializers import (
     RegisterSerializer,
@@ -54,6 +60,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="User Login",
         operation_description="Authenticate user with email and password. Returns a success message and sets HTTP-only "
                               "cookies containing the access and refresh tokens.",
@@ -67,7 +74,9 @@ class CookieTokenObtainPairView(TokenObtainPairView):
                         "message": openapi.Schema(type=openapi.TYPE_STRING, example="Login successful")
                     }
                 )
-            )
+            ),
+            400: ERROR_400_BAD_REQUEST,
+            401: ERROR_401_UNAUTHORIZED,
         }
     )
     def post(self, request, *args, **kwargs):
@@ -88,13 +97,14 @@ class CookieTokenObtainPairView(TokenObtainPairView):
 
 class CookieTokenRefreshView(TokenRefreshView):
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="Refresh Access Token",
         operation_description="Issues a new access token using the refresh token stored in HTTP-only cookies. "
                               "The new access token is set as a cookie. No request body is needed.",
         request_body=no_body,
         responses={
             200: openapi.Response("Access token refreshed in cookies"),
-            401: "No refresh token provided or token is invalid"
+            401: ERROR_401_UNAUTHORIZED,
         }
     )
     def post(self, request, *args, **kwargs):
@@ -119,6 +129,7 @@ class CookieTokenRefreshView(TokenRefreshView):
 
 class LogoutView(views.APIView):
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="User Logout",
         operation_description="Logs out the user by deleting the access and refresh token cookies.",
         responses={200: openapi.Response("Logout successful. Cookies deleted.")}
@@ -131,6 +142,7 @@ class LogoutView(views.APIView):
 
 
 @swagger_auto_schema(
+    tags=["api/auth"],
     method='post',
     operation_summary="User Registration",
     operation_description="Registers a new customer. Requires email, password, confirm_password, and full_name. "
@@ -138,7 +150,7 @@ class LogoutView(views.APIView):
     request_body=RegisterSerializer,
     responses={
         201: openapi.Response("User successfully registered"),
-        400: "Validation errors (e.g. email already exists)"
+        400: ERROR_400_BAD_REQUEST,
     }
 )
 @api_view(["POST"])
@@ -156,11 +168,12 @@ class UserMeView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="Get Current User",
         operation_description="Returns the details of the currently authenticated user based on the access token.",
         responses={
             200: UserSerializer,
-            401: "Unauthorized"
+            401: ERROR_401_UNAUTHORIZED,
         }
     )
     def get(self, request):
@@ -172,13 +185,14 @@ class UserMeView(views.APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="Update Current User Profile",
         operation_description="Partially updates personal profile information of the currently authenticated user.",
         request_body=UserProfileUpdateSerializer,
         responses={
             200: UserSerializer,
-            400: "Validation errors",
-            401: "Unauthorized"
+            400: ERROR_400_BAD_REQUEST,
+            401: ERROR_401_UNAUTHORIZED,
         }
     )
     def patch(self, request):
@@ -192,13 +206,14 @@ class UserMeView(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="Update Current User Profile (Full)",
         operation_description="Updates personal profile information of the currently authenticated user.",
         request_body=UserProfileUpdateSerializer,
         responses={
             200: UserSerializer,
-            400: "Validation errors",
-            401: "Unauthorized"
+            400: ERROR_400_BAD_REQUEST,
+            401: ERROR_401_UNAUTHORIZED,
         }
     )
     def put(self, request):
@@ -219,13 +234,15 @@ class VerifyEmailView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="Verify Email Code",
         operation_description="Validates the 6-digit numeric verification code for the logged-in user to confirm their "
                               "email address.",
         request_body=VerifyEmailSerializer,
         responses={
             200: openapi.Response("Email verified successfully."),
-            400: "Invalid or expired token."
+            400: ERROR_400_BAD_REQUEST,
+            401: ERROR_401_UNAUTHORIZED,
         }
     )
     def post(self, request, *args, **kwargs):
@@ -243,13 +260,15 @@ class ResendEmailCodeView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="Resend Email Verification Code",
         operation_description="Generates and emails a new 6-digit verification token "
                               "if the user's account is unverified.",
         request_body=no_body,
         responses={
             200: openapi.Response("New verification code dispatched."),
-            400: "Email already verified."
+            400: ERROR_400_BAD_REQUEST,
+            401: ERROR_401_UNAUTHORIZED,
         }
     )
     def post(self, request, *args, **kwargs):
@@ -264,11 +283,15 @@ class PasswordResetRequestView(views.APIView):
     permission_classes = [permissions.AllowAny]
 
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="Request Password Reset",
         operation_description="Accepts an account email and sends a recovery token if the account exists, "
                               "safe from enumeration scanning.",
         request_body=PasswordResetRequestSerializer,
-        responses={200: openapi.Response("If the account exists, a reset code has been dispatched.")}
+        responses={
+            200: openapi.Response("If the account exists, a reset code has been dispatched."),
+            400: ERROR_400_BAD_REQUEST,
+        }
     )
     def post(self, request, *args, **kwargs):
         serializer = PasswordResetRequestSerializer(data=request.data)
@@ -282,13 +305,14 @@ class PasswordResetConfirmView(views.APIView):
     permission_classes = [permissions.AllowAny]
 
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="Confirm Password Reset",
         operation_description="Validates the recovery token against user email context "
                               "and commits the updated custom user password.",
         request_body=PasswordResetConfirmSerializer,
         responses={
             200: openapi.Response("Password updated successfully."),
-            400: "Invalid parameters or token."
+            400: ERROR_400_BAD_REQUEST,
         }
     )
     def post(self, request, *args, **kwargs):
@@ -312,6 +336,7 @@ class AvatarUploadView(views.APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     @swagger_auto_schema(
+        tags=["api/auth"],
         operation_summary="Upload User Avatar",
         operation_description="Uploads an image file to be used as the user's avatar. Saves to S3.",
         manual_parameters=[
@@ -325,7 +350,9 @@ class AvatarUploadView(views.APIView):
         ],
         responses={
             200: openapi.Response("Avatar uploaded successfully."),
-            400: "No file provided."
+            400: ERROR_400_BAD_REQUEST,
+            401: ERROR_401_UNAUTHORIZED,
+            500: ERROR_500_INTERNAL_SERVER_ERROR,
         }
     )
     def post(self, request, *args, **kwargs):
@@ -364,6 +391,7 @@ class ContactFormView(views.APIView):
     permission_classes = [permissions.AllowAny]
 
     @swagger_auto_schema(
+        tags=["api/contact-form"],
         operation_summary="Submit Contact Form",
         operation_description="Submit a contact inquiry or message from the website contact form. "
                               "Saves the message and sends an email notification to site administrators.",

@@ -285,7 +285,7 @@ export const HomePage = () => {
               return (
                 <ProductCard
                   key={product.id}
-                  id={product.id}
+                  asin={product.asin}
                   title={product.title}
                   price={product.price}
                   imageUrl={product.image_url ?? ''}

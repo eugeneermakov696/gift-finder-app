@@ -1,11 +1,19 @@
 import csv
 import re
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import get_object_or_404
+from drf_yasg.utils import swagger_auto_schema
+from config.swagger import (
+    ERROR_400_BAD_REQUEST,
+    ERROR_401_UNAUTHORIZED,
+    ERROR_403_FORBIDDEN,
+    ERROR_404_NOT_FOUND,
+)
 
 from presents.models import Present, Wishlist
 from presents.serializers import PresentSerializer, WishlistSerializer
@@ -32,6 +40,58 @@ class IsCustomAdminOrReadOnly(permissions.BasePermission):
         return bool(request.user and request.user.is_authenticated and getattr(request.user, "role", "") == "admin")
 
 
+@method_decorator(name="list", decorator=swagger_auto_schema(
+    tags=["api/gifts"],
+    operation_summary="List Gifts",
+    responses={200: PresentSerializer(many=True), 400: ERROR_400_BAD_REQUEST}
+))
+@method_decorator(name="create", decorator=swagger_auto_schema(
+    tags=["api/gifts"],
+    operation_summary="Create Gift",
+    responses={
+        201: PresentSerializer,
+        400: ERROR_400_BAD_REQUEST,
+        401: ERROR_401_UNAUTHORIZED,
+        403: ERROR_403_FORBIDDEN
+    }
+))
+@method_decorator(name="retrieve", decorator=swagger_auto_schema(
+    tags=["api/gifts"],
+    operation_summary="Get Gift by ASIN",
+    responses={200: PresentSerializer, 404: ERROR_404_NOT_FOUND}
+))
+@method_decorator(name="update", decorator=swagger_auto_schema(
+    tags=["api/gifts"],
+    operation_summary="Update Gift",
+    responses={
+        200: PresentSerializer,
+        400: ERROR_400_BAD_REQUEST,
+        401: ERROR_401_UNAUTHORIZED,
+        403: ERROR_403_FORBIDDEN,
+        404: ERROR_404_NOT_FOUND
+    }
+))
+@method_decorator(name="partial_update", decorator=swagger_auto_schema(
+    tags=["api/gifts"],
+    operation_summary="Partial Update Gift",
+    responses={
+        200: PresentSerializer,
+        400: ERROR_400_BAD_REQUEST,
+        401: ERROR_401_UNAUTHORIZED,
+        403: ERROR_403_FORBIDDEN,
+        404: ERROR_404_NOT_FOUND
+    }
+))
+@method_decorator(name="destroy", decorator=swagger_auto_schema(
+    tags=["api/gifts"],
+    operation_summary="Delete Gift",
+    responses={
+        204: "Gift deleted successfully",
+        401: ERROR_401_UNAUTHORIZED,
+        403: ERROR_403_FORBIDDEN,
+        404: ERROR_404_NOT_FOUND
+    }
+))
 class PresentViewSet(viewsets.ModelViewSet):
     queryset = Present.objects.filter(is_available=True)
     serializer_class = PresentSerializer
@@ -54,6 +114,16 @@ class PresentViewSet(viewsets.ModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    @swagger_auto_schema(
+        tags=["api/gifts"],
+        operation_summary="Scrape Amazon Gift",
+        responses={
+            200: "Gift scraped/updated successfully",
+            400: ERROR_400_BAD_REQUEST,
+            401: ERROR_401_UNAUTHORIZED,
+            403: ERROR_403_FORBIDDEN
+        }
+    )
     @action(detail=False, methods=["post"], url_path="scrape", permission_classes=[IsCustomAdminUser])
     def scrape(self, request):
         amazon_url = request.data.get("amazon_url", "")
@@ -73,6 +143,16 @@ class PresentViewSet(viewsets.ModelViewSet):
         )
         return Response({"status": "success", "action": "created" if created else "updated", "id": gift.id})
 
+    @swagger_auto_schema(
+        tags=["api/gifts"],
+        operation_summary="Trigger Price Check",
+        responses={
+            200: "Price updated successfully",
+            401: ERROR_401_UNAUTHORIZED,
+            403: ERROR_403_FORBIDDEN,
+            404: ERROR_404_NOT_FOUND
+        }
+    )
     @action(detail=True, methods=["post"], url_path="price-check", permission_classes=[IsCustomAdminUser])
     def price_check(self, request, asin=None, **kwargs):
         gift = self.get_object()
@@ -90,6 +170,62 @@ class IsWishlistOwner(permissions.BasePermission):
         return obj.user == request.user
 
 
+@method_decorator(name="list", decorator=swagger_auto_schema(
+    tags=["api/wishlist"],
+    operation_summary="List User Wishlists",
+    responses={200: WishlistSerializer(many=True), 401: ERROR_401_UNAUTHORIZED}
+))
+@method_decorator(name="create", decorator=swagger_auto_schema(
+    tags=["api/wishlist"],
+    operation_summary="Create Wishlist",
+    responses={
+        201: WishlistSerializer,
+        400: ERROR_400_BAD_REQUEST,
+        401: ERROR_401_UNAUTHORIZED
+    }
+))
+@method_decorator(name="retrieve", decorator=swagger_auto_schema(
+    tags=["api/wishlist"],
+    operation_summary="Get Wishlist Details",
+    responses={
+        200: WishlistSerializer,
+        401: ERROR_401_UNAUTHORIZED,
+        403: ERROR_403_FORBIDDEN,
+        404: ERROR_404_NOT_FOUND
+    }
+))
+@method_decorator(name="update", decorator=swagger_auto_schema(
+    tags=["api/wishlist"],
+    operation_summary="Update Wishlist",
+    responses={
+        200: WishlistSerializer,
+        400: ERROR_400_BAD_REQUEST,
+        401: ERROR_401_UNAUTHORIZED,
+        403: ERROR_403_FORBIDDEN,
+        404: ERROR_404_NOT_FOUND
+    }
+))
+@method_decorator(name="partial_update", decorator=swagger_auto_schema(
+    tags=["api/wishlist"],
+    operation_summary="Partial Update Wishlist",
+    responses={
+        200: WishlistSerializer,
+        400: ERROR_400_BAD_REQUEST,
+        401: ERROR_401_UNAUTHORIZED,
+        403: ERROR_403_FORBIDDEN,
+        404: ERROR_404_NOT_FOUND
+    }
+))
+@method_decorator(name="destroy", decorator=swagger_auto_schema(
+    tags=["api/wishlist"],
+    operation_summary="Delete Wishlist",
+    responses={
+        204: "Wishlist deleted successfully",
+        401: ERROR_401_UNAUTHORIZED,
+        403: ERROR_403_FORBIDDEN,
+        404: ERROR_404_NOT_FOUND
+    }
+))
 class WishlistViewSet(viewsets.ModelViewSet):
     serializer_class = WishlistSerializer
     permission_classes = [permissions.IsAuthenticated, IsWishlistOwner]
@@ -105,6 +241,17 @@ class WishlistViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    @swagger_auto_schema(
+        tags=["api/wishlist"],
+        operation_summary="Manage Wishlist Item",
+        responses={
+            200: "Item added or removed successfully",
+            400: ERROR_400_BAD_REQUEST,
+            401: ERROR_401_UNAUTHORIZED,
+            403: ERROR_403_FORBIDDEN,
+            404: ERROR_404_NOT_FOUND
+        }
+    )
     @action(detail=True, methods=["post"], url_path="manage-item")
     def manage_item(self, request, pk=None):
         wishlist = self.get_object()
@@ -137,6 +284,16 @@ class WishlistViewSet(viewsets.ModelViewSet):
 
         return Response({"status": "success", "message": f"Action '{action_type}' processed successfully."})
 
+    @swagger_auto_schema(
+        tags=["api/wishlist"],
+        operation_summary="Export Wishlist to CSV",
+        responses={
+            200: "CSV file download",
+            401: ERROR_401_UNAUTHORIZED,
+            403: ERROR_403_FORBIDDEN,
+            404: ERROR_404_NOT_FOUND
+        }
+    )
     @action(detail=True, methods=["get"], url_path="export/csv")
     def export_csv(self, request, pk=None):
         wishlist = self.get_object()
