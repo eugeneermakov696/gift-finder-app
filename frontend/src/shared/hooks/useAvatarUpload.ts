@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useAppDispatch } from '../../store/hooks';
 import type { Area } from 'react-easy-crop';
@@ -17,8 +17,10 @@ export const useAvatarUpload = (onClose: () => void) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
-      const imageUrl = URL.createObjectURL(file);
-      setImageSrc(imageUrl);
+      setImageSrc((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return URL.createObjectURL(file);
+      });
     }
   }, []);
 
@@ -33,10 +35,22 @@ export const useAvatarUpload = (onClose: () => void) => {
   }, []);
 
   const handleClose = () => {
-    setImageSrc(null);
+    setImageSrc((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
     setZoom(1);
     onClose();
   };
+
+  useEffect(() => {
+    return () => {
+      setImageSrc((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
+    };
+  }, []);
 
   const handleSave = async () => {
     if (!imageSrc || !croppedAreaPixels) return;
