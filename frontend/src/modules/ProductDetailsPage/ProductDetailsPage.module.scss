@@ -322,3 +322,72 @@
     line-height: 1.4;
   }
 }
+
+.tabsContainer {
+  margin-top: 64px;
+  width: 100%;
+
+  @include on-phone {
+    margin-top: 40px;
+  }
+}
+
+.tabHeaders {
+  display: flex;
+  gap: 40px;
+  border-bottom: 1px solid var(--text-muted);
+  margin-bottom: 24px;
+
+  @include on-phone {
+    gap: 20px;
+    overflow-x: auto;
+  }
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 16px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  @include on-phone {
+    font-size: 16px;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    color: var(--text-main);
+  }
+}
+
+.activeTab {
+  color: var(--text-main);
+  border-bottom-color: var(--text-main);
+}
+
+.tabContent {
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.6;
+
+  @include on-phone {
+    font-size: 14px;
+  }
+}
+
+.descriptionText {
+  white-space: pre-wrap;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.emptyState {
+  color: var(--text-muted);
+  font-style: italic;
+}

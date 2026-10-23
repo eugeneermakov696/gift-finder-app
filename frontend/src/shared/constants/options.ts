@@ -1,58 +1,30 @@
 export const AGE_OPTIONS = [
-  '0-10 years',
-  '11-18 years',
-  '19-45 years',
-  '49+ years',
+  'Kids 0-12',
+  'Teens 13-18',
+  'Adults 19-45',
+  'Adults 46+',
 ];
-export const GENDER_OPTIONS = ['Male', 'Female'];
+export const GENDER_OPTIONS = ['Male', 'Female', 'Unisex'];
 export const RELATIONSHIP_OPTIONS = [
+  'Relative',
   'Parent',
   'Friend',
-  'Child',
-  'Grandparent',
-  'Boss',
-  'Relative',
-  'Partner',
-  'Sibling',
-  'Grandchild',
-  'Colleague',
-  'Neighbor',
   'Other',
 ];
 export const INTEREST_OPTIONS = [
   'Sports',
   'Gaming',
-  'Art',
   'Beauty',
   'Travel',
-  'Movies',
-  'Fitness',
-  'Music',
   'Fashion',
-  'Cooking',
-  'Books',
-  'Photography',
-  'Pets',
   'Jewelry',
-  'Wine',
-  'Coffee',
   'Wellness',
   'Outdoor',
   'Tech',
   'Crafts',
   'Experiences',
   'Home & Decor',
-  'Other',
-];
-export const GIFT_TYPE_OPTIONS = [
-  'Practical / Useful',
-  'Romantic',
-  'Entertaining / Fun',
-  'Luxurious',
-  'Creative',
-  'Educational',
-  'Adventurous',
-  'Other',
+  'Toys',
 ];
 
 export const GIFT_CATEGORIES = [

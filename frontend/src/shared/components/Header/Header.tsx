@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
+import { MobileMenu } from './MobileMenu';
 import styles from './Header.module.scss';
 
 export const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const scrollWithOffset = (el: HTMLElement) => {
     setTimeout(() => {
       const yCoordinate = el.getBoundingClientRect().top + window.scrollY;
@@ -20,7 +24,11 @@ export const Header = () => {
           className={styles.logo}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          <img src={`${import.meta.env.BASE_URL}icons/logo.svg`} className={styles.logoImg} alt="Giftly logo" />
+          <img
+            src={`${import.meta.env.BASE_URL}icons/logo.svg`}
+            className={styles.logoImg}
+            alt="Giftly logo"
+          />
         </Link>
 
         <nav className={styles.nav}>
@@ -62,12 +70,17 @@ export const Header = () => {
           </div>
         </NavLink>
 
-        <button className={styles.burgerBtn} aria-label="Open menu" onClick={() => console.log('Open menu')}>
+        <button
+          className={styles.burgerBtn}
+          aria-label="Open menu"
+          onClick={() => setIsMenuOpen(true)}
+        >
           <div className={styles.iconWrapper}>
             <span className={styles.burgerIcon} aria-hidden="true" />
           </div>
         </button>
       </div>
+      {isMenuOpen && <MobileMenu onClose={() => setIsMenuOpen(false)} />}
     </header>
   );
 };

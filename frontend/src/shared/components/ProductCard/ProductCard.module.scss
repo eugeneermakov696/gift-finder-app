@@ -102,7 +102,7 @@
   background-color: var(--color-primary-1);
 }
 
-/* --- Desctop card --- */
+/* --- Regular card --- */
 .horizontal {
   flex-direction: row;
   padding: 16px;
@@ -172,15 +172,12 @@
   }
 }
 
-
-
 /* --- Profile card --- */
 .profile {
   flex-direction: column;
   padding: 0; 
-  background: transparent;
+  background-color: #fff;
   box-shadow: none;
-  
   width: 100%;
   flex-shrink: 0;
 

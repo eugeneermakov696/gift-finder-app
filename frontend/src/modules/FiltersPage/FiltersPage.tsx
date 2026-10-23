@@ -7,7 +7,6 @@ import styles from './FiltersPage.module.scss';
 import {
   AGE_OPTIONS,
   GENDER_OPTIONS,
-  GIFT_TYPE_OPTIONS,
   INTEREST_OPTIONS,
   RELATIONSHIP_OPTIONS,
 } from '../../shared/constants/options';
@@ -22,8 +21,6 @@ export const FiltersPage = () => {
     setRelationship,
     interests,
     setInterests,
-    giftTypes,
-    setGiftTypes,
     budget,
     setBudget,
     toggleSelection,
@@ -115,23 +112,6 @@ export const FiltersPage = () => {
       </section>
 
       <section className={styles.filterSection}>
-        <h3 className={styles.sectionTitle}>What’s the vibe of the gift?</h3>
-        <div className={styles.grid}>
-          {GIFT_TYPE_OPTIONS.map((option) => (
-            <label key={option} className={styles.customLabel}>
-              <input
-                type="checkbox"
-                checked={giftTypes.includes(option)}
-                onChange={() => toggleSelection(option, giftTypes, setGiftTypes)}
-                className={styles.hiddenInput}
-              />
-              <span className={styles.customButton}>{option}</span>
-            </label>
-          ))}
-        </div>
-      </section>
-
-      <section className={styles.filterSection}>
         <div className={styles.sliderWrapper}>
           <h3 className={styles.sectionTitle}>What’s your budget limit?</h3>
           <div className={styles.budgetHeader}>
@@ -168,7 +148,7 @@ export const FiltersPage = () => {
 
           <div className={styles.budgetLimits}>
             <span>$5</span>
-            <span>$1000+</span>
+            <span>$200+</span>
           </div>
         </div>
       </section>

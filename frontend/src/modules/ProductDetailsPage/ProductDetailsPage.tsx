@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchGiftDetails, clearGiftDetails } from '../../store//giftDetails/giftDetailsSlice';
-import { ProductTabs } from './components/ProductTabs';
 import styles from './ProductDetailsPage.module.scss';
 
 export const ProductDetailsPage = () => {
@@ -124,7 +123,23 @@ export const ProductDetailsPage = () => {
         </div>
       </div>
 
-      <ProductTabs description={product.description} />
+      <div className={styles.tabsContainer}>
+        <div className={styles.tabHeaders}>
+          <button className={styles.tab}>Product Details</button>
+        </div>
+
+        <div className={styles.tabContent}>
+          <div className={styles.detailsContent}>
+            {product.description ? (
+              <p className={styles.descriptionText}>{product.description}</p>
+            ) : (
+              <p className={styles.emptyState}>
+                No detailed description available for this product.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
