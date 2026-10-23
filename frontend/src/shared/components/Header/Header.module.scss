@@ -127,7 +127,6 @@
 
 .wishlistIcon {
   @include icon-mask('/icons/heart.svg', 32px);
-  background-color: var(--text-main);
 
   @include on-phone {
     @include icon-mask('/icons/heart.svg', 24px);

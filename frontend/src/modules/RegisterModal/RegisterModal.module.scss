@@ -9,6 +9,10 @@
   justify-content: center;
   z-index: 1000;
   padding: 24px;
+
+  @include on-phone {
+    padding: 16px;
+  }
 }
 
 .modal {
@@ -21,6 +25,11 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
   overflow-y: auto;
+
+  @include on-phone {
+    padding: 32px 24px;
+    max-height: 95vh;
+  }
 }
 
 .closeBtn {
@@ -39,6 +48,11 @@
   margin-right: -8px;
   border-radius: 50%;
   transition: background-color 0.3s ease;
+  
+  @include on-phone {
+    top: 16px;
+    right: 16px;
+  }
   
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
@@ -65,6 +79,10 @@
     font-weight: 400;
     color: var(--text-secondary);
     line-height: 1.4;
+
+    @include on-phone {
+      font-size: 14px;
+    }
   }
 }
 
@@ -74,7 +92,12 @@
   gap: 16px;
   margin-bottom: 16px;
   max-width: 400px;
+
+  @include on-phone {
+    max-width: 100%;
+  }
 }
+
 .inputWrapper {
   display: flex;
   flex-direction: column;
@@ -184,6 +207,11 @@
   font-size: 14px;
   color: var(--text-secondary);
   cursor: pointer;
+
+  @include on-phone {
+    align-items: flex-start;
+    font-size: 13px;
+  }
   
   a {
     color: var(--color-primary-1);
@@ -204,6 +232,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 
   &:checked {
     background-color: var(--color-primary-2);
@@ -224,12 +253,20 @@
 
 .submitBtn {
   max-width: 340px;
+  
+  @include on-phone {
+    width: 100%;
+  }
 }
 
 .footer {
   text-align: left;
   font-size: 14px;
   color: var(--text-secondary);
+
+  @include on-phone {
+    font-size: 13px;
+  }
   
   .loginLink {
     background: none;
@@ -237,7 +274,7 @@
     color: var(--color-primary-1);
     font-weight: 400;
     border-bottom: 1px solid var(--color-primary-1);
-    padding-bottom: 1;
+    padding-bottom: 1px;
     margin-left: 4px;
   }
 }

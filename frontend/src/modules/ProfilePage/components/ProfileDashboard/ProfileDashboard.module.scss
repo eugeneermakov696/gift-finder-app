@@ -10,6 +10,11 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+
+  @include on-phone {
+    padding: 24px 16px;
+    gap: 32px;
+  }
 }
 
 .card {
@@ -17,6 +22,10 @@
   border-radius: 12px;
   padding: 32px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+
+  @include on-phone {
+    padding: 24px 16px;
+  }
 }
 
 /* --- Page Header --- */
@@ -24,18 +33,34 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+
+  @include on-phone {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 16px;
+  }
 }
 
 .title {
   font-size: 20px;
   font-weight: 500;
   margin-bottom: 12px;
+  
+  @include on-phone {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+  }
 }
 
 .subtitle {
   color: var(--text-secondary);
   font-size: 16px;
   font-weight: 400;
+
+  @include on-phone {
+    font-size: 14px;
+  }
 }
 
 .backLink {
@@ -44,8 +69,13 @@
   justify-content: center;
   align-self: flex-end;
   padding: 10px 0;
-  gap: 12px;
+  gap: 8px;
   transition: all 0.3s ease;
+
+  @include on-phone {
+    padding: 0;
+    font-size: 14px;
+  }
 
   &:hover span {
     transform: translateX(4px);
@@ -67,11 +97,24 @@
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   gap: 24px;
+
+  @include on-phone {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 .topRow > .card:first-child {
   display: flex;
   align-items: center;
+
+  @include on-phone {
+    flex-direction: column;
+    align-items: stretch;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
 }
 
 .profileSection {
@@ -79,6 +122,11 @@
   align-items: center;
   gap: 32px;
   flex: 1;
+
+  @include on-phone {
+    align-items: flex-start;
+    gap: 16px;
+  }
 }
 
 .avatarWrapper {
@@ -86,12 +134,18 @@
   width: 170px;
   height: 170px;
   flex-shrink: 0;
+  margin-left: 16px;
+
+  @include on-phone {
+    width: 130px;
+    height: 130px;
+  }
 }
 
 .avatar {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 8px;
   background-color: #e5e5e5;
   background-size: cover;
   background-position: center;
@@ -108,15 +162,32 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+
+  @include on-phone {
+    bottom: -6px;
+    right: -6px;
+    width: 32px;
+    height: 32px;
+  }
 }
 
 .cameraIcon {
   @include icon-mask('/icons/camera.svg', 32px);
+  
+  @include on-phone {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .profileDetails {
   display: flex;
   flex-direction: column;
+
+  @include on-phone {
+    flex: 1;
+    width: 100%;
+  }
 
   h2 {
     font-size: 20px;
@@ -128,12 +199,22 @@
     color: var(--text-secondary);
     font-size: 16px;
     margin: 0 0 12px 0;
+    
+    @include on-phone {
+      font-size: 14px;
+      word-break: break-all;
+    }
   }
   
   .editBtn {
     width: fit-content;
     flex-shrink: 0;
     white-space: nowrap;
+    
+    @include on-phone {
+      width: 100%; /* Розтягуємо кнопку під поштою */
+      margin-top: 4px;
+    }
   }
 }
 
@@ -141,8 +222,12 @@
   width: 1px;
   height: 100%;
   background-color: #e5e5e5;
-  margin: 0  32px;
+  margin: 0 32px;
   flex-shrink: 0;
+
+  @include on-phone {
+    display: none;
+  }
 }
 
 .authStatusSection {
@@ -152,6 +237,12 @@
   justify-content: center;
   flex: 1;
   gap: 16px;
+
+  @include on-phone {
+    align-items: stretch;
+    margin-top: 16px;
+    gap: 12px;
+  }
 }
 
 .statusBlock {
@@ -162,6 +253,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
+  @include on-phone {
+    background-color: transparent;
+    padding: 0;
+  }
 }
 
 .statusHeader {
@@ -172,6 +268,10 @@
   font-size: 16px;
   font-weight: 400;
   margin-bottom: 24px;
+
+  @include on-phone {
+    margin-bottom: 8px;
+  }
 
   .dot {
     width: 8px;
@@ -201,6 +301,11 @@
     border: transparent;
     border-bottom: 1px solid var(--color-primary-1);
   }
+
+  @include on-phone {
+    align-self: flex-end;
+    margin-right: 0;
+  }
 }
 
 /* --- Info --- */
@@ -208,6 +313,12 @@
   display: flex;
   align-items: flex-start;
   gap: 24px;
+  
+  /* На мобілці залишається білою карткою, тому тут не скидаємо background */
+  @include on-phone {
+    flex-direction: column;
+    gap: 16px;
+  }
 }
 
 .userOutlineIcon {
@@ -215,6 +326,12 @@
   display: inline-block;
   margin-right: 20px;
   @include icon-mask('/icons/profile.svg', 32px);
+
+  @include on-phone {
+    margin-right: 12px;
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .infoContainer {
@@ -223,10 +340,22 @@
   max-width: 300px;
   flex: 1;
 
+  @include on-phone {
+    max-width: 100%;
+    width: 100%;
+  }
+
   h2 {
     font-size: 20px;
     font-weight: 500;
     margin: 0 0 24px 0;
+    
+    @include on-phone {
+      display: inline-flex;
+      align-items: center;
+      margin: 0 0 16px 0;
+      font-size: 18px;
+    }
   }
 }
 
@@ -239,12 +368,23 @@
   display: grid;
   grid-template-columns: 140px 1fr;
   padding: 12px 0;
-  border-bottom: 1px solid var(--text-muted);
+  border-bottom: 1px solid #e5e5e5;
+
+  @include on-phone {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+  }
 }
 
 .infoLabel {
   color: var(--text-main);
   font-size: 16px;
+
+  @include on-phone {
+    font-size: 14px;
+  }
 }
 
 .infoValue {
@@ -259,6 +399,19 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
+
+  @include on-phone {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 
+      "title button"
+      "grid grid";
+    align-items: center;
+    gap: 16px;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+  }
 }
 
 .favoritesTitle {
@@ -266,6 +419,12 @@
   font-weight: 500;
   margin: 0;
   min-width: 140px;
+
+  @include on-phone {
+    grid-area: title;
+    min-width: auto;
+    font-size: 18px;
+  }
 }
 
 .productsGrid {
@@ -273,6 +432,12 @@
   flex: 1;
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 24px;
+
+  @include on-phone {
+    grid-area: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
 }
 
 .viewAllBtn {
@@ -291,5 +456,13 @@
 
   &:hover span {
     transform: translateX(4px);
+  }
+
+  @include on-phone {
+    grid-area: button;
+    padding: 0;
+    height: auto;
+    background-color: transparent;
+    color: var(--color-primary-1);
   }
 }
