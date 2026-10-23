@@ -1,45 +1,46 @@
 from django.db.models import Q
 
-# Mapping from frontend quiz "interests" to database "interests" archetypes
-INTEREST_TO_ARCHETYPES = {
-    "sports": ["The Active & Outdoor Explorer"],
-    "fitness": ["The Active & Outdoor Explorer"],
-    "outdoor": ["The Active & Outdoor Explorer"],
-    "travel": ["The Active & Outdoor Explorer", "Play, Fun & Party"],
-    "gaming": ["The Tech & Gadget Geek", "Play, Fun & Party"],
-    "tech": ["The Tech & Gadget Geek"],
-    "art": ["The Creative & Artsy Soul"],
-    "crafts": ["The Creative & Artsy Soul"],
-    "photography": ["The Creative & Artsy Soul", "The Tech & Gadget Geek"],
-    "beauty": ["The Self-Care & Wellness Fan"],
-    "wellness": ["The Self-Care & Wellness Fan"],
-    "jewelry": ["The Self-Care & Wellness Fan", "The Creative & Artsy Soul"],
-    "fashion": ["The Self-Care & Wellness Fan", "The Creative & Artsy Soul"],
-    "cooking": ["The Homebody & Cozy Life"],
-    "books": ["The Homebody & Cozy Life"],
-    "coffee": ["The Homebody & Cozy Life"],
-    "wine": ["The Homebody & Cozy Life"],
-    "home & decor": ["The Homebody & Cozy Life"],
-    "home": ["The Homebody & Cozy Life"],
-    "pets": ["The Homebody & Cozy Life", "The Active & Outdoor Explorer"],
-    "music": ["Play, Fun & Party", "The Creative & Artsy Soul"],
-    "movies": ["Play, Fun & Party", "The Homebody & Cozy Life"],
-    "experiences": ["Play, Fun & Party", "The Active & Outdoor Explorer"],
+# Mapping from frontend quiz "interests" to database "interests" / "category"
+INTEREST_TO_CATEGORIES = {
+    "sports": ["Sports"],
+    "fitness": ["Sports", "Outdoor", "Wellness"],
+    "outdoor": ["Outdoor", "Sports"],
+    "travel": ["Travel", "Outdoor", "Experiences"],
+    "gaming": ["Gaming", "Tech"],
+    "tech": ["Tech", "Gaming"],
+    "art": ["Crafts"],
+    "crafts": ["Crafts"],
+    "photography": ["Tech", "Travel"],
+    "beauty": ["Beauty"],
+    "wellness": ["Wellness", "Beauty"],
+    "jewelry": ["Jewelry"],
+    "fashion": ["Fashion", "Jewelry"],
+    "cooking": ["Home & Decor"],
+    "books": ["Home & Decor", "Experiences"],
+    "coffee": ["Home & Decor"],
+    "wine": ["Home & Decor", "Experiences"],
+    "home & decor": ["Home & Decor"],
+    "home": ["Home & Decor"],
+    "pets": ["Home & Decor", "Outdoor"],
+    "music": ["Experiences", "Tech"],
+    "movies": ["Experiences", "Gaming"],
+    "experiences": ["Experiences"],
+    "toys": ["Toys"],
 }
 
-# Mapping from frontend quiz "category" (gift types) to database Amazon categories
+# Mapping from frontend quiz "category" (gift types) to database categories
 GIFT_TYPE_TO_CATEGORIES = {
-    "practical / useful": ["Home & Kitchen", "Clothing & Accessories", "Electronics"],
-    "practical": ["Home & Kitchen", "Clothing & Accessories", "Electronics"],
-    "useful": ["Home & Kitchen", "Clothing & Accessories", "Electronics"],
-    "entertaining / fun": ["Toys & Games", "Costumes & Party"],
-    "entertaining": ["Toys & Games", "Costumes & Party"],
-    "fun": ["Toys & Games", "Costumes & Party"],
-    "creative": ["Toys & Games", "Beauty & Personal Care"],
-    "educational": ["Toys & Games", "Electronics"],
-    "adventurous": ["Sports & Outdoors"],
-    "luxurious": ["Jewelry & Watches", "Beauty & Personal Care", "Clothing & Accessories"],
-    "romantic": ["Jewelry & Watches", "Beauty & Personal Care", "Home & Kitchen"],
+    "practical / useful": ["Home & Decor", "Tech", "Fashion", "Sports"],
+    "practical": ["Home & Decor", "Tech", "Fashion", "Sports"],
+    "useful": ["Home & Decor", "Tech", "Fashion", "Sports"],
+    "entertaining / fun": ["Gaming", "Toys", "Experiences"],
+    "entertaining": ["Gaming", "Toys", "Experiences"],
+    "fun": ["Gaming", "Toys", "Experiences"],
+    "creative": ["Crafts", "Beauty", "Fashion", "Toys"],
+    "educational": ["Toys", "Tech", "Crafts"],
+    "adventurous": ["Outdoor", "Travel", "Sports", "Experiences"],
+    "luxurious": ["Jewelry", "Beauty", "Fashion"],
+    "romantic": ["Jewelry", "Beauty", "Home & Decor", "Experiences"],
 }
 
 
@@ -138,29 +139,28 @@ def filter_presents_queryset(queryset, query_params):
             )
 
     # 4. Age Group
+    # Brackets: Kids (0-10), Teens (11-18), Adults (19-45), Old (49+)
     if age_group_param:
         age_str = age_group_param.strip().lower()
-        if any(k in age_str for k in ["0-2", "baby", "toddler", "infant"]):
+        if any(k in age_str for k in ["0-10", "0-2", "3-5", "6-12", "6-10", "kid", "child", "baby"]):
             queryset = queryset.filter(
-                Q(age_group__iexact="Baby") | Q(age_group__iexact="All Ages")
+                Q(age_group__icontains="Kids") | Q(age_group__iexact="All Ages")
             )
-        elif any(k in age_str for k in ["3-5", "6-12", "13-17", "kid", "teen", "child"]):
+        elif any(k in age_str for k in ["11-18", "13-17", "teen"]):
             queryset = queryset.filter(
-                Q(age_group__iexact="Kids")
-                | Q(recipient__icontains="Kids")
-                | Q(age_group__iexact="All Ages")
+                Q(age_group__icontains="Teens") | Q(age_group__iexact="All Ages")
+            )
+        elif any(k in age_str for k in ["19-45", "18-24", "25-34", "35-44", "adult"]):
+            queryset = queryset.filter(
+                Q(age_group__icontains="Adults") | Q(age_group__iexact="All Ages")
+            )
+        elif any(k in age_str for k in ["49", "45", "55", "65", "old", "senior"]):
+            queryset = queryset.filter(
+                Q(age_group__icontains="Old") | Q(age_group__iexact="All Ages")
             )
         else:
-            # Adults (18+)
             queryset = queryset.filter(
-                (
-                    Q(age_group__icontains="Adults")
-                    | Q(age_group__iexact="All Ages")
-                )
-                & ~(
-                    Q(age_group__in=["Baby", "Kids"])
-                    & ~Q(recipient__icontains="Unisex")
-                )
+                Q(age_group__icontains=age_group_param) | Q(age_group__iexact="All Ages")
             )
 
     # 5. Recipient / Relationship
@@ -199,30 +199,36 @@ def filter_presents_queryset(queryset, query_params):
                     | Q(recipient__icontains="For Her")
                 )
 
-    # 6. Interests (comma-separated support + archetype mapping)
+    # 6. Interests (comma-separated support + category mapping, ignore "other")
     if interests_param:
         raw_tokens = [t.strip().lower() for t in interests_param.split(",") if t.strip()]
         if raw_tokens:
             interest_q = Q()
             for token in raw_tokens:
-                interest_q |= Q(interests__icontains=token)
-                archetypes = INTEREST_TO_ARCHETYPES.get(token, [])
-                for arch in archetypes:
-                    interest_q |= Q(interests__icontains=arch)
-            queryset = queryset.filter(interest_q)
+                if token == "other":
+                    continue
+                interest_q |= Q(interests__icontains=token) | Q(category__icontains=token)
+                mapped_cats = INTEREST_TO_CATEGORIES.get(token, [])
+                for m_cat in mapped_cats:
+                    interest_q |= Q(interests__icontains=m_cat) | Q(category__icontains=m_cat)
+            if interest_q:
+                queryset = queryset.filter(interest_q)
 
-    # 7. Category / Gift Type (comma-separated support + gift type mapping)
+    # 7. Category / Gift Type (comma-separated support + gift type mapping, ignore "other")
     if category_param:
         raw_categories = [c.strip() for c in category_param.split(",") if c.strip()]
         if raw_categories:
             cat_q = Q()
             for cat in raw_categories:
                 cat_lower = cat.lower()
+                if cat_lower == "other":
+                    continue
                 cat_q |= Q(category__icontains=cat)
                 mapped_cats = GIFT_TYPE_TO_CATEGORIES.get(cat_lower, [])
                 for m_cat in mapped_cats:
                     cat_q |= Q(category__icontains=m_cat)
-            queryset = queryset.filter(cat_q)
+            if cat_q:
+                queryset = queryset.filter(cat_q)
 
     # 8. Occasion (comma-separated + apostrophe normalization)
     if occasion_param:

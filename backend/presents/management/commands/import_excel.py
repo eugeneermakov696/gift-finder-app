@@ -1,3 +1,4 @@
+import datetime
 import os
 import pandas as pd
 from django.core.management.base import BaseCommand
@@ -61,6 +62,18 @@ class Command(BaseCommand):
                     except (ValueError, TypeError):
                         return default
 
+                def get_rating(col_name="rating"):
+                    val = row.get(col_name)
+                    if pd.isna(val):
+                        return None
+                    if isinstance(val, (datetime.datetime, datetime.date)):
+                        # Recover rating corrupted by Excel date auto-formatting (e.g. 4.6 -> 2026-06-04)
+                        return round(val.day + val.month / 10.0, 2)
+                    try:
+                        return round(float(val), 2)
+                    except (ValueError, TypeError):
+                        return None
+
                 def get_int(col_name, default=0):
                     val = row.get(col_name)
                     if pd.isna(val):
@@ -84,7 +97,7 @@ class Command(BaseCommand):
                         "image_url": image_url,
                         "price": price_val,
                         "original_price": get_float("original_price"),
-                        "rating": get_float("rating"),
+                        "rating": get_rating("rating"),
                         "reviews_count": get_int("reviews_count", 0),
                         "category": get_str("category") or "Imported Gifts",
                         "age_group": get_str("age_group"),
@@ -94,7 +107,6 @@ class Command(BaseCommand):
                         "recipient": get_str("recipient"),
                         "is_available": True
                     }
-
                 )
                 if created:
                     success_count += 1

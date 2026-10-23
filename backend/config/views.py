@@ -4,9 +4,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from config.swagger import ERROR_503_SERVICE_UNAVAILABLE
 
 
 @swagger_auto_schema(
+    tags=["api/health"],
     method="get",
     operation_summary="Health Check",
     operation_description="Returns the operational status of the API and its database connectivity.",
@@ -21,7 +23,7 @@ from drf_yasg import openapi
                 }
             )
         ),
-        503: openapi.Response("Database connection failure")
+        503: ERROR_503_SERVICE_UNAVAILABLE
     }
 )
 @api_view(["GET"])

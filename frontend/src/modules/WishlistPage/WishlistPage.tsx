@@ -39,7 +39,7 @@ export const WishlistPage = () => {
           savedItems.map((item) => (
             <ProductCard
               key={item.id}
-              id={item.id}
+              asin={item.asin}
               title={item.title}
               price={item.price}
               imageUrl={item.image_url ?? ''}

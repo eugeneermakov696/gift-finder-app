@@ -20,9 +20,15 @@ export const App = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchMe()).then(() => {
+    const hasSession = localStorage.getItem('has_session') === 'true';
+
+    if (hasSession) {
+      dispatch(fetchMe()).then(() => {
+        dispatch(fetchWishlist());
+      });
+    } else {
       dispatch(fetchWishlist());
-    });
+    }
   }, [dispatch]);
 
   return (
