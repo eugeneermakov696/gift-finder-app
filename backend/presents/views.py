@@ -235,6 +235,9 @@ class WishlistViewSet(viewsets.ModelViewSet):
         if getattr(self, "swagger_fake_view", False):
             return Wishlist.objects.none()
         if self.action == "list":
+            if self.request.user.is_authenticated:
+                if not Wishlist.objects.filter(user=self.request.user).exists():
+                    Wishlist.objects.create(user=self.request.user, name="Liked Ideas")
             return Wishlist.objects.filter(user=self.request.user)
         return Wishlist.objects.all()
 
