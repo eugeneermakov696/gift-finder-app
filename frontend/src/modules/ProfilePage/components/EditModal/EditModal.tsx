@@ -43,15 +43,17 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
+          {/* Name */}
           <div className={styles.inputWrapper}>
             <div className={styles.inputGroup}>
+              <label className={styles.floatingLabel}>Name</label>
               <span className={`${styles.iconLeft} ${styles.userIcon}`} />
               <input
                 type="text"
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                placeholder="Full name"
+                placeholder="Enter your name"
                 className={styles.withIconLeft}
                 required
               />
@@ -59,64 +61,70 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
             {errors.fullName && <span className={styles.errorMsg}>{errors.fullName}</span>}
           </div>
 
+          {/* Email */}
           <div className={styles.inputWrapper}>
             <div className={styles.inputGroup}>
+              <label className={styles.floatingLabel}>Email</label>
               <span className={`${styles.iconLeft} ${styles.emailIcon}`} />
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Email address"
+                placeholder="Enter your Email"
                 className={styles.withIconLeft}
                 required
               />
             </div>
+            {errors.email && <span className={styles.errorMsg}>{errors.email}</span>}
           </div>
 
+          {/* Old Password */}
           <div className={styles.inputWrapper}>
             <div className={styles.inputGroup}>
+              <label className={styles.floatingLabel}>Password</label>
               <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
               <input
                 type={showOldPassword ? 'text' : 'password'}
-                name="oldPassword"
+                name="old password"
                 value={formData.oldPassword}
                 onChange={handleChange}
                 placeholder="Old password"
-                autoComplete="current-password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
               />
               <button
                 type="button"
                 className={`${styles.iconRight} ${styles.eyeIcon}`}
                 onClick={() => setShowOldPassword(!showOldPassword)}
-                aria-label="Toggle old password visibility"
+                aria-label="Toggle old password"
               />
             </div>
-            {errors.oldPassword && <span className={styles.errorMsg}>{errors.oldPassword}</span>}
+            {errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
           </div>
 
-          {/* New password */}
+          {/* New Password */}
           <div className={styles.inputWrapper}>
             <div className={styles.inputGroup}>
+              <label className={styles.floatingLabel}>Password</label>
               <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
               <input
                 type={showNewPassword ? 'text' : 'password'}
-                name="newPassword"
+                name="New Password"
                 value={formData.newPassword}
                 onChange={handleChange}
                 placeholder="New password"
-                autoComplete="new-password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
               />
               <button
                 type="button"
                 className={`${styles.iconRight} ${styles.eyeIcon}`}
                 onClick={() => setShowNewPassword(!showNewPassword)}
-                aria-label="Toggle new password visibility"
+                aria-label="Toggle new password"
               />
             </div>
-            {errors.newPassword && <span className={styles.errorMsg}>{errors.newPassword}</span>}
+            {errors.confirmPassword && (
+              <span className={styles.errorMsg}>{errors.confirmPassword}</span>
+            )}
           </div>
 
           {authError && <div className={styles.errorMsg}>{authError}</div>}
