@@ -135,7 +135,7 @@ class PresentViewSet(viewsets.ModelViewSet):
             asin=asin,
             defaults={
                 "title": f"Amazon Choice Product ({asin})",
-                "amazon_url": f"https://amazon.com{asin}",
+                "amazon_url": f"https://www.amazon.com/dp/{asin}",
                 "price": round(mock_seed_price, 2),
                 "category": "Featured Products",
                 "is_available": True
