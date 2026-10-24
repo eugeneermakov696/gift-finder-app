@@ -1,9 +1,46 @@
+import sys
+import threading
+import logging
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from users.models import UserVerificationCode, VerificationScenario, ContactMessage
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
+
+
+def send_mail_async(subject: str, message: str, recipient_list: list, from_email: str = None) -> threading.Thread | None:
+    """
+    Dispatches email asynchronously in a daemon thread so SMTP latency never blocks the HTTP request.
+    In testing environments (locmem backend), executes synchronously for predictable outbox assertions.
+    """
+    from_email = from_email or getattr(settings, "DEFAULT_FROM_EMAIL", None)
+
+    is_testing = (
+        getattr(settings, "EMAIL_BACKEND", "").endswith("locmem.EmailBackend")
+        or "test" in sys.argv
+    )
+
+    def _deliver():
+        try:
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=from_email,
+                recipient_list=recipient_list,
+                fail_silently=True,
+            )
+        except Exception as exc:
+            logger.warning(f"Failed to dispatch async email to {recipient_list}: {exc}")
+
+    if is_testing:
+        _deliver()
+        return None
+
+    thread = threading.Thread(target=_deliver, daemon=True)
+    thread.start()
+    return thread
 
 
 def create_and_send_verification_code(user, scenario: VerificationScenario) -> UserVerificationCode:
@@ -19,16 +56,12 @@ def create_and_send_verification_code(user, scenario: VerificationScenario) -> U
         subject = "Reset Your Password"
         message = f"Your password reset code is: {verification_entry.code}. Valid for 15 minutes."
 
-    try:
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
-            recipient_list=[user.email],
-            fail_silently=True,
-        )
-    except Exception:
-        pass
+    send_mail_async(
+        subject=subject,
+        message=message,
+        recipient_list=[user.email],
+        from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
+    )
     return verification_entry
 
 
@@ -67,15 +100,10 @@ def send_contact_form_notification(contact_message: ContactMessage) -> None:
         f"Message:\n{contact_message.message}\n"
     )
     recipient = getattr(settings, "CONTACT_FORM_RECIPIENT_EMAIL", None) or getattr(settings, "DEFAULT_FROM_EMAIL", "admin@giftfinder.com")
-    try:
-        send_mail(
-            subject=subject,
-            message=body,
-            from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
-            recipient_list=[recipient],
-            fail_silently=True,
-        )
-    except Exception:
-        # Fallback to silent error handling to avoid disrupting user experience
-        pass
+    send_mail_async(
+        subject=subject,
+        message=body,
+        recipient_list=[recipient],
+        from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
+    )
 

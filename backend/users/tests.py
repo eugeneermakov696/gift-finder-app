@@ -99,8 +99,21 @@ class AuthenticationVerificationTests(APITestCase):
         self.assertIn("code", response.data)
         self.assertIn("new_password", response.data)
 
+    def test_send_mail_async_threaded_execution(self):
+        from unittest.mock import patch
+        from users.services import send_mail_async
 
-
+        with patch("users.services.sys.argv", ["manage.py", "runserver"]):
+            with patch("users.services.settings.EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"):
+                with patch("users.services.send_mail") as mock_send_mail:
+                    thread = send_mail_async(
+                        subject="Threaded Subject",
+                        message="Threaded Body",
+                        recipient_list=["threaded@example.com"]
+                    )
+                    self.assertIsNotNone(thread)
+                    thread.join(timeout=2.0)
+                    mock_send_mail.assert_called_once()
 
     def test_get_me_authenticated(self):
         self.client.force_authenticate(user=self.user)
