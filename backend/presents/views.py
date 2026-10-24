@@ -268,9 +268,9 @@ class WishlistViewSet(viewsets.ModelViewSet):
             )
 
         if action_type == "add":
-            if wishlist.items.count() >= 50:
+            if wishlist.items.count() >= Wishlist.MAX_CAPACITY:
                 return Response(
-                    {"status": "error", "message": "Wishlist capacity limit reached (max 50)."},
+                    {"status": "error", "message": f"Wishlist capacity limit reached (max {Wishlist.MAX_CAPACITY})."},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             wishlist.items.add(present)
