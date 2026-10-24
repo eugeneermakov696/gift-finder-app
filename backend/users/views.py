@@ -13,15 +13,15 @@ from config.swagger import (
     ERROR_500_INTERNAL_SERVER_ERROR,
 )
 
-from presents.serializers import UserSerializer
 from users.serializers import (
+    UserSerializer,
     RegisterSerializer,
     CustomTokenObtainPairSerializer,
     VerifyEmailSerializer,
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
     UserProfileUpdateSerializer,
-    ContactFormSerializer
+    ContactFormSerializer,
 )
 from users.models import VerificationScenario
 from users.services import (
