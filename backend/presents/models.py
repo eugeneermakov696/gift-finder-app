@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -34,12 +35,19 @@ class Present(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["is_available", "gender_target", "price"], name="present_avail_gender_price_idx"),
+            models.Index(fields=["is_available", "category", "price"], name="present_avail_cat_price_idx"),
+            models.Index(fields=["is_available", "-rating"], name="present_avail_rating_idx"),
+        ]
 
     def __str__(self):
         return self.title
 
 
 class Wishlist(models.Model):
+    MAX_CAPACITY = getattr(settings, "WISHLIST_MAX_CAPACITY", 50)
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

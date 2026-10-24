@@ -9,6 +9,21 @@ from users.models import ContactMessage
 User = get_user_model()
 
 
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model = User
+        fields = [
+            "id", "email", "username", "password", "image_url", "avatar", "role",
+            "email_is_confirmed", "first_name", "last_name"
+        ]
+        read_only_fields = ["id", "role", "email_is_confirmed"]
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,

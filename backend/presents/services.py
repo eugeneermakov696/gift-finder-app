@@ -35,7 +35,7 @@ def mock_amazon_scrape(url):
     return {
         "title": f"Amazon Choice: {selected_title}",
         "asin": asin,
-        "amazon_url": f"https://amazon.com{asin}",
+        "amazon_url": f"https://www.amazon.com/dp/{asin}",
         "price": round(mock_seed_price, 2),
         "original_price": round(mock_seed_price * 1.25, 2),
         "category": "Featured Products",

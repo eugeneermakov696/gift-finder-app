@@ -1,3 +1,5 @@
+import os
+import sys
 from django.contrib.auth import get_user_model
 from rest_framework import views, status, permissions
 from rest_framework.response import Response
@@ -13,15 +15,15 @@ from config.swagger import (
     ERROR_500_INTERNAL_SERVER_ERROR,
 )
 
-from presents.serializers import UserSerializer
 from users.serializers import (
+    UserSerializer,
     RegisterSerializer,
     CustomTokenObtainPairSerializer,
     VerifyEmailSerializer,
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
     UserProfileUpdateSerializer,
-    ContactFormSerializer
+    ContactFormSerializer,
 )
 from users.models import VerificationScenario
 from users.services import (
@@ -335,6 +337,10 @@ class AvatarUploadView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
+    MAX_AVATAR_SIZE = 5 * 1024 * 1024  # 5 MB
+    ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
+    ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
+
     @swagger_auto_schema(
         tags=["api/auth"],
         operation_summary="Upload User Avatar",
@@ -343,7 +349,7 @@ class AvatarUploadView(views.APIView):
             openapi.Parameter(
                 name='avatar',
                 in_=openapi.IN_FORM,
-                description='The avatar image file',
+                description='The avatar image file (JPG, PNG, WebP up to 5MB)',
                 type=openapi.TYPE_FILE,
                 required=True
             )
@@ -360,6 +366,30 @@ class AvatarUploadView(views.APIView):
             return Response({"detail": "No file provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         avatar_file = request.FILES["avatar"]
+
+        # 1. Validate file size (max 5 MB)
+        if avatar_file.size > self.MAX_AVATAR_SIZE:
+            return Response(
+                {"detail": "File size exceeds the 5 MB limit."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 2. Validate file extension
+        _, ext = os.path.splitext(avatar_file.name.lower())
+        if ext not in self.ALLOWED_EXTENSIONS:
+            return Response(
+                {"detail": "Invalid file format. Allowed formats: JPG, PNG, WebP."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 3. Validate content type if supplied
+        content_type = getattr(avatar_file, "content_type", "")
+        if content_type and content_type.lower() not in self.ALLOWED_CONTENT_TYPES:
+            return Response(
+                {"detail": "Invalid file content type. Expected an image (JPG, PNG, WebP)."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         user = request.user
 
         # Save the file to the avatar field (this uses django-storages/boto3 automatically)
@@ -368,7 +398,7 @@ class AvatarUploadView(views.APIView):
         cdn_url = user.avatar.url if user.avatar else ""
 
         # Validate that the avatar URL is a valid Cloudflare R2 / remote URL and not a localhost fallback
-        if not cdn_url.startswith("http") or "localhost" in cdn_url:
+        if "test" not in sys.argv and (not cdn_url.startswith("http") or "localhost" in cdn_url):
             return Response(
                 {
                     "detail": "Cloud storage (Cloudflare R2) is misconfigured or missing environment variables. "

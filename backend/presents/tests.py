@@ -164,11 +164,11 @@ class GiftFinderAPITestCase(APITestCase):
             asin="BMEN123456",
             amazon_url="https://amazon.com/men",
             price=75.00,
-            category="Clothing & Accessories",
+            category="Fashion",
             gender_target="Men",
             recipient="For Him",
             age_group="Adults",
-            interests="The Active & Outdoor Explorer",
+            interests="Sports, The Active & Outdoor Explorer",
             occasion="Birthday, Christmas",
             is_available=True
         )
@@ -210,3 +210,16 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertEqual(res_occ.status_code, status.HTTP_200_OK)
         asins_occ = [p["asin"] for p in res_occ.data["results"]]
         self.assertIn("BWOM123456", asins_occ)
+
+    def test_wishlist_self_healing_creates_default_if_none(self):
+        new_user = User.objects.create_user(username="nowishlist_user", password="password123")
+        # Explicitly remove any auto-created wishlists for this user
+        Wishlist.objects.filter(user=new_user).delete()
+        self.assertEqual(Wishlist.objects.filter(user=new_user).count(), 0)
+
+        self.client.force_authenticate(user=new_user)
+        response = self.client.get(reverse("wishlist-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["name"], "Liked Ideas")
+        self.assertEqual(Wishlist.objects.filter(user=new_user).count(), 1)

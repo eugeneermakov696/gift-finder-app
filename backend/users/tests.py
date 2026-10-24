@@ -172,6 +172,23 @@ class AuthenticationVerificationTests(APITestCase):
         response = self.client.patch(self.me_url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_avatar_upload_oversized_file_fails(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        self.client.force_authenticate(user=self.user)
+        big_content = b"x" * (5 * 1024 * 1024 + 10)
+        file = SimpleUploadedFile("avatar.jpg", big_content, content_type="image/jpeg")
+        response = self.client.post("/api/auth/avatar/", {"avatar": file}, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("File size exceeds", response.data["detail"])
+
+    def test_avatar_upload_invalid_extension_fails(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        self.client.force_authenticate(user=self.user)
+        file = SimpleUploadedFile("avatar.exe", b"fake binary", content_type="application/octet-stream")
+        response = self.client.post("/api/auth/avatar/", {"avatar": file}, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("Invalid file format", response.data["detail"])
+
 
 class ContactFormAPITests(APITestCase):
 

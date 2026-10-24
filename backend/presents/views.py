@@ -135,7 +135,7 @@ class PresentViewSet(viewsets.ModelViewSet):
             asin=asin,
             defaults={
                 "title": f"Amazon Choice Product ({asin})",
-                "amazon_url": f"https://amazon.com{asin}",
+                "amazon_url": f"https://www.amazon.com/dp/{asin}",
                 "price": round(mock_seed_price, 2),
                 "category": "Featured Products",
                 "is_available": True
@@ -235,6 +235,9 @@ class WishlistViewSet(viewsets.ModelViewSet):
         if getattr(self, "swagger_fake_view", False):
             return Wishlist.objects.none()
         if self.action == "list":
+            if self.request.user.is_authenticated:
+                if not Wishlist.objects.filter(user=self.request.user).exists():
+                    Wishlist.objects.create(user=self.request.user, name="Liked Ideas")
             return Wishlist.objects.filter(user=self.request.user)
         return Wishlist.objects.all()
 
@@ -268,9 +271,9 @@ class WishlistViewSet(viewsets.ModelViewSet):
             )
 
         if action_type == "add":
-            if wishlist.items.count() >= 50:
+            if wishlist.items.count() >= Wishlist.MAX_CAPACITY:
                 return Response(
-                    {"status": "error", "message": "Wishlist capacity limit reached (max 50)."},
+                    {"status": "error", "message": f"Wishlist capacity limit reached (max {Wishlist.MAX_CAPACITY})."},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             wishlist.items.add(present)

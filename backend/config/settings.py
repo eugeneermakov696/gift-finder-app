@@ -153,6 +153,7 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@yourdomain.com")
 
 VERIFICATION_CODE_LIFETIME = timedelta(minutes=15)
+WISHLIST_MAX_CAPACITY = env.int("WISHLIST_MAX_CAPACITY", default=50)
 
 # AWS S3 / Cloudflare R2 Settings
 AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
