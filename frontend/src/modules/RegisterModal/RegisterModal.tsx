@@ -53,15 +53,17 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
+          {/* Name */}
           <div className={styles.inputWrapper}>
             <div className={styles.inputGroup}>
+              <label className={styles.floatingLabel}>Name</label>
               <span className={`${styles.iconLeft} ${styles.userIcon}`} />
               <input
                 type="text"
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                placeholder="Full name"
+                placeholder="Enter your name"
                 className={styles.withIconLeft}
                 required
               />
@@ -69,30 +71,36 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
             {errors.fullName && <span className={styles.errorMsg}>{errors.fullName}</span>}
           </div>
 
+          {/* Email */}
           <div className={styles.inputWrapper}>
             <div className={styles.inputGroup}>
+              <label className={styles.floatingLabel}>Email</label>
               <span className={`${styles.iconLeft} ${styles.emailIcon}`} />
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Email address"
+                placeholder="Enter your Email"
                 className={styles.withIconLeft}
                 required
               />
             </div>
+            {errors.email && <span className={styles.errorMsg}>{errors.email}</span>}
           </div>
 
+          {/* Password */}
           <div className={styles.inputWrapper}>
             <div className={styles.inputGroup}>
+              <label className={styles.floatingLabel}>Password</label>
+              <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Password"
-                className={styles.withIconRight}
+                placeholder="Write your password"
+                className={`${styles.withIconLeft} ${styles.withIconRight}`}
                 required
               />
               <button
@@ -105,8 +113,10 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
             {errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
           </div>
 
+          {/* Confirm Password */}
           <div className={styles.inputWrapper}>
             <div className={styles.inputGroup}>
+              <label className={styles.floatingLabel}>Password</label>
               <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
               <input
                 type={showConfirmPassword ? 'text' : 'password'}

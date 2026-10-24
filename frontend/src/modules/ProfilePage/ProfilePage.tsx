@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RegisterModal } from '../RegisterModal';
 import { GlowCard } from '../../shared/components/GlowCard';
@@ -6,53 +6,23 @@ import { ProfileDashboard } from './components/ProfileDashboard';
 import { Button } from '../../shared/components/Button';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../store/hooks';
-import { fetchMe, loginUser, logoutUser } from '../../store/auth/authSlice';
-import { ForgotPasswordModal } from './components/ForgotPasswordModal';
+import {logoutUser } from '../../store/auth/authSlice';
 import type { RootState } from '../../store/store';
 import styles from './ProfilePage.module.scss';
+import AuthFlow from './components/AuthFlow/AuthFlow';
 
 export const ProfilePage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loginError, setLoginError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
 
   const { isAuth, user } = useSelector((state: RootState) => state.auth);
-
   const dispatch = useAppDispatch();
-
-  const loginInputRef = useRef<HTMLInputElement>(null);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError('');
-
-    try {
-      await dispatch(
-        loginUser({
-          email,
-          password,
-        }),
-      ).unwrap();
-
-      await dispatch(fetchMe()).unwrap();
-    } catch (error) {
-      setLoginError(error as string);
-    }
-  };
 
   const handleLogout = async () => {
     await dispatch(logoutUser());
-    setEmail('');
-    setPassword('');
   };
 
   const handleSwitchToLogin = () => {
-    setTimeout(() => {
-      loginInputRef.current?.focus();
-    }, 100);
+    setIsModalOpen(false);
   };
 
   if (isAuth && user) {
@@ -61,6 +31,7 @@ export const ProfilePage = () => {
 
   return (
     <div className={styles.container}>
+      
       <div className={styles.pageHeader}>
         <div className={styles.headerText}>
           <h1 className={styles.title}>My Account</h1>
@@ -78,6 +49,7 @@ export const ProfilePage = () => {
       </div>
 
       <div className={styles.authContainer}>
+        
         <div className={styles.welcomeSection}>
           <div className={styles.illustrationWrapper}>
             <div className={styles.placeholderBox} />
@@ -105,69 +77,9 @@ export const ProfilePage = () => {
         </div>
 
         <div className={styles.loginSection}>
-          <div className={styles.loginHeader}>
-            <h2>Already have an account?</h2>
-            <p>Welcome back! Log in to access your favorites, gift lists, and more.</p>
-          </div>
-
-          <form className={styles.loginForm} onSubmit={handleLogin}>
-            <div className={styles.inputWrapper}>
-              <span className={styles.emailIcon} />
-              <input
-                type="email"
-                ref={loginInputRef}
-                placeholder="Email address"
-                className={styles.emailInput}
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setLoginError('');
-                }}
-                required
-              />
-            </div>
-
-            <div className={styles.inputWrapper}>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Password"
-                className={styles.passwordInput}
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setLoginError('');
-                }}
-                required
-              />
-              <button
-                type="button"
-                className={`${styles.eyeIcon} ${showPassword ? styles.eyeOpen : ''}`}
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label="Toggle password visibility"
-              />
-            </div>
-
-            {loginError && <div className={styles.errprMsg}>{loginError}</div>}
-
-            <div className={styles.formOptions}>
-              <label className={styles.checkboxLabel}>
-                <input type="checkbox" className={styles.customCheckbox} />
-                <span>Keep me signed in</span>
-              </label>
-              <button
-                type="button"
-                className={styles.forgotLink}
-                onClick={() => setIsForgotModalOpen(true)}
-              >
-                Forgot password?
-              </button>
-            </div>
-
-            <Button variant="select" size="large" type="submit" className={styles.loginBtn}>
-              Log In
-            </Button>
-          </form>
+          <AuthFlow />
         </div>
+        
       </div>
 
       <div className={styles.benefitsSection}>
@@ -182,19 +94,16 @@ export const ProfilePage = () => {
             description="Save your favourite gift ideas and revisit them anytime."
             className={styles.card}
           />
-
           <GlowCard
             title="Revisit Gift Ideas"
             description="Return to gift ideas you liked without starting your search again."
             className={styles.card}
           />
-
           <GlowCard
             title="Keep Everything Organized"
             description="Save gift ideas and easily compare your favorites before you decide."
             className={styles.card}
           />
-
           <GlowCard
             title="Continue Exploring"
             description="Sign in anytime and continue exploring all of your saved gift."
@@ -207,8 +116,6 @@ export const ProfilePage = () => {
         onClose={() => setIsModalOpen(false)}
         onSwitchToLogin={handleSwitchToLogin}
       />
-
-      <ForgotPasswordModal isOpen={isForgotModalOpen} onClose={() => setIsForgotModalOpen(false)} />
     </div>
   );
 };

@@ -1,7 +1,21 @@
 import { Link } from 'react-router-dom';
 import styles from './MobileMenu.module.scss';
+import { HashLink } from 'react-router-hash-link';
 
 export const MobileMenu = ({ onClose }: { onClose: () => void }) => {
+  const scrollWithOffset = (el: HTMLElement) => {
+    setTimeout(() => {
+      const yCoordinate = el.getBoundingClientRect().top + window.scrollY;
+      const yOffset = -120;
+
+      window.scrollTo({ top: yCoordinate + yOffset, behavior: 'smooth' });
+    }, 100);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
@@ -21,9 +35,9 @@ export const MobileMenu = ({ onClose }: { onClose: () => void }) => {
         <nav className={styles.nav}>
           <ul className={styles.navList}>
             <li className={styles.navItem}>
-              <a href="/" className={styles.navLink}>
+              <Link to="/" className={styles.navLink} onClick={scrollToTop}>
                 HOME
-              </a>
+              </Link>
             </li>
             <li className={styles.navItem}>
               <Link to="/profile" className={styles.navLink}>
@@ -31,24 +45,24 @@ export const MobileMenu = ({ onClose }: { onClose: () => void }) => {
               </Link>
             </li>
             <li className={styles.navItem}>
-              <a href="/about" className={styles.navLink}>
+              <HashLink className={styles.navLink} to="/#about" scroll={scrollWithOffset}>
                 ABOUT
-              </a>
+              </HashLink>
             </li>
             <li className={styles.navItem}>
-              <a href="/how-it-works" className={styles.navLink}>
+              <HashLink className={styles.navLink} to="/#howItWorks" scroll={scrollWithOffset}>
                 HOW IT WORKS
-              </a>
+              </HashLink>
             </li>
             <li className={styles.navItem}>
-              <a href="/faq" className={styles.navLink}>
+              <HashLink className={styles.navLink} to="/#faq" scroll={scrollWithOffset}>
                 FAQ
-              </a>
+              </HashLink>
             </li>
             <li className={styles.navItem}>
-              <a href="/popular" className={styles.navLink}>
+              <HashLink className={styles.navLink} to="/#popularGifts" scroll={scrollWithOffset}>
                 POPULAR GIFTS
-              </a>
+              </HashLink>
             </li>
           </ul>
         </nav>
