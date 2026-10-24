@@ -1,13 +1,13 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
-const getBaseURL = () => {
-  if (import.meta.env.VITE_BACKEND_URL) {
-    return import.meta.env.VITE_BACKEND_URL;
+const getBaseURL = (): string => {
+  const url = import.meta.env.VITE_BACKEND_URL;
+
+  if (!url || url.length === 0) {
+    throw new Error("Error at the axios.ts: The VITE_BACKEND_URL was not provided");
   }
-  if (typeof window !== "undefined" && window.location.hostname.includes("railway.app")) {
-    return "https://gift-finder-app-production.up.railway.app/api/";
-  }
-  return "http://localhost:8000/api/";
+
+  return url;
 };
 
 const baseURL = getBaseURL();
@@ -54,9 +54,17 @@ axiosInstance.interceptors.response.use(
     const isAuthEndpoint =
       originalRequest.url?.includes("auth/login/") ||
       originalRequest.url?.includes("auth/refresh/") ||
-      originalRequest.url?.includes("auth/register/");
+      originalRequest.url?.includes("auth/register/") ||
+      originalRequest.url?.includes("auth/logout/");
 
-    if (error.response.status === 401 && !originalRequest._isRetry && !isAuthEndpoint) {
+    const hasSession = localStorage.getItem("has_session") === "true";
+
+    if (
+      error.response.status === 401 &&
+      !originalRequest._isRetry &&
+      !isAuthEndpoint &&
+      hasSession
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -73,6 +81,7 @@ axiosInstance.interceptors.response.use(
         processQueue(null);
         return axiosInstance.request(originalRequest);
       } catch (refreshError) {
+        localStorage.removeItem("has_session");
         processQueue(refreshError);
         return Promise.reject(refreshError);
       } finally {

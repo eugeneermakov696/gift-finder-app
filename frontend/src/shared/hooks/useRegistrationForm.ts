@@ -47,7 +47,7 @@ export const useRegisterForm = ({ onClose }: UseRegisterFormProps) => {
       newErrors.fullName = 'Name must be at least 3 characters.';
     }
 
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)\S{8,}$/;
     if (!passwordRegex.test(formData.password)) {
       newErrors.password = 'Password must be at least 8 characters, include a letter and a number.';
     }

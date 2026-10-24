@@ -10,6 +10,7 @@ from .views import (
     PasswordResetRequestView,
     PasswordResetConfirmView,
     AvatarUploadView,
+    ContactFormView,
 )
 
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
     path("api/auth/password-reset-request/", PasswordResetRequestView.as_view(), name="password-reset-request"),
     path("api/auth/password-reset-confirm/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
     path("api/auth/avatar/", AvatarUploadView.as_view(), name="avatar-upload"),
+    path("api/contact-form/", ContactFormView.as_view(), name="contact-form"),
 ]

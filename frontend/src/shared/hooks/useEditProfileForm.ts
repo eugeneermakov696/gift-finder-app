@@ -4,7 +4,7 @@ import type { RootState } from '../../store/store';
 import { useAppDispatch } from '../../store/hooks';
 import { clearError, updateProfile, type UpdateProfilePayload } from '../../store/auth/authSlice';
 
-const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)\S{8,}$/;
 
 export const useEditProfileForm = (onClose: () => void) => {
   const { user, isLoading, error: authError } = useSelector((state: RootState) => state.auth);

@@ -116,8 +116,7 @@ export const HomePage = () => {
         </p>
         <p className={styles.description}>
           3. Free Wishlists & Favorites Never lose a great idea again. Save favorites to custom
-          wishlists for birthdays or holidays and share private links with family. if it looks good
-          in the design
+          wishlists for birthdays or holidays and share private links with family.
         </p>
       </section>
 
