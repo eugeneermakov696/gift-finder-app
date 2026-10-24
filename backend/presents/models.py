@@ -34,6 +34,11 @@ class Present(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["is_available", "gender_target", "price"], name="present_avail_gender_price_idx"),
+            models.Index(fields=["is_available", "category", "price"], name="present_avail_cat_price_idx"),
+            models.Index(fields=["is_available", "-rating"], name="present_avail_rating_idx"),
+        ]
 
     def __str__(self):
         return self.title
