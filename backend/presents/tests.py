@@ -89,7 +89,9 @@ class GiftFinderAPITestCase(APITestCase):
         response = self.client.post(url, data=payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["status"], "success")
-        self.assertTrue(Present.objects.filter(asin="B07ZPKZSSC").exists())
+        scraped = Present.objects.filter(asin="B07ZPKZSSC").first()
+        self.assertIsNotNone(scraped)
+        self.assertTrue(bool(scraped.description))
 
     def test_add_item_to_wishlist(self):
         url = reverse("wishlist-manage-item", kwargs={"pk": self.wishlist.id})

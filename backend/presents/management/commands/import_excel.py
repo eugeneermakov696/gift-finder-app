@@ -93,6 +93,7 @@ class Command(BaseCommand):
                     asin=asin_clean,
                     defaults={
                         "title": str(row["title"]).strip(),
+                        "description": get_str("description"),
                         "amazon_url": str(row["amazon_url"]).strip(),
                         "image_url": image_url,
                         "price": price_val,

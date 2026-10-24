@@ -34,6 +34,7 @@ def mock_amazon_scrape(url):
 
     return {
         "title": f"Amazon Choice: {selected_title}",
+        "description": f"High quality {selected_title.lower()} featuring premium materials and modern design.",
         "asin": asin,
         "amazon_url": f"https://www.amazon.com/dp/{asin}",
         "price": round(mock_seed_price, 2),
