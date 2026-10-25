@@ -2,7 +2,7 @@
 
 .loginHeader {
   margin-bottom: 24px;
-  max-width: 360px;
+  max-width: 100%;
 
   h2 {
     font-size: 20px;
@@ -47,7 +47,7 @@
   left: 16px;
   background-color: #fff;
   padding: 0 4px;
-  color: var(--color-primary-2);
+  color: var(--color-primary-1);
   font-size: 14px;
   font-weight: 400;
   pointer-events: none;
@@ -153,8 +153,8 @@
   }
 
   &:checked {
-    background-color: var(--color-primary-2);
-    border-color: var(--color-primary-2);
+    background-color: var(--color-primary-1);
+    border-color: var(--color-primary-1);
 
     &::after {
       content: '';
@@ -178,7 +178,7 @@
 
 .forgotLink {
   color: var(--text-main);
-  border-bottom: 1px solid var(--color-primary-2);
+  border-bottom: 1px solid var(--color-primary-1);
   padding-bottom: 1px;
   transition: border-color 0.3s;
 
@@ -314,8 +314,8 @@
   transition: all 0.3s ease;
 
   &.valid {
-    background-color: var(--color-primary-2, #6b4e54);
-    border-color: var(--color-primary-2, #6b4e54);
+    background-color: var(--color-primary-1);
+    border-color: var(--color-primary-1);
 
     &::after {
       content: '';

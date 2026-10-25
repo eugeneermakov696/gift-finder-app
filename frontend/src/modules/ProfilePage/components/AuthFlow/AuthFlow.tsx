@@ -1,13 +1,18 @@
 import { useSearchParams } from 'react-router-dom';
 import React, { useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { fetchMe, loginUser, requestPasswordReset } from '../../../../store/auth/authSlice';
+import {
+  confirmPasswordReset,
+  fetchMe,
+  loginUser,
+  requestPasswordReset,
+} from '../../../../store/auth/authSlice';
 import { Button } from '../../../../shared/components/Button';
 import type { RootState } from '../../../../store/store';
 import styles from './AuthFlow.module.scss';
 
 type AuthView =
-  | 'login' | 'forgot_request' | 'forgot_sent' | 'reset_password' | 'reset_success' | 'reset_expired';
+  'login' | 'forgot_request' | 'forgot_sent' | 'reset_password' | 'reset_success' | 'reset_expired';
 
 const AuthFlow = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -16,14 +21,15 @@ const AuthFlow = () => {
     return searchParams.get('reset_token') ? 'reset_password' : 'login';
   });
 
-  // Login
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState('');
+  // Login and Reset Request
+  const loginEmailRef = useRef<HTMLInputElement>(null);
+  const loginPasswordRef = useRef<HTMLInputElement>(null);
+  const resetEmailRef = useRef<HTMLInputElement>(null);
 
-  // Reseting
-  const [resetEmail, setResetEmail] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Creating new password
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -31,24 +37,30 @@ const AuthFlow = () => {
 
   const { isLoading } = useAppSelector((state: RootState) => state.auth);
   const dispatch = useAppDispatch();
-  const loginInputRef = useRef<HTMLInputElement>(null);
 
-  // Password rules
+  // Visual password rules
   const isLength = newPassword.length >= 8;
   const isUpper = /[A-Z]/.test(newPassword);
   const isLower = /[a-z]/.test(newPassword);
   const isNumber = /[0-9]/.test(newPassword);
+  const isSpecial = /[!@#$%^&*_\-+=?]/.test(newPassword);
+
   const isPasswordValid =
     isLength &&
     isUpper &&
     isLower &&
     isNumber &&
+    isSpecial &&
     newPassword === confirmNewPassword &&
     newPassword !== '';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
+
+    const email = loginEmailRef.current?.value || '';
+    const password = loginPasswordRef.current?.value || '';
+
     try {
       await dispatch(loginUser({ email, password })).unwrap();
       await dispatch(fetchMe()).unwrap();
@@ -59,6 +71,8 @@ const AuthFlow = () => {
 
   const handleRequestReset = async (e: React.FormEvent) => {
     e.preventDefault();
+    const resetEmail = resetEmailRef.current?.value || '';
+
     try {
       await dispatch(requestPasswordReset(resetEmail)).unwrap();
       setAuthView('forgot_sent');
@@ -70,12 +84,21 @@ const AuthFlow = () => {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isPasswordValid) return;
+
+    const token = searchParams.get('reset_token');
+
+    if (!token) {
+      setAuthView('reset_expired');
+      return;
+    }
+
     try {
-      // Request for password resetting
+      await dispatch(confirmPasswordReset({ token, password: newPassword })).unwrap();
       setAuthView('reset_success');
       searchParams.delete('reset_token');
       setSearchParams(searchParams);
-    } catch {
+    } catch (error) {
+      console.error(error);
       setAuthView('reset_expired');
     }
   };
@@ -95,14 +118,10 @@ const AuthFlow = () => {
                 <span className={styles.emailIcon} />
                 <input
                   type="email"
-                  ref={loginInputRef}
+                  ref={loginEmailRef}
                   placeholder="Enter your Email"
                   className={`${styles.inputField} ${styles.withIconLeft}`}
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setLoginError('');
-                  }}
+                  onChange={() => setLoginError('')}
                   required
                 />
               </div>
@@ -110,13 +129,10 @@ const AuthFlow = () => {
                 <label className={styles.floatingLabel}>Password</label>
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  ref={loginPasswordRef}
                   placeholder="Write your password"
                   className={`${styles.inputField} ${styles.withIconRight}`}
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setLoginError('');
-                  }}
+                  onChange={() => setLoginError('')}
                   required
                 />
                 <button
@@ -169,10 +185,9 @@ const AuthFlow = () => {
                 <span className={styles.emailIcon} />
                 <input
                   type="email"
+                  ref={resetEmailRef}
                   placeholder="Enter your Email"
                   className={`${styles.inputField} ${styles.withIconLeft}`}
-                  value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
                   required
                 />
               </div>
@@ -204,20 +219,9 @@ const AuthFlow = () => {
             </div>
             <div className={styles.loginHeader}>
               <h2>Check your email</h2>
-              <p>
-                We’ve sent a password reset link to <br />
-                <strong>{resetEmail || 'your email'}</strong>
-              </p>
+              <p>We’ve sent a password reset link to your email.</p>
             </div>
             <div className={styles.loginForm}>
-              <Button
-                variant="select"
-                size="large"
-                className={styles.submitBtn}
-                onClick={() => setAuthView('reset_password')}
-              >
-                Create a new password
-              </Button>
               <button
                 type="button"
                 className={styles.backToLoginBtn}
@@ -268,6 +272,10 @@ const AuthFlow = () => {
                 <div className={styles.ruleItem}>
                   <span className={`${styles.ruleCheckbox} ${isNumber ? styles.valid : ''}`} />
                   <span>One number</span>
+                </div>
+                <div className={styles.ruleItem}>
+                  <span className={`${styles.ruleCheckbox} ${isSpecial ? styles.valid : ''}`} />
+                  <span>One special character</span>
                 </div>
               </div>
               <div className={styles.inputWrapper}>

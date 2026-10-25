@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
 import { useAppDispatch } from '../../store/hooks';
 import { clearError, updateProfile, type UpdateProfilePayload } from '../../store/auth/authSlice';
-
-const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)\S{8,}$/;
+import { validator } from '../utils/validator';
+import type { RootState } from '../../store/store';
 
 export const useEditProfileForm = (onClose: () => void) => {
   const { user, isLoading, error: authError } = useSelector((state: RootState) => state.auth);
@@ -12,16 +11,12 @@ export const useEditProfileForm = (onClose: () => void) => {
 
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-
-  const getInitialData = () => ({
-    fullName: user ? `${user.first_name} ${user.last_name}`.trim() : '',
-    email: user?.email || user?.username || '',
-    oldPassword: '',
-    newPassword: '',
-  });
-
-  const [formData, setFormData] = useState(getInitialData);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const fullNameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const oldPasswordRef = useRef<HTMLInputElement>(null);
+  const newPasswordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     dispatch(clearError());
@@ -30,24 +25,22 @@ export const useEditProfileForm = (onClose: () => void) => {
     };
   }, [dispatch]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
 
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
-    }
-  };
+    const fullName = fullNameRef.current?.value || '';
+    const email = emailRef.current?.value || '';
+    const oldPassword = oldPasswordRef.current?.value || '';
+    const newPassword = newPasswordRef.current?.value || '';
 
-  const validate = () => {
     const newErrors: Record<string, string> = {};
 
-    if (formData.fullName.trim().length < 3) {
-      newErrors.fullName = 'Name must be at least 3 characters.';
-    }
+    const nameError = validator.validateName(fullName);
+    if (nameError) newErrors.fullName = nameError;
 
-    const hasOld = Boolean(formData.oldPassword);
-    const hasNew = Boolean(formData.newPassword);
+    const hasOld = Boolean(oldPassword);
+    const hasNew = Boolean(newPassword);
 
     if (hasOld || hasNew) {
       if (!hasOld) {
@@ -56,42 +49,37 @@ export const useEditProfileForm = (onClose: () => void) => {
 
       if (!hasNew) {
         newErrors.newPassword = 'Enter a new password.';
-      } else if (!PASSWORD_REGEX.test(formData.newPassword)) {
-        newErrors.newPassword =
-          'Password must be at least 8 characters, include a letter and a number.';
-      } else if (hasOld && formData.oldPassword === formData.newPassword) {
-        newErrors.newPassword = 'New password must be different from the old one.';
+      } else {
+        const passwordError = validator.validatePassword(newPassword);
+        if (passwordError) newErrors.newPassword = passwordError;
+        else if (hasOld && oldPassword === newPassword) {
+          newErrors.newPassword = 'New password must be different from the old one.';
+        }
       }
     }
 
-    return newErrors;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
     const payload: UpdateProfilePayload = {
-      full_name: formData.fullName.trim(),
+      full_name: fullName.trim(),
     };
 
-    if (formData.email.trim()) {
-      payload.email = formData.email.trim();
+    if (email.trim()) {
+      payload.email = email.trim();
     }
 
-    if (formData.oldPassword && formData.newPassword) {
-      payload.old_password = formData.oldPassword;
-      payload.new_password = formData.newPassword;
+    if (oldPassword && newPassword) {
+      payload.old_password = oldPassword;
+      payload.new_password = newPassword;
     }
 
     try {
       await dispatch(updateProfile(payload)).unwrap();
-      setFormData(getInitialData());
+      if (oldPasswordRef.current) oldPasswordRef.current.value = '';
+      if (newPasswordRef.current) newPasswordRef.current.value = '';
       onClose();
     } catch (err) {
       console.error('Failed to update profile:', err);
@@ -99,7 +87,6 @@ export const useEditProfileForm = (onClose: () => void) => {
   };
 
   return {
-    formData,
     errors,
     showOldPassword,
     setShowOldPassword,
@@ -107,7 +94,11 @@ export const useEditProfileForm = (onClose: () => void) => {
     setShowNewPassword,
     isLoading,
     authError,
-    handleChange,
     handleSubmit,
+    fullNameRef,
+    emailRef,
+    oldPasswordRef,
+    newPasswordRef,
+    user,
   };
 };
