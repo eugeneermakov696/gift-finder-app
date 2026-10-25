@@ -14,6 +14,7 @@ export const MobileMenu = ({ onClose }: { onClose: () => void }) => {
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    onClose();
   };
 
   return (
@@ -40,27 +41,27 @@ export const MobileMenu = ({ onClose }: { onClose: () => void }) => {
               </Link>
             </li>
             <li className={styles.navItem}>
-              <Link to="/profile" className={styles.navLink}>
+              <Link to="/profile" className={styles.navLink} onClick={onClose}>
                 PROFILE
               </Link>
             </li>
             <li className={styles.navItem}>
-              <HashLink className={styles.navLink} to="/#about" scroll={scrollWithOffset}>
+              <HashLink className={styles.navLink} to="/#about" scroll={scrollWithOffset} onClick={onClose}>
                 ABOUT
               </HashLink>
             </li>
             <li className={styles.navItem}>
-              <HashLink className={styles.navLink} to="/#howItWorks" scroll={scrollWithOffset}>
+              <HashLink className={styles.navLink} to="/#howItWorks" scroll={scrollWithOffset} onClick={onClose}>
                 HOW IT WORKS
               </HashLink>
             </li>
             <li className={styles.navItem}>
-              <HashLink className={styles.navLink} to="/#faq" scroll={scrollWithOffset}>
+              <HashLink className={styles.navLink} to="/#faq" scroll={scrollWithOffset} onClick={onClose}>
                 FAQ
               </HashLink>
             </li>
             <li className={styles.navItem}>
-              <HashLink className={styles.navLink} to="/#popularGifts" scroll={scrollWithOffset}>
+              <HashLink className={styles.navLink} to="/#popularGifts" scroll={scrollWithOffset} onClick={onClose}>
                 POPULAR GIFTS
               </HashLink>
             </li>

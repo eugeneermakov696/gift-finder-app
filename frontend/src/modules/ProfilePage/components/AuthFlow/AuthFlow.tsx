@@ -1,5 +1,5 @@
-import { useSearchParams } from 'react-router-dom';
-import React, { useState, useRef } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   confirmPasswordReset,
@@ -103,6 +103,18 @@ const AuthFlow = () => {
     }
   };
 
+  const location = useLocation();
+
+  useEffect(() => {
+    if (authView === 'login' && location.state?.autoFocusEmail) {
+      setTimeout(() => {
+        loginEmailRef.current?.focus();
+      }, 100);
+
+      window.history.replaceState({}, document.title);
+    }
+  }, [authView, location.state]);
+
   const renderView = () => {
     switch (authView) {
       case 'login':
@@ -115,7 +127,6 @@ const AuthFlow = () => {
             <form className={styles.loginForm} onSubmit={handleLogin}>
               <div className={styles.inputWrapper}>
                 <label className={styles.floatingLabel}>Email</label>
-                <span className={styles.emailIcon} />
                 <input
                   type="email"
                   ref={loginEmailRef}
@@ -182,7 +193,6 @@ const AuthFlow = () => {
             <form className={styles.loginForm} onSubmit={handleRequestReset}>
               <div className={styles.inputWrapper}>
                 <label className={styles.floatingLabel}>Email</label>
-                <span className={styles.emailIcon} />
                 <input
                   type="email"
                   ref={resetEmailRef}

@@ -89,18 +89,45 @@
   flex-direction: column;
   margin-bottom: 92px;
 
+  background-image: url('/images/background_image.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+
+  margin-top: calc(-160px - 108px); 
+  padding-top: calc(160px + 108px + 42px);
+  padding-bottom: 240px;
+
+  @include on-tablet {
+    margin-bottom: 48px;
+    margin-top: calc(-80px - 60px);
+    padding-top: calc(80px + 60px + 60px);
+    padding-bottom: 60px;
+  }
+
   @include on-phone {
-    padding: 0;
     margin-bottom: 24px;
+    margin-top: calc(-40px - 45px);
+    padding-top: calc(40px + 45px + 16px);
+    padding-bottom: 40px;
   }
 }
 
 .animationWrapper {
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 64px auto;
+  
   height: 150px;
   position: relative;
   overflow: hidden;
-  margin-bottom: 64px;
 
   display: flex;
   justify-content: center;
@@ -121,6 +148,10 @@
 }
 
 .heroContent {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  
   padding: 0 112px;
   display: flex;
   flex-direction: column;
@@ -129,7 +160,7 @@
   white-space: nowrap;
 
   @include on-phone {
-    padding: 0;
+    padding: 0 20px;
   }
 }
 
@@ -164,7 +195,7 @@
   gap: 16px;
   font-size: 20px;
   font-weight: 400;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   align-items: flex-start;
   text-align: left;
 

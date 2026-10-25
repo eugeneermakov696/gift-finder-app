@@ -61,6 +61,7 @@
   color: var(--text-primary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -73,7 +74,7 @@
 .price {
   font-size: 18px;
   font-weight: 400;
-  margin: 0 0 12px 0;
+  margin: 0 0 20px 0;
   color: var(--text-primary);
 }
 
@@ -81,11 +82,12 @@
   font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.4;
-  margin: 0 0 24px 0;
+  margin: 0 0 4px 0;
   flex-grow: 1;
-  
+
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -131,19 +133,19 @@
     gap: 8px;
   }
 
-   .detailsBtn {
+  .detailsBtn {
     display: flex;
     align-items: center;
     justify-content: center;
     padding-top: 8px;
     color: var(--color-primary-1);
-   }
+  }
 
   .amazonBtn {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #FBF7F3;
+    background-color: #fbf7f3;
     border: 1px solid var(--color-primary-1);
     border-radius: 8px;
     padding: 10px;
@@ -161,7 +163,7 @@
   @include on-phone {
     flex-direction: column;
     gap: 16px;
-    
+
     .imageWrapper {
       width: 100%;
       height: 220px;
@@ -194,7 +196,7 @@
 /* --- Profile card --- */
 .profile {
   flex-direction: column;
-  padding: 0; 
+  padding: 0;
   background-color: #fff;
   box-shadow: none;
   width: 100%;
@@ -207,7 +209,7 @@
     overflow: hidden;
     margin-bottom: 12px;
   }
-  
+
   .content {
     padding: 0 8px;
   }

@@ -107,7 +107,7 @@ export const ProductDetailsPage = () => {
                 rel="noreferrer"
                 className={styles.amazonBtn}
               >
-                Buy on Amazon
+                Available at Amazon <span className={styles.amazonIcon} />
               </a>
             </div>
           )}

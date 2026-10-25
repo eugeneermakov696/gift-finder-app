@@ -273,6 +273,8 @@
 }
 
 .amazonBtn {
+  height: 44px;
+  padding: 0 64px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -284,9 +286,9 @@
   outline: none;
   text-align: center;
   white-space: nowrap; 
-  background-color: #fff;
-  border: solid 1px var(--color-primary-2);
-  color: var(--text-main);
+  background-color: var(--bg-main);
+  border: solid 1px var(--color-primary-1);
+  color: var(--color-primary-1);
   
   &:hover {
     background-color: var(--color-primary-3);
@@ -298,9 +300,14 @@
   }
 
   &:active {
-    color: #fff;
-    background-color: var(--color-primary-2);
+    transform: scale(0.97);
   }
+}
+
+.amazonIcon {
+  @include icon-mask('/icons/Amazon.svg', 16px);
+  background-color: var(--color-primary-1);
+  margin-left: 8px;
 }
 
 .promoBox {
@@ -350,10 +357,9 @@
   padding: 16px 0;
   font-size: 20px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--text-primary);
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
-  cursor: pointer;
   transition: all 0.3s ease;
 
   @include on-phone {

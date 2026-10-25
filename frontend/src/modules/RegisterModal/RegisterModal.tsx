@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/components/Button';
-import styles from './RegisterModal.module.scss';
 import { useRegisterForm } from '../../shared/hooks/useRegistrationForm';
+import styles from './RegisterModal.module.scss';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -10,7 +10,7 @@ interface RegisterModalProps {
   onSwitchToLogin: () => void;
 }
 
-export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps) => {
+export const RegisterModal = ({ isOpen, onClose }: RegisterModalProps) => {
   const {
     errors,
     showPassword,
@@ -33,9 +33,11 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
     }
   };
 
+  const navigate = useNavigate();
+
   const handleLoginClick = () => {
     onClose();
-    onSwitchToLogin();
+    navigate('/profile', { state: { autoFocusEmail: true } });
   };
 
   if (!isOpen) return null;
