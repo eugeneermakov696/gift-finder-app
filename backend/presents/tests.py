@@ -207,11 +207,54 @@ class GiftFinderAPITestCase(APITestCase):
         asins_int = [p["asin"] for p in res_int.data["results"]]
         self.assertIn("BMEN123456", asins_int)
 
-        # Test occasion matching with apostrophe normalization ("Mother's Day" vs "Mother’s Day")
+        Present.objects.create(
+            title="Standard Catalog Gift Item",
+            asin="BCAT123456",
+            amazon_url="https://amazon.com/cat",
+            price=29.99,
+            category="Toys",
+            gender_target="Unisex",
+            recipient="Partner, Friend, Relatives, Other",
+            age_group="Adults, Teens, Olds",
+            interests="Gaming, Tech",
+            occasion="Birthday, Christmas, mother_day, anniversary, wedding_or_engagement",
+            is_available=True
+        )
+
+        # Test occasion matching with apostrophe normalization ("Mother's Day" vs "Mother’s Day" vs "mother_day")
         res_occ = self.client.get(reverse("gift-list"), {"occasion": "Mother's Day"})
         self.assertEqual(res_occ.status_code, status.HTTP_200_OK)
         asins_occ = [p["asin"] for p in res_occ.data["results"]]
         self.assertIn("BWOM123456", asins_occ)
+        self.assertIn("BCAT123456", asins_occ)
+
+        # Test occasion matching for wedding_or_engagement
+        res_wed = self.client.get(reverse("gift-list"), {"occasion": "wedding_or_engagement"})
+        self.assertEqual(res_wed.status_code, status.HTTP_200_OK)
+        self.assertIn("BCAT123456", [p["asin"] for p in res_wed.data["results"]])
+
+        # Test catalog recipient queries directly against recipient column
+        for rec_val in ["Partner", "Friend", "Relatives", "Other"]:
+            res_rec = self.client.get(reverse("gift-list"), {"recipient": rec_val})
+            self.assertEqual(res_rec.status_code, status.HTTP_200_OK)
+            asins_rec = [p["asin"] for p in res_rec.data["results"]]
+            self.assertIn("BCAT123456", asins_rec)
+
+        # Test catalog unique category query
+        res_cat_exact = self.client.get(reverse("gift-list"), {"category": "Toys"})
+        self.assertEqual(res_cat_exact.status_code, status.HTTP_200_OK)
+        self.assertIn("BCAT123456", [p["asin"] for p in res_cat_exact.data["results"]])
+
+        # Test catalog unique interests query
+        res_int_exact = self.client.get(reverse("gift-list"), {"interests": "Gaming"})
+        self.assertEqual(res_int_exact.status_code, status.HTTP_200_OK)
+        self.assertIn("BCAT123456", [p["asin"] for p in res_int_exact.data["results"]])
+
+        # Test catalog age_group queries
+        for ag_val in ["Teens", "Olds", "Adults"]:
+            res_ag = self.client.get(reverse("gift-list"), {"age_group": ag_val})
+            self.assertEqual(res_ag.status_code, status.HTTP_200_OK)
+            self.assertIn("BCAT123456", [p["asin"] for p in res_ag.data["results"]])
 
     def test_wishlist_self_healing_creates_default_if_none(self):
         new_user = User.objects.create_user(username="nowishlist_user", password="password123")

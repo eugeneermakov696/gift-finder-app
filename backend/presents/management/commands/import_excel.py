@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 import pandas as pd
 from django.core.management.base import BaseCommand
 from presents.models import Present
@@ -89,6 +90,12 @@ class Command(BaseCommand):
                 except (ValueError, TypeError):
                     price_val = 0.0
 
+                raw_occasion = get_str("occasion")
+                clean_occasion = (
+                    re.sub(r'(?i)\bwedding\s+or\s+engagement\b', 'wedding_or_engagement', raw_occasion)
+                    if raw_occasion else None
+                )
+
                 gift, created = Present.objects.update_or_create(
                     asin=asin_clean,
                     defaults={
@@ -103,7 +110,7 @@ class Command(BaseCommand):
                         "category": get_str("category") or "Imported Gifts",
                         "age_group": get_str("age_group"),
                         "gender_target": get_str("gender_target"),
-                        "occasion": get_str("occasion"),
+                        "occasion": clean_occasion,
                         "interests": get_str("interests"),
                         "recipient": get_str("recipient"),
                         "is_available": True
