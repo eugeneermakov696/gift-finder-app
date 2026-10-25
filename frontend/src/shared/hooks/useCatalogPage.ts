@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchFilteredGifts, setAllFilters, setFilter } from '../../store/filters/filtersSlice';
 import type { RootState } from '../../store/store';
@@ -23,14 +23,13 @@ export const mockProduct = {
 };
 
 export const useCatalogData = () => {
-  const location = useLocation();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
 
   const requestRef = useRef<{ abort: () => void } | null>(null);
 
-  const isFromGenerate = location.state?.fromGenerate === true;
-  const [showLoadingScreen, setShowLoadingScreen] = useState(isFromGenerate);
+  const isFromFilters = searchParams.get('loader') === 'true';
+  const [showLoadingScreen, setShowLoadingScreen] = useState(isFromFilters);
 
   const {
     results: gifts,

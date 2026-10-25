@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ProductCard } from '../../shared/components/ProductCard';
 import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import { Button } from '../../shared/components/Button';
@@ -9,6 +9,7 @@ import styles from './CatalogPage.module.scss';
 
 export const CatalogPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     gifts,
@@ -33,7 +34,10 @@ export const CatalogPage = () => {
         }}
         onComplete={() => {
           setShowLoadingScreen(false);
-          window.history.replaceState({}, document.title);
+          
+          const cleanParams = new URLSearchParams(location.search);
+          cleanParams.delete('loader');
+          navigate(`${location.pathname}?${cleanParams.toString()}`, { replace: true });
         }}
       />
     );

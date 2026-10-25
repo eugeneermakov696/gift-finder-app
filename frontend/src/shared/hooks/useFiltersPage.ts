@@ -24,32 +24,38 @@ export const useFiltersForm = () => {
   };
 
   const handleGenerate = () => {
-    const params = new URLSearchParams();
+  const params = new URLSearchParams();
 
-    if (gender) params.append('gender_target', gender);
-    if (relationship) params.append('recipient', relationship);
-    if (age) params.append('age_group', age);
-    if (budget) params.append('max_price', budget.toString());
-    
-    if (interests.length > 0) {
-      params.append('interests', interests.join(','));
-    }
-    if (giftTypes.length > 0) {
-      params.append('category', giftTypes.join(','));
-    }
+  if (gender) params.append('gender_target', gender);
+  if (relationship) params.append('recipient', relationship);
+  if (age) params.append('age_group', age);
+  if (budget) params.append('max_price', budget.toString());
+  
+  if (interests.length > 0) {
+    params.append('interests', interests.join(','));
+  }
+  if (giftTypes.length > 0) {
+    params.append('category', giftTypes.join(','));
+  }
 
-    navigate(`/catalog?${params.toString()}`, {
-      state: { fromGenerate: true },
-    });
-  };
+  params.append('loader', 'true');
+
+  navigate(`/catalog?${params.toString()}`);
+};
 
   return {
-    age, setAge,
-    gender, setGender,
-    relationship, setRelationship,
-    interests, setInterests,
-    giftTypes, setGiftTypes,
-    budget, setBudget,
+    age,
+    setAge,
+    gender,
+    setGender,
+    relationship,
+    setRelationship,
+    interests,
+    setInterests,
+    giftTypes,
+    setGiftTypes,
+    budget,
+    setBudget,
     toggleSelection,
     handleGenerate,
   };

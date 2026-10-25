@@ -6,12 +6,38 @@ import styles from './ReadyIdeasPage.module.scss';
 const formatSlug = (slug?: string): string => {
   if (!slug) return '';
   
-  const cleanSlug = slug.replace(/^gifts-for-/, '');
+  let cleanSlug = slug.replace(/^gifts-for-/, '');
+  cleanSlug = cleanSlug.replace(/-s-/g, "'s-");
   
   return cleanSlug
     .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+};
+
+const mapSlugToApiRecipient = (slug: string): string => {
+  const s = slug.toLowerCase();
+  if (s.includes('mom') || s.includes('dad') || s.includes('grandparent') || s.includes('in-law')) return 'Relatives';
+  if (s.includes('friend')) return 'Friend';
+  if (s.includes('boyfriend') || s.includes('husband') || s.includes('girlfriend') || s.includes('wife')) return 'Partner';
+  return 'Other';
+};
+
+const mapSlugToApiOccasion = (slug: string): string => {
+  const s = slug.toLowerCase();
+  if (s.includes('mother')) return 'mother_day';
+  if (s.includes('father')) return 'father_day';
+  if (s.includes('birthday')) return 'birthday';
+  if (s.includes('christmas')) return 'christmas';
+  if (s.includes('anniversary')) return 'anniversary';
+  if (s.includes('housewarming')) return 'housewarming';
+  if (s.includes('wedding')) return 'wedding';
+  if (s.includes('engagement')) return 'engagement';
+  if (s.includes('graduation')) return 'graduation';
+  if (s.includes('retirement')) return 'retirement';
+  if (s.includes('just-because')) return 'just_because';
+  
+  return s.replace(/-/g, '_');
 };
 
 export const ReadyIdeasPage = () => {
@@ -24,14 +50,17 @@ export const ReadyIdeasPage = () => {
   const handleSeeIdeas = (minPrice?: number, maxPrice?: number) => {
     const params = new URLSearchParams();
 
-    if (formattedRecipient) params.append('recipient', formattedRecipient);
-    if (formattedOccasion) params.append('occasion', formattedOccasion);
+    const apiRecipient = mapSlugToApiRecipient(recipient || '');
+    const apiOccasion = mapSlugToApiOccasion(occasion || '');
+
+    if (apiRecipient) params.append('recipient', apiRecipient);
+    if (apiOccasion) params.append('occasion', apiOccasion);
     if (minPrice !== undefined) params.append('min_price', minPrice.toString());
     if (maxPrice !== undefined) params.append('max_price', maxPrice.toString());
+    
+    params.append('loader', 'true');
 
-    navigate(`/catalog?${params.toString()}`, {
-      state: { fromGenerate: true },
-    });
+    navigate(`/catalog?${params.toString()}`);
   };
 
   return (

@@ -22,7 +22,7 @@ export const ReadyIdeasWindow = ({ onClose }: PopularGiftsModalProps) => {
   const handleCategoryClick = (recipient: string, occasion: string) => {
     onClose();
 
-    const urlRecipient = recipient.toLowerCase();
+    const urlRecipient = recipient.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const urlOccasion = occasion.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
     navigate(`/ready-ideas/${urlRecipient}/${urlOccasion}`);
