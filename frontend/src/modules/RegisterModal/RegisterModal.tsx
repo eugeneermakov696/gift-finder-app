@@ -12,7 +12,6 @@ interface RegisterModalProps {
 
 export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps) => {
   const {
-    formData,
     errors,
     showPassword,
     setShowPassword,
@@ -20,8 +19,12 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
     setShowConfirmPassword,
     isLoading,
     authError,
-    handleChange,
     handleSubmit,
+    fullNameRef,
+    emailRef,
+    passwordRef,
+    confirmPasswordRef,
+    agreedToTermsRef,
   } = useRegisterForm({ onClose });
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -61,8 +64,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
               <input
                 type="text"
                 name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
+                ref={fullNameRef}
                 placeholder="Enter your name"
                 className={styles.withIconLeft}
                 required
@@ -79,8 +81,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
               <input
                 type="email"
                 name="email"
-                value={formData.email}
-                onChange={handleChange}
+                ref={emailRef}
                 placeholder="Enter your Email"
                 className={styles.withIconLeft}
                 required
@@ -97,8 +98,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
-                value={formData.password}
-                onChange={handleChange}
+                ref={passwordRef}
                 placeholder="Write your password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
                 required
@@ -121,8 +121,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
                 name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
+                ref={confirmPasswordRef}
                 placeholder="Confirmed Password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
                 required
@@ -144,8 +143,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
               <input
                 type="checkbox"
                 name="agreedToTerms"
-                checked={formData.agreedToTerms}
-                onChange={handleChange}
+                ref={agreedToTermsRef}
                 className={styles.customCheckbox}
                 required
               />
@@ -154,6 +152,9 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModa
                 <Link to="/privacy-policy">Privacy Policy</Link>
               </span>
             </label>
+            {errors.agreedToTerms && (
+              <span className={styles.errorMsg}>{errors.agreedToTerms}</span>
+            )}
           </div>
 
           {authError && <p className={styles.errorMessage}>{authError}</p>}

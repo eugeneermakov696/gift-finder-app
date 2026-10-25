@@ -45,12 +45,13 @@ export const ProductCard = ({
 
       <div className={styles.content}>
         <h3 className={styles.title}>{title}</h3>
-        <p className={styles.description}>{description}</p>
-        <p className={styles.price}>${price.toFixed(2)}</p>
 
         {variant !== 'profile' && description && (
           <p className={styles.description}>{description}</p>
         )}
+
+        <p className={styles.price}>${price.toFixed(2)}</p>
+
 
         {variant !== 'profile' && (
           <div className={styles.actions}>

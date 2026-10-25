@@ -1,59 +1,57 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../store/hooks';
 import { useSelector } from 'react-redux';
+import { registerUser, loginUser, fetchMe } from '../../store/auth/authSlice';
+import { validator } from '../utils/validator';
 import type { RootState } from '../../store/store';
-import { registerUser, loginUser, fetchMe } from '../../store/auth/authSlice'; 
 
-interface UseRegisterFormProps {
+export interface UseRegisterFormProps {
   onClose: () => void;
 }
 
 export const useRegisterForm = ({ onClose }: UseRegisterFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    agreedToTerms: false,
-  });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { isLoading, error: authError } = useSelector((state: RootState) => state.auth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
-    }
-  };
+  const fullNameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
+  const agreedToTermsRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    
+    const fullName = fullNameRef.current?.value || '';
+    const email = emailRef.current?.value || '';
+    const password = passwordRef.current?.value || '';
+    const confirmPassword = confirmPasswordRef.current?.value || '';
+    const agreedToTerms = agreedToTermsRef.current?.checked || false;
+
     const newErrors: Record<string, string> = {};
 
-    if (formData.fullName.trim().length < 3) {
-      newErrors.fullName = 'Name must be at least 3 characters.';
-    }
+    const nameError = validator.validateName(fullName);
+    if (nameError) newErrors.fullName = nameError;
 
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)\S{8,}$/;
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password = 'Password must be at least 8 characters, include a letter and a number.';
-    }
+    const emailError = validator.validateEmail(email);
+    if (emailError) newErrors.email = emailError;
 
-    if (formData.password !== formData.confirmPassword) {
+    const passwordError = validator.validatePassword(password);
+    if (passwordError) newErrors.password = passwordError;
+
+    if (password !== confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match.';
+    }
+
+    if (!agreedToTerms) {
+      newErrors.agreedToTerms = 'You must agree to the Terms & Conditions.';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -64,29 +62,16 @@ export const useRegisterForm = ({ onClose }: UseRegisterFormProps) => {
     try {
       await dispatch(
         registerUser({
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          fullname: formData.fullName,
+          email,
+          password,
+          confirmPassword,
+          fullname: fullName,
         }),
       ).unwrap();
 
-      await dispatch(
-        loginUser({
-          email: formData.email,
-          password: formData.password,
-        }),
-      ).unwrap();
-
+      await dispatch(loginUser({ email, password })).unwrap();
       await dispatch(fetchMe()).unwrap();
 
-      setFormData({
-        fullName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        agreedToTerms: false,
-      });
       onClose();
       navigate('/profile');
     } catch (error) {
@@ -95,7 +80,6 @@ export const useRegisterForm = ({ onClose }: UseRegisterFormProps) => {
   };
 
   return {
-    formData,
     errors,
     showPassword,
     setShowPassword,
@@ -103,7 +87,11 @@ export const useRegisterForm = ({ onClose }: UseRegisterFormProps) => {
     setShowConfirmPassword,
     isLoading,
     authError,
-    handleChange,
     handleSubmit,
+    fullNameRef,
+    emailRef,
+    passwordRef,
+    confirmPasswordRef,
+    agreedToTermsRef,
   };
 };

@@ -10,7 +10,6 @@ interface EditModalProps {
 
 export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
   const {
-    formData,
     errors,
     showOldPassword,
     setShowOldPassword,
@@ -18,8 +17,12 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
     setShowNewPassword,
     isLoading,
     authError,
-    handleChange,
     handleSubmit,
+    fullNameRef,
+    emailRef,
+    oldPasswordRef,
+    newPasswordRef,
+    user,
   } = useEditProfileForm(onClose);
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -51,8 +54,8 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
               <input
                 type="text"
                 name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
+                ref={fullNameRef}
+                defaultValue={user ? `${user.first_name} ${user.last_name}`.trim() : ''}
                 placeholder="Enter your name"
                 className={styles.withIconLeft}
                 required
@@ -69,8 +72,8 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
               <input
                 type="email"
                 name="email"
-                value={formData.email}
-                onChange={handleChange}
+                ref={emailRef}
+                defaultValue={user?.email || user?.username || ''}
                 placeholder="Enter your Email"
                 className={styles.withIconLeft}
                 required
@@ -86,9 +89,8 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
               <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
               <input
                 type={showOldPassword ? 'text' : 'password'}
-                name="old password"
-                value={formData.oldPassword}
-                onChange={handleChange}
+                name="oldPassword"
+                ref={oldPasswordRef}
                 placeholder="Old password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
               />
@@ -99,7 +101,7 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
                 aria-label="Toggle old password"
               />
             </div>
-            {errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
+            {errors.oldPassword && <span className={styles.errorMsg}>{errors.oldPassword}</span>}
           </div>
 
           {/* New Password */}
@@ -109,9 +111,8 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
               <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
               <input
                 type={showNewPassword ? 'text' : 'password'}
-                name="New Password"
-                value={formData.newPassword}
-                onChange={handleChange}
+                name="newPassword"
+                ref={newPasswordRef}
                 placeholder="New password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
               />
@@ -122,9 +123,7 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
                 aria-label="Toggle new password"
               />
             </div>
-            {errors.confirmPassword && (
-              <span className={styles.errorMsg}>{errors.confirmPassword}</span>
-            )}
+            {errors.newPassword && <span className={styles.errorMsg}>{errors.newPassword}</span>}
           </div>
 
           {authError && <div className={styles.errorMsg}>{authError}</div>}
