@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchGiftDetails, clearGiftDetails } from '../../store//giftDetails/giftDetailsSlice';
+import { ProductDetailsSkeleton } from '../../shared/components/ProductDetailsSkeleton';
 import styles from './ProductDetailsPage.module.scss';
 
 export const ProductDetailsPage = () => {
@@ -20,11 +21,7 @@ export const ProductDetailsPage = () => {
   }, [asin, dispatch]);
 
   if (isLoading) {
-    return (
-      <div className={styles.container}>
-        <h2 className={styles.statusMessage}>Loading product details...</h2>
-      </div>
-    );
+    return <ProductDetailsSkeleton />;
   }
 
   if (error) {
@@ -42,6 +39,8 @@ export const ProductDetailsPage = () => {
       </div>
     );
   }
+
+  const ratingValue = product.rating ? Math.floor(product.rating) : 5;
 
   return (
     <div className={styles.container}>
@@ -86,6 +85,20 @@ export const ProductDetailsPage = () => {
 
         <div className={styles.productInfo}>
           <h2 className={styles.productTitle}>{product.title}</h2>
+
+          <div className={styles.ratingRow}>
+            <div className={styles.stars}>
+              {Array.from({ length: ratingValue }).map((_, index) => (
+                <span key={index} className={styles.starIcon} />
+              ))}
+            </div>
+            {product.rating && <span className={styles.ratingNumber}>{product.rating}</span>}
+            {product.reviews_count !== undefined && (
+              <span className={styles.reviewsCount}>
+                ({product.reviews_count} review{product.reviews_count !== 1 ? 's' : ''})
+              </span>
+            )}
+          </div>
 
           <div className={styles.priceRow}>
             <div className={styles.prices}>

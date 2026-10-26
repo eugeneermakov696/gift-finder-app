@@ -110,6 +110,7 @@ export default function PixelDrift() {
       let frame = 0;
       let entered = false;
       let firstSample = true;
+      let renderScale = 1;
 
       const fitFont = (
         measure: CanvasRenderingContext2D,
@@ -162,6 +163,8 @@ export default function PixelDrift() {
           maxHeight / Math.max(1, glyphHeight),
         );
 
+        renderScale = fit;
+
         size = Math.max(8, size * fit);
         sample.clearRect(0, 0, width, height);
         sample.fillStyle = '#f3e7d9';
@@ -184,11 +187,14 @@ export default function PixelDrift() {
           return found;
         };
 
-        let stride = Math.max(2, Math.round(150 / clamp(Number(config.particleCount) || 1, 1, 50)));
+        let stride = Math.max(
+          1,
+          Math.round((150 / clamp(Number(config.particleCount) || 1, 1, 50)) * renderScale),
+        );
         let candidates = scan(stride);
 
-        while (!candidates.length && stride > 2) {
-          stride = Math.max(2, Math.floor(stride / 2));
+        while (!candidates.length && stride > 1) {
+          stride = Math.max(1, Math.floor(stride / 2));
           candidates = scan(stride);
         }
 
@@ -208,7 +214,7 @@ export default function PixelDrift() {
         for (let index = 0; index < count; index += 1) {
           const [x, y] = candidates[index * skip];
           const angle = Math.random() * Math.PI * 2;
-          const radius = Math.max(width, height) * (0.6 + Math.random() * 0.5);
+          const radius = Math.max(width, height) * (0.6 + Math.random() * 0.5) * renderScale;
 
           originX[index] = x;
           originY[index] = y;
@@ -434,14 +440,14 @@ export default function PixelDrift() {
         root.dataset.pointerHits = String(hits);
         ctx.globalAlpha = settled ? 1 : factor;
 
-        const size = Math.max(1, Number(config.particleSize) / 4);
-        const half = size / 2;
+        const pSize = Math.max(0.5, (Number(config.particleSize) / 4) * renderScale);
+        const half = pSize / 2;
 
         buckets.forEach((bucket, color) => {
           if (!bucket.length) return;
           ctx.fillStyle = palette[color];
           bucket.forEach((index) =>
-            ctx.fillRect(positionX[index] - half, positionY[index] - half, size, size),
+            ctx.fillRect(positionX[index] - half, positionY[index] - half, pSize, pSize),
           );
         });
 

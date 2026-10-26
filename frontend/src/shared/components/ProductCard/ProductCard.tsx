@@ -31,7 +31,10 @@ export const ProductCard = ({
   return (
     <div className={cardClassName}>
       <div className={styles.imageWrapper}>
-        <button className={styles.favoriteBtn} onClick={onToggleFavorite}>
+        <button
+          className={`${styles.favoriteBtn} ${isFavorite ? styles.active : ''}`}
+          onClick={onToggleFavorite}
+        >
           {isFavorite ? (
             <span className={styles.filledHeartIcon} />
           ) : (
@@ -51,7 +54,6 @@ export const ProductCard = ({
         )}
 
         <p className={styles.price}>${price.toFixed(2)}</p>
-
 
         {variant !== 'profile' && (
           <div className={styles.actions}>

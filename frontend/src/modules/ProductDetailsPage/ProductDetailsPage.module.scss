@@ -78,9 +78,11 @@
     padding: 10px 0;
     gap: 12px;
     transition: all 0.3s ease;
+    color: var(--color-primary-1);
 
     &:hover .arrowIcon {
       transform: translateX(4px);
+      background-color: var(--color-primary-1);
     }
 
     .desktopText {
@@ -99,7 +101,7 @@
 
   .arrowIcon {
     @include icon-mask('/icons/rightArrow.svg', 16px);
-    background-color: var(--text-main);
+    background-color: var(--color-primary-1);
     transition: transform 0.3s ease;
 
     @include on-phone {
@@ -195,13 +197,38 @@
 .productTitle {
   font-size: 32px;
   font-weight: 600;
-  margin: 0 0 24px 0;
+  margin: 0 0 8px 0;
   line-height: 1.2;
 
   @include on-phone {
     font-size: 24px;
     margin-bottom: 16px;
   }
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.starIcon {
+  @include icon-mask('/icons/star.svg', 24px);
+  background-color: var(--color-warming-800);
+}
+
+.ratingNumber,
+.reviewsCount {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-muted);
 }
 
 .priceRow {
@@ -251,11 +278,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: color 0.3s ease;
 
   &:hover {
-    opacity: 0.8;
+    color: var(--color-primary-2);
   }
 }
 
@@ -357,24 +383,14 @@
   padding: 16px 0;
   font-size: 20px;
   font-weight: 600;
-  color: var(--text-primary);
-  border-bottom: 2px solid transparent;
+  color: var(--text-main);
+  border-bottom: 2px solid var(--text-main);
   margin-bottom: -1px;
-  transition: all 0.3s ease;
 
   @include on-phone {
     font-size: 16px;
     white-space: nowrap;
   }
-
-  &:hover {
-    color: var(--text-main);
-  }
-}
-
-.activeTab {
-  color: var(--text-main);
-  border-bottom-color: var(--text-main);
 }
 
 .tabContent {

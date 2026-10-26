@@ -25,12 +25,10 @@
 .loginForm {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 16px;
-  max-width: 360px;
-
-  @include on-phone {
-    max-width: 100%;
-  }
+  width: 100%;
+  max-width: 100%;
 }
 
 .inputWrapper {
@@ -52,6 +50,10 @@
   font-weight: 400;
   pointer-events: none;
   z-index: 2;
+
+  @include on-phone {
+    background-color: var(--bg-main);
+  }
 }
 
 .inputField {
@@ -59,17 +61,13 @@
   height: 48px;
   padding: 12px 16px;
   border: 1px solid var(--color-primary-1);
+  background-color: #fff;
   border-radius: 4px;
   font-size: 14px;
   outline: none;
-  background-color: transparent;
 
   &::placeholder {
     color: #a0a0a0;
-  }
-
-  &:focus {
-    border-color: var(--color-primary-1);
   }
 
   &.withIconRight {
@@ -185,12 +183,20 @@
   height: 38px;
   align-self: flex-end;
   margin-top: 8px;
+
+  @include on-phone {
+    padding: 0 44px;
+  }
+}
+
+.submitBtn {
+  max-width: 190px;
 }
 
 .resetFlowContainer {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   width: 100%;
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -206,44 +212,40 @@
   }
 }
 
-.inputField {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--color-primary-1);
-  border-radius: 4px;
-  font-size: 14px;
-  outline: none;
-
-  &:focus {
-    border-color: var(--color-primary-1);
-  }
-}
-
 .backToLoginBtn {
+  align-self: flex-end;
+  width: max-content;
+  margin-top: 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 14px 24px;
-  background-color: var(--bg-main);
-  color: var(--text-main);
+  
+  background-color: transparent;
+  color: var(--color-primary-1);
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 400;
-  cursor: pointer;
-  margin-top: 12px;
-  transition: opacity 0.3s ease;
-
+  
   &:hover {
+    background-color: transparent;
     opacity: 0.8;
+  }
+  
+  &:hover {
+    background-color: var(--color-primary-3);
+  }
+
+  &:focus {
+    box-shadow: inset 0 4px 4px rgba(122, 78, 89, 0.2);
+    background-color: transparent;
+  }
+
+  &:active {
+    background-color: rgba(244, 232, 234, 0.56);
   }
 }
 
 .arrowRightIcon {
   @include icon-mask('/icons/rightArrow.svg', 16px);
-  background-color: var(--text-main);
+  background-color: var(--color-primary-1);
+  margin-left: 8px;
 }
 
 .iconGraphicWrapper {

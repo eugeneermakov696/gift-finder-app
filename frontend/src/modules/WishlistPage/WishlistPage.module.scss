@@ -39,6 +39,7 @@
   cursor: pointer;
   gap: 12px;
   transition: all 0.3s ease;
+  color: var(--color-primary-1);
 
   &:hover span {
     transform: translateX(4px);
@@ -55,7 +56,7 @@
 
 .arrowIcon {
   @include icon-mask('/icons/rightArrow.svg', 16px);
-  background-color: var(--text-main);
+  background-color: var(--color-primary-1);
   transition: all 0.3s ease;
 
   @include on-phone {

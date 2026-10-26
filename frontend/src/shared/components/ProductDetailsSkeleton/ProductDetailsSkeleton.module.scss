@@ -1,0 +1,105 @@
+.basePulse {
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  display: block;
+  animation: pulseBg 1.5s infinite ease-in-out;
+}
+
+.breadcrumb {
+  width: 200px;
+  min-height: 20px;
+}
+
+.pageTitle {
+  width: 250px;
+  min-height: 24px;
+  margin-bottom: 12px;
+}
+
+.pageSubtitle {
+  width: 320px;
+  min-height: 16px;
+  max-width: 100%;
+}
+
+.backLink {
+  width: 120px;
+  min-height: 16px;
+}
+
+.thumbPulse {
+  border: none;
+}
+
+.largeImagePulse {
+  min-height: 400px;
+  border-radius: 12px;
+}
+
+.productTitle {
+  width: 90%;
+  min-height: 38px;
+  margin-bottom: 16px;
+}
+
+.rating {
+  width: 150px;
+  min-height: 24px;
+}
+
+.price {
+  width: 120px;
+  min-height: 32px;
+}
+
+.wishlistBtn {
+  width: 140px;
+  min-height: 24px;
+  border-radius: 20px;
+}
+
+.amazonBtnBlock {
+  width: 280px;
+  min-height: 44px;
+  border-radius: 8px;
+  max-width: 100%;
+}
+
+.promoMain {
+  width: 100%;
+  min-height: 16px;
+  margin-bottom: 12px;
+}
+
+.promoSub {
+  width: 80%;
+  min-height: 14px;
+}
+
+.tabHeader {
+  width: 140px;
+  min-height: 28px;
+}
+
+.descLineFull {
+  width: 100%;
+  min-height: 16px;
+  margin-bottom: 12px;
+}
+
+.descLine90 {
+  width: 90%;
+  min-height: 16px;
+  margin-bottom: 12px;
+}
+
+.descLine95 {
+  width: 95%;
+  min-height: 16px;
+  margin-bottom: 12px;
+}
+
+.descLine60 {
+  width: 60%;
+  min-height: 16px;
+}

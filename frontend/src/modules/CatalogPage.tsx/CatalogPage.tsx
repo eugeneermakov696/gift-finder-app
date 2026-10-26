@@ -6,6 +6,7 @@ import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import { Pagination } from './components/Pagination';
 import { useCatalogData } from '../../shared/hooks/useCatalogPage';
 import styles from './CatalogPage.module.scss';
+import { SkeletonCard } from '../../shared/components/SkeletonCard';
 
 export const CatalogPage = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export const CatalogPage = () => {
         }}
         onComplete={() => {
           setShowLoadingScreen(false);
-          
+
           const cleanParams = new URLSearchParams(location.search);
           cleanParams.delete('loader');
           navigate(`${location.pathname}?${cleanParams.toString()}`, { replace: true });
@@ -71,31 +72,33 @@ export const CatalogPage = () => {
       </header>
 
       <div className={styles.productsGrid}>
-        {gifts.map((product) => {
-          const isFavorite = wishlistItems.some((item) => item.id === product.id);
+        {isReduxLoading
+          ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+          : gifts.map((product) => {
+              const isFavorite = wishlistItems.some((item) => item.id === product.id);
 
-          const handleToggleFavorite = () => {
-            if (isFavorite) {
-              dispatch(removeGiftFromWishlist(product.id));
-            } else {
-              dispatch(addGiftToWishlist(product));
-            }
-          };
+              const handleToggleFavorite = () => {
+                if (isFavorite) {
+                  dispatch(removeGiftFromWishlist(product.id));
+                } else {
+                  dispatch(addGiftToWishlist(product));
+                }
+              };
 
-          return (
-            <ProductCard
-              key={product.id}
-              asin={product.asin}
-              title={product.title}
-              price={product.price}
-              imageUrl={product.image_url ?? ''}
-              description={product.description ?? undefined}
-              amazonUrl={product.amazon_url}
-              isFavorite={isFavorite}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          );
-        })}
+              return (
+                <ProductCard
+                  key={product.id}
+                  asin={product.asin}
+                  title={product.title}
+                  price={product.price}
+                  imageUrl={product.image_url ?? ''}
+                  description={product.description ?? undefined}
+                  amazonUrl={product.amazon_url}
+                  isFavorite={isFavorite}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              );
+            })}
       </div>
 
       <Pagination

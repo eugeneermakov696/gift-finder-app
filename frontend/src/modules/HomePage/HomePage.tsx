@@ -15,6 +15,7 @@ import {
   type FeatureCardProps,
 } from '../../shared/constants/homePage';
 import styles from './HomePage.module.scss';
+import { SkeletonCard } from '../../shared/components/SkeletonCard';
 
 const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -200,8 +201,7 @@ export const HomePage = () => {
           Still have questions?{' '}
           <button className={styles.contactLink} onClick={() => setIsContactOpen(true)}>
             Contact us
-          </button>{' '}
-          at [email address].
+          </button>
         </p>
       </section>
 
@@ -268,35 +268,33 @@ export const HomePage = () => {
         </p>
 
         <div className={styles.favGrid}>
-          {isLoadingGifts ? (
-            <p>Loading popular ideas...</p>
-          ) : (
-            popularGifts.map((product) => {
-              const isFavorite = wishlistItems.some((item) => item.id === product.id);
+          {isLoadingGifts
+            ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+            : popularGifts.map((product) => {
+                const isFavorite = wishlistItems.some((item) => item.id === product.id);
 
-              const handleToggleFavorite = () => {
-                if (isFavorite) {
-                  dispatch(removeGiftFromWishlist(product.id));
-                } else {
-                  dispatch(addGiftToWishlist(product));
-                }
-              };
+                const handleToggleFavorite = () => {
+                  if (isFavorite) {
+                    dispatch(removeGiftFromWishlist(product.id));
+                  } else {
+                    dispatch(addGiftToWishlist(product));
+                  }
+                };
 
-              return (
-                <ProductCard
-                  key={product.id}
-                  asin={product.asin}
-                  title={product.title}
-                  price={product.price}
-                  imageUrl={product.image_url ?? ''}
-                  description={product.description ?? undefined}
-                  amazonUrl={product.amazon_url}
-                  isFavorite={isFavorite}
-                  onToggleFavorite={handleToggleFavorite}
-                />
-              );
-            })
-          )}
+                return (
+                  <ProductCard
+                    key={product.id}
+                    asin={product.asin}
+                    title={product.title}
+                    price={product.price}
+                    imageUrl={product.image_url ?? ''}
+                    description={product.description ?? undefined}
+                    amazonUrl={product.amazon_url}
+                    isFavorite={isFavorite}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                );
+              })}
         </div>
       </section>
       {isContactOpen && <ContactsWindow onClose={() => setIsContactOpen(false)} />}

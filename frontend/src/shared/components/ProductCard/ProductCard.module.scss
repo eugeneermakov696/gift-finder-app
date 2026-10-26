@@ -25,11 +25,39 @@
   height: 32px;
   top: 12px;
   left: 12px;
-  background-color: var(--bg-main);
   border: none;
   border-radius: 8px;
   z-index: 2;
   cursor: pointer;
+  background-color: var(--bg-main);
+  box-shadow: 0 2px 8px rgba(101, 63, 73, 0.15); 
+  transition: all 0.3s ease;
+
+  span {
+    background-color: var(--color-primary-1);
+    transition: background-color 0.3s ease;
+  }
+
+  &:hover {
+    background-color: var(--color-primary-3);
+    
+    span {
+      background-color: var(--color-primary-2);
+    }
+  }
+
+  /* --- Added to wishlist (Active) --- */
+  &.active {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    span {
+      background-color: var(--color-primary-1); 
+
+      &:hover {
+        background-color: var(--color-primary-2);
+      }
+    }
+  }
 }
 
 .imagePlaceholder {
@@ -106,12 +134,10 @@
 
 .heartIcon {
   @include icon-mask('/icons/heart.svg', 20px);
-  background-color: var(--color-primary-1);
 }
 
 .filledHeartIcon {
   @include icon-mask('/icons/filledHeart.svg', 20px);
-  background-color: var(--color-primary-1);
 }
 
 /* --- Regular card --- */

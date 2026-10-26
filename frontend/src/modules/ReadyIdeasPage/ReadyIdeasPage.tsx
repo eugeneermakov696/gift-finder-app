@@ -5,10 +5,10 @@ import styles from './ReadyIdeasPage.module.scss';
 
 const formatSlug = (slug?: string): string => {
   if (!slug) return '';
-  
+
   let cleanSlug = slug.replace(/^gifts-for-/, '');
   cleanSlug = cleanSlug.replace(/-s-/g, "'s-");
-  
+
   return cleanSlug
     .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -17,26 +17,35 @@ const formatSlug = (slug?: string): string => {
 
 const mapSlugToApiRecipient = (slug: string): string => {
   const s = slug.toLowerCase();
-  if (s.includes('mom') || s.includes('dad') || s.includes('grandparent') || s.includes('in-law')) return 'Relatives';
-  if (s.includes('friend')) return 'Friend';
-  if (s.includes('boyfriend') || s.includes('husband') || s.includes('girlfriend') || s.includes('wife')) return 'Partner';
-  return 'Other';
+  if (s.includes('mom') || s.includes('dad') || s.includes('grandparent') || s.includes('in-law'))
+    return 'relatives';
+  if (s.includes('friend')) return 'friend';
+  if (
+    s.includes('boyfriend') ||
+    s.includes('husband') ||
+    s.includes('girlfriend') ||
+    s.includes('wife')
+  )
+    return 'partner';
+  return 'other';
 };
 
 const mapSlugToApiOccasion = (slug: string): string => {
   const s = slug.toLowerCase();
+
   if (s.includes('mother')) return 'mother_day';
   if (s.includes('father')) return 'father_day';
   if (s.includes('birthday')) return 'birthday';
   if (s.includes('christmas')) return 'christmas';
   if (s.includes('anniversary')) return 'anniversary';
   if (s.includes('housewarming')) return 'housewarming';
-  if (s.includes('wedding')) return 'wedding';
-  if (s.includes('engagement')) return 'engagement';
+  if (s.includes('wedding') || s.includes('engagement')) return 'wedding_or_engagement';
+  if (s.includes('thanksgiving')) return 'thanksgiving';
+  if (s.includes('halloween')) return 'halloween';
+  if (s.includes('party')) return 'party';
   if (s.includes('graduation')) return 'graduation';
   if (s.includes('retirement')) return 'retirement';
-  if (s.includes('just-because')) return 'just_because';
-  
+
   return s.replace(/-/g, '_');
 };
 
@@ -57,7 +66,7 @@ export const ReadyIdeasPage = () => {
     if (apiOccasion) params.append('occasion', apiOccasion);
     if (minPrice !== undefined) params.append('min_price', minPrice.toString());
     if (maxPrice !== undefined) params.append('max_price', maxPrice.toString());
-    
+
     params.append('loader', 'true');
 
     navigate(`/catalog?${params.toString()}`);
@@ -105,8 +114,8 @@ export const ReadyIdeasPage = () => {
               <p className={styles.cardSubtitle}>{tier.subtitle}</p>
 
               <Button
-                variant='primary'
-                size='default'
+                variant="primary"
+                size="default"
                 className={styles.seeIdeasBtn}
                 onClick={() => handleSeeIdeas(tier.minPrice, tier.maxPrice)}
               >

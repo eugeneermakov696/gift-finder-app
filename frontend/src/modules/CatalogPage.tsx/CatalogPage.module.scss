@@ -75,13 +75,14 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  color: var(--text-main);
+  color: var(--color-primary-1);
   text-decoration: none;
   font-size: 16px;
   transition: all 0.3s ease;
 
   &:hover .arrowIcon {
     transform: translateX(4px);
+    background-color: var(--color-primary-1);
   }
 
   @include on-phone {

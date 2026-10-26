@@ -171,7 +171,7 @@ const AuthFlow = () => {
                 variant="select"
                 size="large"
                 type="submit"
-                className={styles.submitBtn}
+                className={styles.loginBtn}
                 disabled={isLoading}
               >
                 Log In
@@ -210,13 +210,13 @@ const AuthFlow = () => {
               >
                 {isLoading ? 'Sending...' : 'Send reset link'}
               </Button>
-              <button
-                type="button"
+              <Button
+                size="default"
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
                 Back to log in <span className={styles.arrowRightIcon} />
-              </button>
+              </Button>
             </form>
           </div>
         );
@@ -313,13 +313,13 @@ const AuthFlow = () => {
               >
                 Reset password
               </Button>
-              <button
-                type="button"
+              <Button
+                size="default"
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
                 Back to log in <span className={styles.arrowRightIcon} />
-              </button>
+              </Button>
             </form>
           </div>
         );
@@ -335,13 +335,13 @@ const AuthFlow = () => {
               <p>Your password has been successfully changed.</p>
             </div>
             <div className={styles.loginForm}>
-              <button
-                type="button"
+              <Button
+                size="default"
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
                 Back to log in <span className={styles.arrowRightIcon} />
-              </button>
+              </Button>
             </div>
           </div>
         );
@@ -358,20 +358,19 @@ const AuthFlow = () => {
             </div>
             <div className={styles.loginForm}>
               <Button
-                variant="select"
-                size="large"
+                size="default"
                 className={styles.submitBtn}
                 onClick={() => setAuthView('forgot_request')}
               >
                 Send a new link
               </Button>
-              <button
-                type="button"
+              <Button
+                size="default"
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
                 Back to log in <span className={styles.arrowRightIcon} />
-              </button>
+              </Button>
             </div>
           </div>
         );

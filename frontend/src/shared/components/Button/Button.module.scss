@@ -21,6 +21,10 @@
   &:active {
     transform: scale(0.97);
   }
+
+  @include on-phone {
+    border-radius: 4px;
+  }
 }
 
 .default {
@@ -44,6 +48,7 @@
     white-space: nowrap;
     padding: 0 20px;
     height: 40px;
+    line-height: 1.2;
   }
 }
 
@@ -85,7 +90,7 @@
 }
 
 .select {
-  background-color: #fff;
+  background-color: transparent;
   border: solid 1px var(--color-primary-2);
   color: var(--text-main);
   
