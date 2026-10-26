@@ -28,16 +28,18 @@ backend/
 ├── config/                 # Core system configuration settings
 │   ├── __init__.py
 │   ├── settings.py         # Global Django & DRF settings (JWT, CORS, DB, Email)
+│   ├── swagger.py          # Standardized reusable Swagger/OpenAPI error schemas
 │   ├── urls.py             # Root URL routing (Swagger, Admin, Presents, Users)
 │   ├── views.py            # Health-check endpoint (API + DB connectivity)
 │   └── wsgi.py             # WSGI application entry point
 ├── presents/               # Product catalog & wishlist domain application
 │   ├── admin.py            # Django admin interface registrations for Presents & Wishlists
 │   ├── apps.py             # Application configuration metadata
+│   ├── filters.py          # Custom query filter sets for catalog searching & sorting
 │   ├── models.py           # Present and Wishlist database models
 │   ├── serializers.py      # DRF serializers for gifts and wishlist transformations
 │   ├── services.py         # Mock Amazon scraper pattern processing utilities
-│   ├── tests.py            # Automated integration unit test suite (12 test vectors)
+│   ├── tests.py            # Automated integration unit test suite
 │   ├── urls.py             # Presents and Wishlists router endpoints
 │   ├── views.py            # ModelViewSets with RBAC, wishlist ownership, and CSV export
 │   ├── management/         # Custom Django management commands
@@ -45,16 +47,18 @@ backend/
 │   │       ├── __init__.py
 │   │       └── import_excel.py # Importer mapping Excel sheets into PostgreSQL
 │   └── migrations/         # Database migration schemas
-└── users/                  # User identity, authentication & verification application
-    ├── apps.py             # Users application configuration
-    ├── authentication.py   # CustomJWTAuthentication (HTTP-only cookies + header fallback)
-    ├── models.py           # CustomUser (`auth_users`) & UserVerificationCode models
-    ├── serializers.py      # User registration, token, and verification serializers
-    ├── services.py         # Verification code generator, email dispatcher & validators
-    ├── tests.py            # Authentication & verification test suite (3 test vectors)
-    ├── urls.py             # Auth endpoints (login, register, reset, verify, avatar)
-    ├── views.py            # Cookie JWT, email verify, password reset, avatar upload
-    └── migrations/         # User and verification code database schemas
+├── users/                  # User identity, authentication & verification application
+│   ├── admin.py            # Django admin interface registrations for CustomUser & ContactMessage
+│   ├── apps.py             # Users application configuration
+│   ├── authentication.py   # CustomJWTAuthentication (HTTP-only cookies + header fallback)
+│   ├── models.py           # CustomUser, UserVerificationCode & ContactMessage models
+│   ├── serializers.py      # User registration, token, verification & contact serializers
+│   ├── services.py         # Verification code generator, email dispatcher & validators
+│   ├── tests.py            # Authentication, verification & OpenAPI test suite
+│   ├── urls.py             # Auth & contact-form endpoints
+│   ├── views.py            # Cookie JWT, email verify, password reset, avatar, contact
+│   └── migrations/         # User and verification code database schemas
+└── media/                  # User-uploaded static media files (e.g. avatars)
 ```
 
 ---
