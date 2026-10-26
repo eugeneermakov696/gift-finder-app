@@ -162,6 +162,20 @@ AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
 AWS_S3_ENDPOINT_URL = env("AWS_S3_ENDPOINT_URL", default="")  # e.g. https://<account_id>.r2.cloudflarestorage.com
 AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN", default="")  # Optional, for serving media
 
+# Sanitize custom domain to prevent double protocol schemes like https://https://
+if AWS_S3_CUSTOM_DOMAIN:
+    AWS_S3_CUSTOM_DOMAIN = (
+        AWS_S3_CUSTOM_DOMAIN.replace("https://", "")
+        .replace("http://", "")
+        .strip("/")
+    )
+
+# Sanitize endpoint URL to remove trailing slash and accidental bucket name suffix
+if AWS_S3_ENDPOINT_URL:
+    AWS_S3_ENDPOINT_URL = AWS_S3_ENDPOINT_URL.rstrip("/")
+    if AWS_STORAGE_BUCKET_NAME and AWS_S3_ENDPOINT_URL.endswith(f"/{AWS_STORAGE_BUCKET_NAME}"):
+        AWS_S3_ENDPOINT_URL = AWS_S3_ENDPOINT_URL[:-len(f"/{AWS_STORAGE_BUCKET_NAME}")].rstrip("/")
+
 # Optional AWS S3 settings
 AWS_S3_OBJECT_PARAMETERS = {
     "CacheControl": "max-age=86400",
@@ -193,3 +207,33 @@ if missing_r2_vars:
 else:
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+
+# Ensure server errors and request exceptions are logged to console
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {name}: {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+}
+

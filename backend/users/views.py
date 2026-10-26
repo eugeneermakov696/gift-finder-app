@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 from django.contrib.auth import get_user_model
 from rest_framework import views, status, permissions
 from rest_framework.response import Response
@@ -8,6 +9,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_yasg.utils import swagger_auto_schema, no_body
 from drf_yasg import openapi
+
+logger = logging.getLogger(__name__)
 
 from config.swagger import (
     ERROR_400_BAD_REQUEST,
@@ -392,29 +395,39 @@ class AvatarUploadView(views.APIView):
 
         user = request.user
 
-        # Save the file to the avatar field (this uses django-storages/boto3 automatically)
-        user.avatar.save(avatar_file.name, avatar_file, save=False)
+        try:
+            # Save the file to the avatar field (this uses django-storages/boto3 automatically)
+            user.avatar.save(avatar_file.name, avatar_file, save=False)
 
-        cdn_url = user.avatar.url if user.avatar else ""
+            cdn_url = user.avatar.url if user.avatar else ""
 
-        # Validate that the avatar URL is a valid Cloudflare R2 / remote URL and not a localhost fallback
-        if "test" not in sys.argv and (not cdn_url.startswith("http") or "localhost" in cdn_url):
+            # Validate that the avatar URL is a valid Cloudflare R2 / remote URL and not a localhost fallback
+            if "test" not in sys.argv and (not cdn_url.startswith("http") or "localhost" in cdn_url):
+                return Response(
+                    {
+                        "detail": "Cloud storage (Cloudflare R2) is misconfigured or missing environment variables. "
+                                  "Localhost avatar storage is not allowed."
+                    },
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+            # Save direct CDN URL to image_url in the database
+            user.image_url = cdn_url
+            user.save()
+
+            return Response({
+                "detail": "Avatar uploaded successfully.",
+                "avatar_url": cdn_url
+            }, status=status.HTTP_200_OK)
+
+        except Exception as exc:
+            logger.error("Failed to upload avatar to cloud storage: %s", exc, exc_info=True)
             return Response(
                 {
-                    "detail": "Cloud storage (Cloudflare R2) is misconfigured or missing environment variables. "
-                              "Localhost avatar storage is not allowed."
+                    "detail": f"Failed to upload avatar to cloud storage: {str(exc)}"
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-        # Save direct CDN URL to image_url in the database
-        user.image_url = cdn_url
-        user.save()
-
-        return Response({
-            "detail": "Avatar uploaded successfully.",
-            "avatar_url": cdn_url
-        }, status=status.HTTP_200_OK)
 
 
 class ContactFormView(views.APIView):
