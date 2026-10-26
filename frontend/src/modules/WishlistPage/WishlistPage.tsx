@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../store/hooks';
 import { removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import { Link } from 'react-router-dom';
 import { ProductCard } from '../../shared/components/ProductCard';
+import { SkeletonCard } from '../../shared/components/SkeletonCard';
 import type { RootState } from '../../store/store';
 import styles from './WishlistPage.module.scss';
 
 export const WishlistPage = () => {
+  const [isLoading] = useState(false);
+
   const dispatch = useAppDispatch();
   const savedItems = useSelector((state: RootState) => state.wishlist.items);
 
@@ -33,7 +37,11 @@ export const WishlistPage = () => {
       </div>
 
       <div className={styles.grid}>
-        {savedItems.length === 0 ? (
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, index) => (
+            <SkeletonCard key={index} />
+          ))
+        ) : savedItems.length === 0 ? (
           <p className={styles.emptyState}>Your favourites list is empty.</p>
         ) : (
           savedItems.map((item) => (
@@ -45,8 +53,8 @@ export const WishlistPage = () => {
               imageUrl={item.image_url ?? ''}
               description={item.description ?? undefined}
               amazonUrl={item.amazon_url}
-              isFavorite={true} 
-              onToggleFavorite={() => dispatch(removeGiftFromWishlist(item.id))} 
+              isFavorite={true}
+              onToggleFavorite={() => dispatch(removeGiftFromWishlist(item.id))}
             />
           ))
         )}

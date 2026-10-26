@@ -80,9 +80,11 @@
   padding: 10px 0;
   gap: 12px;
   transition: all 0.3s ease;
+  color: var(--color-primary-1);
 
   &:hover span {
     transform: translateX(4px);
+    background-color: var(--color-primary-1);
   }
 
   @include on-phone {

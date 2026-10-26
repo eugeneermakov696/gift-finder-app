@@ -14,7 +14,7 @@ export const BUDGET_TIERS: BudgetTier[] = [
     subtitle: 'Small Surprises',
     minPrice: 0,
     maxPrice: 15,
-    imgName: 'ready-ideas-1.png',
+    imgName: 'image1.png',
   },
   {
     id: '15-40',
@@ -22,7 +22,7 @@ export const BUDGET_TIERS: BudgetTier[] = [
     subtitle: 'Thoughtful',
     minPrice: 15,
     maxPrice: 40,
-    imgName: 'ready-ideas-2.png',
+    imgName: 'image2.png',
   },
   {
     id: '40-100',
@@ -30,7 +30,7 @@ export const BUDGET_TIERS: BudgetTier[] = [
     subtitle: 'Sweet Spot',
     minPrice: 40,
     maxPrice: 100,
-    imgName: 'ready-ideas-3.png',
+    imgName: 'image3.png',
   },
   {
     id: '100-200',
@@ -38,7 +38,7 @@ export const BUDGET_TIERS: BudgetTier[] = [
     subtitle: 'Premium',
     minPrice: 100,
     maxPrice: 200,
-    imgName: 'ready-ideas-4.png',
+    imgName: 'image4.png',
   },
   {
     id: '200-plus',
@@ -46,6 +46,6 @@ export const BUDGET_TIERS: BudgetTier[] = [
     subtitle: 'Special',
     minPrice: 200,
     maxPrice: undefined,
-    imgName: 'ready-ideas-5.png',
+    imgName: 'image5.png',
   },
 ];

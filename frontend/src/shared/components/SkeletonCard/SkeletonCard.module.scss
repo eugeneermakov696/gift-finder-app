@@ -1,0 +1,51 @@
+@keyframes pulseBg {
+  0% { background-color: #f3f4f6; }
+  50% { background-color: #e5e7eb; }
+  100% { background-color: #f3f4f6; }
+}
+
+.skeletonPulse {
+  animation: pulseBg 1.5s infinite ease-in-out;
+  border-radius: 4px;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.title {
+  height: 20px;
+  width: 85%;
+  margin-bottom: 8px;
+}
+
+.descLine {
+  height: 14px;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.descLineShort {
+  width: 70%;
+}
+
+.price {
+  height: 18px;
+  width: 60px;
+  margin-bottom: 20px;
+  margin-top: auto;
+}
+
+.amazonBtn {
+  height: 40px;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.detailsBtn {
+  height: 16px;
+  width: 80px;
+  margin: 8px auto 0;
+}

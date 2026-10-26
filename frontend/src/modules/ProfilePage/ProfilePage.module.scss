@@ -59,9 +59,11 @@
   padding: 10px 0;
   gap: 12px;
   transition: all 0.3s ease;
+  color: var(--color-primary-1);
 
   &:hover .arrowIcon {
     transform: translateX(4px);
+    background-color: var(--color-primary-1);
   }
 
   @include on-phone {
@@ -99,6 +101,7 @@
     box-shadow: none;
     background-color: transparent;
     margin-bottom: 32px;
+    gap: 40px;
   }
 }
 
@@ -128,10 +131,12 @@
 
   @include on-phone {
     flex-direction: column;
-    padding: 0 0 32px 0;
+    padding: 24px;
     gap: 24px;
     border-right: none;
-    border-bottom: 1px solid var(--text-muted);
+    border-bottom: none;
+    background-color: #fff;
+    border-radius: 12px;
   }
 }
 
@@ -192,11 +197,13 @@
   display: flex;
   gap: 24px;
   margin-top: 32px;
+  width: 100%;
 
   @include on-phone {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
+    margin-top: 24px;
   }
 }
 
@@ -209,7 +216,7 @@
   justify-content: center;
 
   @include on-phone {
-    padding: 32px 0 0 0;
+    padding: 0;
   }
 }
 
