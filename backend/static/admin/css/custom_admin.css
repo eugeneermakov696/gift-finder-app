@@ -660,13 +660,29 @@ input[type="submit"].default:hover,
    ========================================================================== */
 
 #changelist {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  box-shadow: var(--card-shadow);
-  padding: 16px;
-  box-sizing: border-box;
-  width: 100%;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+#changelist .changelist-form-container {
+  background: var(--card-bg, #FFFFFF) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--card-shadow) !important;
+  padding: 24px !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+#changelist.filtered .changelist-form-container {
+  width: auto !important;
 }
 
 #toolbar {
@@ -784,58 +800,10 @@ input[type="submit"].default:hover,
   transform: translateY(0) !important;
 }
 
-/* Actions Bar & Button */
-.actions {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  padding: 10px 16px !important;
-  background: var(--body-bg) !important;
-  border-radius: 10px !important;
-  margin-bottom: 16px !important;
-  border: 1px solid var(--border-color) !important;
-}
-
-.actions select {
-  padding: 8px 14px !important;
-  border-radius: 8px !important;
-  border: 1px solid var(--border-color) !important;
-  background: #FFFFFF !important;
-  color: var(--body-fg) !important;
-  font-family: var(--font-family-primary) !important;
-  font-size: 13px !important;
-}
-
-.actions button,
-.actions input[type="submit"],
-.actions .button {
-  background-color: var(--button-bg, #7A4E59) !important;
-  color: #FFFFFF !important;
-  font-family: var(--font-family-primary) !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  padding: 8px 18px !important;
-  border-radius: 8px !important;
-  border: none !important;
-  box-shadow: 0 2px 6px rgba(101, 63, 73, 0.15) !important;
-  cursor: pointer !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-.actions button:hover,
-.actions input[type="submit"]:hover,
-.actions .button:hover {
-  background-color: var(--button-hover-bg, #653F49) !important;
-  color: #FFFFFF !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(101, 63, 73, 0.25) !important;
-}
-
-.actions button:active,
-.actions input[type="submit"]:active,
-.actions .button:active {
-  background-color: rgba(122, 78, 89, 0.32) !important;
-  color: var(--primary) !important;
+/* Actions Bar - Hidden per user request */
+.actions,
+#changelist .actions {
+  display: none !important;
 }
 
 #changelist table {
@@ -935,7 +903,7 @@ img[src*="icon-no"]:hover {
   transform: scale(1.25) !important;
 }
 
-/* Filter Sidebar (Right Panel) */
+/* Filter Sidebar (Right Panel - Themed to match Giftly Cards) */
 #changelist.filtered {
   display: flex !important;
   align-items: flex-start !important;
@@ -944,82 +912,93 @@ img[src*="icon-no"]:hover {
   width: 100% !important;
 }
 
-#changelist.filtered .changelist-form-container,
-#changelist.filtered #changelist-form {
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-  width: auto !important;
-}
-
 #changelist-filter {
-  flex: 0 0 256px !important;
-  width: 256px !important;
+  flex: 0 0 260px !important;
+  width: 260px !important;
   background: #FFFFFF !important;
-  border: 1px solid rgba(101, 63, 73, 0.12) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: 16px !important;
-  box-shadow: 0 4px 20px rgba(101, 63, 73, 0.06) !important;
+  box-shadow: var(--card-shadow) !important;
   overflow: hidden !important;
   position: sticky !important;
   top: 24px !important;
   margin: 0 !important;
-  padding: 0 0 12px 0 !important;
+  padding: 0 !important;
   order: 2 !important;
+  box-sizing: border-box !important;
+  max-height: calc(100vh - 48px) !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(101, 63, 73, 0.2) transparent !important;
 }
 
 #changelist-filter h2 {
-  background: linear-gradient(135deg, #653F49 0%, #7A4E59 100%) !important;
-  color: #FFFFFF !important;
+  background: var(--primary-light, #FAF2EE) !important;
+  color: var(--primary, #653F49) !important;
   font-family: var(--font-family-display) !important;
   font-size: 13px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.08em !important;
+  letter-spacing: 0.05em !important;
   text-transform: uppercase !important;
   padding: 14px 18px !important;
   margin: 0 !important;
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
-  border-bottom: 2px solid rgba(229, 199, 169, 0.3) !important;
+  border-bottom: 1px solid var(--border-color) !important;
 }
 
 #changelist-filter h2::before {
-  content: '⚙️';
-  font-size: 14px;
+  content: "" !important;
+  display: inline-block !important;
+  width: 14px !important;
+  height: 14px !important;
+  background: currentColor !important;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'/%3E%3C/svg%3E") center/contain no-repeat !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'/%3E%3C/svg%3E") center/contain no-repeat !important;
 }
 
+/* Clear filters banner */
 #changelist-filter-extra-actions {
-  background: #FAF5F2 !important;
   padding: 10px 16px !important;
-  border-bottom: 1px solid rgba(101, 63, 73, 0.08) !important;
-  text-align: center !important;
+  background: #FAF7F5 !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
 }
 
-#changelist-filter-extra-actions h3 {
-  margin: 0 !important;
+#changelist-filter-extra-actions:not(:has(a:not(.viewlink))) {
+  display: none !important;
 }
 
 #changelist-filter-extra-actions a.viewlink {
+  display: none !important;
+}
+
+#changelist-filter-extra-actions a:not(.viewlink) {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 5px !important;
   font-size: 11px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.04em !important;
+  color: #D42023 !important;
+  background: #FEF2F2 !important;
+  padding: 5px 12px !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(236, 45, 48, 0.25) !important;
   text-transform: uppercase !important;
-  color: var(--primary) !important;
-  background: rgba(101, 63, 73, 0.08) !important;
-  padding: 6px 14px !important;
-  border-radius: 20px !important;
-  border: 1px solid rgba(101, 63, 73, 0.14) !important;
-  transition: all 0.2s ease !important;
+  letter-spacing: 0.03em !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
 }
 
-#changelist-filter-extra-actions a.viewlink:hover {
-  background: var(--primary) !important;
+#changelist-filter-extra-actions a:not(.viewlink):hover {
+  background: #D42023 !important;
   color: #FFFFFF !important;
-  border-color: var(--primary) !important;
 }
 
+/* Details Accordions */
 #changelist-filter details {
   border-bottom: 1px solid rgba(101, 63, 73, 0.08) !important;
   margin: 0 !important;
@@ -1036,11 +1015,12 @@ img[src*="icon-no"]:hover {
   font-size: 13px !important;
   font-weight: 700 !important;
   color: #4A2B33 !important;
+  background: transparent !important;
   cursor: pointer !important;
-  list-style: none !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
+  list-style: none !important;
   transition: background 0.15s ease, color 0.15s ease !important;
   user-select: none !important;
 }
@@ -1062,7 +1042,7 @@ img[src*="icon-no"]:hover {
   border-right: 2px solid #7A4E59 !important;
   border-bottom: 2px solid #7A4E59 !important;
   transform: rotate(45deg) !important;
-  transition: transform 0.2s ease !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   margin-right: 4px !important;
 }
 
@@ -1071,18 +1051,18 @@ img[src*="icon-no"]:hover {
 }
 
 #changelist-filter summary:hover {
-  background: rgba(101, 63, 73, 0.04) !important;
-  color: var(--primary) !important;
+  background: #FAF7F5 !important;
+  color: #653F49 !important;
 }
 
 #changelist-filter ul {
   list-style: none !important;
-  padding: 4px 12px 12px 12px !important;
+  padding: 6px 12px 14px 12px !important;
   margin: 0 !important;
   max-height: 240px !important;
   overflow-y: auto !important;
   scrollbar-width: thin !important;
-  scrollbar-color: rgba(101, 63, 73, 0.25) transparent !important;
+  scrollbar-color: rgba(101, 63, 73, 0.2) transparent !important;
 }
 
 #changelist-filter ul::-webkit-scrollbar {
@@ -1096,7 +1076,7 @@ img[src*="icon-no"]:hover {
 
 #changelist-filter li {
   list-style: none !important;
-  margin: 4px 0 !important;
+  margin: 3px 0 !important;
   padding: 0 !important;
   border: none !important;
   border-inline-start: none !important;
@@ -1107,10 +1087,10 @@ img[src*="icon-no"]:hover {
   align-items: center !important;
   justify-content: space-between !important;
   padding: 7px 12px !important;
-  border-radius: 8px !important;
+  border-radius: 6px !important;
   font-size: 13px !important;
   font-weight: 500 !important;
-  color: #4A4446 !important;
+  color: #5A5255 !important;
   text-decoration: none !important;
   border: none !important;
   border-inline-start: none !important;
@@ -1118,40 +1098,35 @@ img[src*="icon-no"]:hover {
 }
 
 #changelist-filter li a:hover {
-  background: #F4E8EA !important;
+  background: #FAF2EE !important;
   color: #653F49 !important;
   padding-left: 14px !important;
 }
 
 #changelist-filter li.selected a {
-  background: linear-gradient(135deg, #653F49 0%, #7A4E59 100%) !important;
-  color: #FFFFFF !important;
-  font-weight: 600 !important;
-  box-shadow: 0 3px 10px rgba(101, 63, 73, 0.25) !important;
-  border: none !important;
-  border-inline-start: none !important;
-  padding-left: 12px !important;
+  background: #F4E8EA !important;
+  color: #653F49 !important;
+  font-weight: 700 !important;
+  border-left: 3px solid #7A4E59 !important;
+  padding-left: 11px !important;
+  box-shadow: none !important;
 }
 
 #changelist-filter li.selected a:hover {
-  background: linear-gradient(135deg, #5A353E 0%, #6E444E 100%) !important;
-  color: #FFFFFF !important;
+  background: #EFE2E5 !important;
+  color: #4A2B33 !important;
 }
 
 #changelist-filter .facet-count,
 #changelist-filter li a small {
   font-size: 11px !important;
-  font-weight: 700 !important;
-  padding: 2px 7px !important;
-  border-radius: 12px !important;
-  background: #FAF2F3 !important;
+  font-weight: 600 !important;
   color: #7A4E59 !important;
-}
-
-#changelist-filter li.selected a .facet-count,
-#changelist-filter li.selected a small {
-  background: rgba(255, 255, 255, 0.25) !important;
-  color: #FFFFFF !important;
+  background: rgba(122, 78, 89, 0.12) !important;
+  padding: 2px 7px !important;
+  border-radius: 10px !important;
+  margin-left: 8px !important;
+  border: none !important;
 }
 
 /* ==========================================================================
