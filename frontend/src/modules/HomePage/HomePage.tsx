@@ -129,6 +129,7 @@ export const HomePage = () => {
           <p className={styles.description}>
             From zero ideas to a thoughtful present in your Amazon cart in under two minutes.
           </p>
+          <div className={styles.bgGiftDecoration} aria-hidden="true" />
           <Link to="/find-a-gift">
             <Button variant="primary" size="default">
               Start Gift Search

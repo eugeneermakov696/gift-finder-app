@@ -1,9 +1,9 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useAppDispatch } from '../../store/hooks';
-import type { Area } from 'react-easy-crop';
-import getCroppedImg from '../utils/cropUtils';
 import { uploadUserAvatar } from '../../store/auth/authSlice';
+import getCroppedImg from '../utils/cropUtils';
+import type { Area } from 'react-easy-crop';
 
 export const useAvatarUpload = (onClose: () => void) => {
   const dispatch = useAppDispatch();
