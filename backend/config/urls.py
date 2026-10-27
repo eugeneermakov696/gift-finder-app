@@ -26,3 +26,18 @@ urlpatterns = [
     path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]
+
+# Giftly Admin Branding
+admin.site.site_header = "Giftly Administration"
+admin.site.site_title = "Giftly Admin Portal"
+admin.site.index_title = "Store Management & Catalog Control"
+admin.site.site_url = None
+admin.site.enable_nav_sidebar = False
+
+# Ensure static files (including custom admin CSS/JS) are always served in all environments
+from django.contrib.staticfiles.views import serve as staticfiles_serve
+
+urlpatterns += [
+    re_path(r"^static/(?P<path>.*)$", staticfiles_serve, {"insecure": True}),
+]
+

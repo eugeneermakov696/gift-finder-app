@@ -9,3 +9,7 @@ frontend/node_modules/
 
 # Documentation
 docs/
+
+# Static files
+staticfiles/
+backend/staticfiles/
