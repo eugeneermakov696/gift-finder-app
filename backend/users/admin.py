@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from users.models import CustomUser, UserVerificationCode, ContactMessage
+from django.contrib.auth.models import Group
+from rest_framework.authtoken.models import TokenProxy
+from users.models import CustomUser, ContactMessage
 
 
 @admin.register(CustomUser)
@@ -14,17 +16,19 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
-@admin.register(UserVerificationCode)
-class UserVerificationCodeAdmin(admin.ModelAdmin):
-    list_display = ("user", "code", "scenario", "created_at", "expires_at")
-    list_filter = ("scenario", "created_at")
-    search_fields = ("user__email", "user__username", "code")
-    readonly_fields = ("created_at",)
-
-
 @admin.register(ContactMessage)
 class ContactMessageAdmin(admin.ModelAdmin):
     list_display = ("name", "email", "created_at", "is_resolved")
     list_filter = ("is_resolved", "created_at")
     search_fields = ("name", "email", "message")
     readonly_fields = ("created_at",)
+
+    def has_add_permission(self, request):
+        return False
+
+
+# Unregister models not needed in the Giftly admin interface
+for model in (Group, TokenProxy):
+    if admin.site.is_registered(model):
+        admin.site.unregister(model)
+
