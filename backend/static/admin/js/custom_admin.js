@@ -8,14 +8,24 @@ document.addEventListener('DOMContentLoaded', () => {
   if (imageUrlInput && previewImg) {
     const updatePreview = () => {
       const val = imageUrlInput.value.trim();
+
       if (val) {
         previewImg.src = val;
         previewImg.style.display = 'block';
-        if (previewLink) previewLink.href = val;
-        if (placeholder) placeholder.style.display = 'none';
+
+        if (previewLink) {
+          previewLink.href = val;
+        }
+
+        if (placeholder) {
+          placeholder.style.display = 'none';
+        }
       } else {
         previewImg.style.display = 'none';
-        if (placeholder) placeholder.style.display = 'inline-flex';
+
+        if (placeholder) {
+          placeholder.style.display = 'inline-flex';
+        }
       }
     };
 

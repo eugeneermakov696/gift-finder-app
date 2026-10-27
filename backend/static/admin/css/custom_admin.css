@@ -41,8 +41,9 @@ body,
   --breadcrumbs-link-fg: #653F49;
   --breadcrumbs-fg: #746D70;
 
-  --border-color: rgba(101, 63, 73, 0.12);
-  --border-subtle: rgba(101, 63, 73, 0.06);
+  --hairline-color: transparent !important;
+  --border-color: rgba(101, 63, 73, 0.12) !important;
+  --border-subtle: rgba(101, 63, 73, 0.06) !important;
   --card-bg: #FFFFFF;
 
   --button-bg: #7A4E59;
@@ -73,6 +74,19 @@ body,
   --darkened-bg: #FAF5F2;
   --selected-bg: #F4E8EA;
   --selected-row: #F4E8EA;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root,
+  html,
+  body,
+  [data-theme],
+  [data-theme="dark"] {
+    --hairline-color: transparent !important;
+    --border-color: rgba(101, 63, 73, 0.12) !important;
+    --body-bg: #FBF7F3 !important;
+    --card-bg: #FFFFFF !important;
+  }
 }
 
 /* Hide theme switcher everywhere */
@@ -270,11 +284,104 @@ div.breadcrumbs a:hover {
   color: var(--body-loud-color);
 }
 
-#content-main {
+/* Reset Django's legacy .colMS and .dashboard #content fixed widths & negative margins */
+.colMS,
+.colSM,
+#content.colMS,
+.dashboard #content {
   width: 100% !important;
-  float: none !important;
-  clear: both !important;
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+  margin-right: auto !important;
   box-sizing: border-box !important;
+}
+
+/* Dashboard 2-Column Grid Layout: Main Apps (Left) + Recent Actions (Right) */
+.dashboard #content {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 360px !important;
+  gap: 32px !important;
+  align-items: start !important;
+  padding: 32px !important;
+}
+
+.dashboard #content > h1 {
+  grid-column: 1 / -1 !important;
+  margin-bottom: 8px !important;
+}
+
+.dashboard #content-main {
+  grid-column: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  float: none !important;
+  clear: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.dashboard #content-related {
+  grid-column: 2 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  float: none !important;
+  margin: 0 !important;
+  margin-right: 0 !important;
+  position: static !important;
+  box-sizing: border-box !important;
+}
+
+.dashboard #content > br.clear {
+  display: none !important;
+}
+
+.dashboard .module table {
+  width: 100% !important;
+  table-layout: auto !important;
+}
+
+.dashboard .module table th,
+.module th {
+  width: 100% !important;
+  word-break: normal !important;
+}
+
+.dashboard .module table td,
+.module td {
+  width: 1% !important;
+  white-space: nowrap !important;
+  text-align: right !important;
+  padding: 14px 10px !important;
+}
+
+.dashboard .module table td:last-child,
+.module td:last-child {
+  padding-right: 20px !important;
+}
+
+.dashboard .module table td a,
+.dashboard .module table td a.addlink,
+.dashboard .module table td a.changelink,
+.module td a.addlink,
+.module td a.changelink {
+  display: inline-flex !important;
+  width: auto !important;
+  max-width: fit-content !important;
+}
+
+@media (max-width: 1024px) {
+  .dashboard #content {
+    grid-template-columns: 1fr !important;
+  }
+  .dashboard #content-main,
+  .dashboard #content-related {
+    grid-column: 1 !important;
+  }
+}
+
+#content-main {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .module {
@@ -319,12 +426,22 @@ div.breadcrumbs a:hover {
   border-collapse: collapse;
 }
 
-.module th,
+.module th {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  color: var(--body-fg) !important;
+  width: auto !important;
+}
+
 .module td {
   padding: 14px 20px;
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
   color: var(--body-fg) !important;
+  width: 1% !important;
+  white-space: nowrap !important;
+  text-align: right !important;
 }
 
 .module th[scope="row"] a {
@@ -465,12 +582,14 @@ div#content-related h2 {
   border: 1px solid rgba(101, 63, 73, 0.22) !important;
   box-shadow: 0 1px 4px rgba(101, 63, 73, 0.08) !important;
   font-weight: 600;
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  padding: 6px 16px !important;
+  border-radius: 20px !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  width: auto !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -491,12 +610,14 @@ div#content-related h2 {
   border: 1px solid rgba(101, 63, 73, 0.22) !important;
   box-shadow: 0 1px 4px rgba(101, 63, 73, 0.08) !important;
   font-weight: 600;
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  padding: 6px 16px !important;
+  border-radius: 20px !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  width: auto !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -518,7 +639,7 @@ div#content-related h2 {
   box-shadow: 0 2px 6px rgba(101, 63, 73, 0.15) !important;
 }
 
-/* Object Tools (Add Present + Button top right) */
+/* Object Tools (Top Action Buttons like Add Present / History) */
 .object-tools {
   float: right !important;
   position: relative !important;
@@ -545,39 +666,74 @@ div#content-related h2 {
 ul.object-tools a,
 ul.object-tools a:link,
 ul.object-tools a:visited {
-  background-color: var(--button-bg, #7A4E59) !important;
+  background-image: none !important;
+  background: linear-gradient(135deg, #7A4E59 0%, #653F49 100%) !important;
   color: #FFFFFF !important;
   font-family: var(--font-family-primary) !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   font-weight: 600 !important;
-  letter-spacing: 0.04em !important;
-  text-transform: uppercase !important;
-  padding: 10px 20px !important;
-  border-radius: 8px !important;
-  border: 1px solid rgba(101, 63, 73, 0.25) !important;
-  box-shadow: 0 2px 8px rgba(101, 63, 73, 0.2) !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  padding: 0 20px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 14px rgba(101, 63, 73, 0.25) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important;
+  gap: 8px !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  line-height: 1.4 !important;
-  height: auto !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+}
+
+.object-tools a.addlink::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: 14px !important;
+  height: 14px !important;
+  background: #FFFFFF !important;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 2.5v11M2.5 8h11'/%3E%3C/svg%3E") center/contain no-repeat !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 2.5v11M2.5 8h11'/%3E%3C/svg%3E") center/contain no-repeat !important;
+  flex-shrink: 0 !important;
+}
+
+.object-tools a.historylink::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: 14px !important;
+  height: 14px !important;
+  background: #FFFFFF !important;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolyline points='12 6 12 12 16 14'/%3E%3C/svg%3E") center/contain no-repeat !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolyline points='12 6 12 12 16 14'/%3E%3C/svg%3E") center/contain no-repeat !important;
+  flex-shrink: 0 !important;
+}
+
+.object-tools a.viewsitelink::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: 14px !important;
+  height: 14px !important;
+  background: #FFFFFF !important;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'/%3E%3Cpolyline points='15 3 21 3 21 9'/%3E%3Cline x1='10' y1='14' x2='21' y2='3'/%3E%3C/svg%3E") center/contain no-repeat !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'/%3E%3Cpolyline points='15 3 21 3 21 9'/%3E%3Cline x1='10' y1='14' x2='21' y2='3'/%3E%3C/svg%3E") center/contain no-repeat !important;
+  flex-shrink: 0 !important;
 }
 
 .object-tools a:hover,
 ul.object-tools a:hover {
-  background-color: var(--button-hover-bg, #653F49) !important;
+  background: linear-gradient(135deg, #653F49 0%, #522E37 100%) !important;
   color: #FFFFFF !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 14px rgba(101, 63, 73, 0.3) !important;
+  transform: translateY(-1.5px) !important;
+  box-shadow: 0 6px 20px rgba(101, 63, 73, 0.35) !important;
 }
 
 .object-tools a:active,
 ul.object-tools a:active {
-  background-color: rgba(122, 78, 89, 0.32) !important;
-  color: var(--primary) !important;
   transform: translateY(0) !important;
+  box-shadow: 0 2px 6px rgba(101, 63, 73, 0.2) !important;
 }
 
 /* ==========================================================================
@@ -685,11 +841,16 @@ input[type="submit"].default:hover,
   width: auto !important;
 }
 
-#toolbar {
-  background: transparent;
-  border: none;
-  margin-bottom: 20px;
-  padding: 0;
+#toolbar,
+#changelist #toolbar {
+  background: transparent !important;
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  margin-bottom: 24px !important;
+  padding: 0 !important;
 }
 
 #toolbar form>div {
@@ -806,21 +967,49 @@ input[type="submit"].default:hover,
   display: none !important;
 }
 
-#changelist table {
-  border-radius: 10px;
-  overflow: hidden;
+#changelist-form,
+#changelist-form .results,
+#changelist .results {
+  border: none !important;
+  border-top: none !important;
 }
 
-#changelist table thead th {
+#changelist table,
+#changelist #result_list {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  width: 100% !important;
+}
+
+#changelist table thead,
+#changelist table thead tr {
+  border: none !important;
+  border-top: none !important;
+}
+
+#changelist table thead th,
+#changelist table thead th.action-checkbox-column,
+#changelist #result_list thead th {
   background: var(--primary-light) !important;
   color: var(--primary) !important;
-  font-family: var(--font-family-display);
-  font-weight: 700;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  padding: 12px 16px;
-  border-bottom: 2px solid var(--border-color);
+  font-family: var(--font-family-display) !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+  padding: 12px 16px !important;
+  border: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 2px solid var(--border-color) !important;
 }
 
 #changelist table thead th a {
@@ -964,7 +1153,7 @@ img[src*="icon-no"]:hover {
   background: #FAF7F5 !important;
   border-bottom: 1px solid var(--border-color) !important;
   display: flex !important;
-  justify-content: flex-end !important;
+  justify-content: center !important;
   align-items: center !important;
 }
 
