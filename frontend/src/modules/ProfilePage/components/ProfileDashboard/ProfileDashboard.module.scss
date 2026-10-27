@@ -331,8 +331,8 @@
   padding: 0;
   align-self: center;
   margin-left: 48px;
-  transition: opacity 0.3s ease;
-  
+  margin-top: 24px;
+
   &:hover {
     text-decoration: underline;
   }
@@ -350,7 +350,6 @@
   align-items: flex-start;
   gap: 24px;
   
-  /* На мобілці залишається білою карткою, тому тут не скидаємо background */
   @include on-phone {
     flex-direction: column;
     gap: 16px;

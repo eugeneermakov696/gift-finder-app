@@ -19,7 +19,7 @@ export const AvatarUploadModal = ({ isOpen, onClose }: AvatarUploadModalProps) =
     onCropComplete,
     handleSave,
     handleClose,
-    //handleRemove,
+    handleRemove,
   } = useAvatarUpload(onClose);
 
   if (!isOpen) return null;
@@ -92,10 +92,10 @@ export const AvatarUploadModal = ({ isOpen, onClose }: AvatarUploadModalProps) =
           <button
             type="button"
             className={styles.removeBtn}
-            //onClick={handleRemove || handleClose}
+            onClick={handleRemove}
             disabled={isUploading}
           >
-            Remove
+            Remove avatar
           </button>
 
           <Button

@@ -128,7 +128,7 @@ export const deleteAvatar = createAsyncThunk(
   'user/deleteAvatar',
   async (_, { rejectWithValue }) => {
     try {
-      //return await authService.deleteAvatar();
+      return await authService.deleteAvatar();
     } catch (error) {
       if (error instanceof AxiosError) {
         return rejectWithValue(error.response?.data?.detail || 'Error deleting avatar');

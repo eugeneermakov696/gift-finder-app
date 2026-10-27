@@ -90,10 +90,8 @@ axiosInstance.interceptors.response.use(
     }
 
     if (error.response.status === 403) {
-      // TODO for Maksym: here we have situation when user is logged in
-      // but doesn't have permissions to do something
-      // so you can redirect user from the forbidden page or show modal window or smth else.
-      console.error("403 Forbidden");
+      console.error("403 Forbidden: Access denied. Redirecting to home...");
+      window.location.replace('/');
     }
 
     return Promise.reject(error);

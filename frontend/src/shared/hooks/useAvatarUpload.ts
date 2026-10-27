@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useAppDispatch } from '../../store/hooks';
-import { uploadUserAvatar } from '../../store/auth/authSlice';
+import { deleteAvatar, uploadUserAvatar } from '../../store/auth/authSlice';
 import getCroppedImg from '../utils/cropUtils';
 import type { Area } from 'react-easy-crop';
 
@@ -70,6 +70,18 @@ export const useAvatarUpload = (onClose: () => void) => {
     }
   };
 
+  const handleRemove = async () => {
+    try {
+      await dispatch(deleteAvatar()).unwrap();
+      
+      setImageSrc(null);
+      
+      onClose();
+    } catch (error) {
+      console.error('Failed to remove avatar:', error);
+    }
+  };
+
   return {
     imageSrc,
     crop, setCrop,
@@ -79,5 +91,6 @@ export const useAvatarUpload = (onClose: () => void) => {
     onCropComplete,
     handleSave,
     handleClose,
+    handleRemove,
   };
 };

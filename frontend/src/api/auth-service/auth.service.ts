@@ -77,6 +77,15 @@ class AuthService {
   }
 
   /**
+   * Delete user's avatar from the backend.
+   */
+  public async deleteAvatar(): Promise<{ detail: string }> {
+    const response = await this.api.delete('auth/avatar/');
+    
+    return response.data;
+  }
+
+  /**
    * Verify the logged-in user's email using a 6-digit code sent to their inbox
    */
   public async verifyEmail(code: string): Promise<{ detail: string }> {
