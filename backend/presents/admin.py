@@ -50,3 +50,5 @@ class PresentAdmin(admin.ModelAdmin):
             '</div>'
         )
 
+
+

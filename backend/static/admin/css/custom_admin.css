@@ -331,7 +331,7 @@ div.breadcrumbs a:hover {
 
 .module tr:hover td,
 .module tr:hover th {
-  background-color: var(--primary-light) !important;
+  background-color: #FAF2EE !important;
 }
 
 /* Sidebar Recent Actions */
@@ -439,39 +439,62 @@ div#content-related h2 {
 /* Action links in tables (Dashboard Add, Change) */
 .module td a.addlink,
 .module th a.addlink {
-  color: var(--primary) !important;
-  background: var(--primary-light) !important;
+  color: #653F49 !important;
+  background: #FFFFFF !important;
+  border: 1px solid rgba(101, 63, 73, 0.22) !important;
+  box-shadow: 0 1px 4px rgba(101, 63, 73, 0.08) !important;
   font-weight: 600;
-  padding: 5px 12px;
-  border-radius: 6px;
+  padding: 5px 14px;
+  border-radius: 20px;
   font-size: 13px;
-  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .module td a.addlink:hover,
 .module th a.addlink:hover {
-  background: var(--primary) !important;
+  background: #653F49 !important;
   color: #FFFFFF !important;
+  border-color: #653F49 !important;
+  box-shadow: 0 3px 8px rgba(101, 63, 73, 0.25) !important;
+  transform: translateY(-1px);
 }
 
 .changelink, 
 .module td a.changelink,
 .module th a.changelink {
-  color: var(--secondary) !important;
+  color: #7A4E59 !important;
+  background: #FFFFFF !important;
+  border: 1px solid rgba(101, 63, 73, 0.22) !important;
+  box-shadow: 0 1px 4px rgba(101, 63, 73, 0.08) !important;
   font-weight: 600;
-  padding: 5px 12px;
-  border-radius: 6px;
+  padding: 5px 14px;
+  border-radius: 20px;
   font-size: 13px;
-  background: var(--secondary-light);
-  border: 1px solid rgba(101, 63, 73, 0.12);
-  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .changelink:hover,
 .module td a.changelink:hover,
 .module th a.changelink:hover {
-  background: var(--secondary) !important;
+  background: #7A4E59 !important;
   color: #FFFFFF !important;
+  border-color: #7A4E59 !important;
+  box-shadow: 0 3px 8px rgba(101, 63, 73, 0.25) !important;
+  transform: translateY(-1px);
+}
+
+/* Ensure buttons pop with high contrast when row is hovered */
+.module tr:hover td a.addlink,
+.module tr:hover td a.changelink {
+  background: #FFFFFF !important;
+  border-color: rgba(101, 63, 73, 0.35) !important;
+  box-shadow: 0 2px 6px rgba(101, 63, 73, 0.15) !important;
 }
 
 /* Object Tools (Add Present + Button top right) */
@@ -774,7 +797,47 @@ input[type="submit"].default:hover,
 
 #changelist table tbody tr:hover td,
 #changelist table tbody tr:hover th {
-  background-color: var(--primary-light) !important;
+  background-color: #FAF2EE !important;
+}
+
+/* Custom is_available & Boolean Icons */
+.giftly-avail-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+}
+
+.giftly-avail-icon:hover {
+  transform: scale(1.25);
+}
+
+.giftly-avail-icon svg {
+  display: block;
+}
+
+td.field-is_available,
+th.field-is_available {
+  text-align: center !important;
+}
+
+td.field-is_available img,
+.field-is_available img,
+img[src*="icon-yes"],
+img[src*="icon-no"] {
+  width: 20px !important;
+  height: 20px !important;
+  vertical-align: middle !important;
+  display: inline-block !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+td.field-is_available img:hover,
+img[src*="icon-yes"]:hover,
+img[src*="icon-no"]:hover {
+  transform: scale(1.25) !important;
 }
 
 /* Filter Sidebar (Right Panel) */
