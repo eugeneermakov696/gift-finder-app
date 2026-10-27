@@ -158,6 +158,14 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
         if password:
             instance.set_password(password)
 
+        if "avatar" in validated_data and not validated_data["avatar"]:
+            if instance.avatar:
+                instance.avatar.delete(save=False)
+            instance.avatar = None
+
+        if "image_url" in validated_data and not validated_data["image_url"]:
+            instance.image_url = None
+
         return super().update(instance, validated_data)
 
 
