@@ -210,13 +210,12 @@ const AuthFlow = () => {
               >
                 {isLoading ? 'Sending...' : 'Send reset link'}
               </Button>
-              <Button
-                size="default"
+              <button
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
                 Back to log in <span className={styles.arrowRightIcon} />
-              </Button>
+              </button>
             </form>
           </div>
         );
@@ -313,13 +312,12 @@ const AuthFlow = () => {
               >
                 Reset password
               </Button>
-              <Button
-                size="default"
+              <button
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
                 Back to log in <span className={styles.arrowRightIcon} />
-              </Button>
+              </button>
             </form>
           </div>
         );
@@ -335,13 +333,12 @@ const AuthFlow = () => {
               <p>Your password has been successfully changed.</p>
             </div>
             <div className={styles.loginForm}>
-              <Button
-                size="default"
+              <button
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
                 Back to log in <span className={styles.arrowRightIcon} />
-              </Button>
+              </button>
             </div>
           </div>
         );
@@ -364,13 +361,12 @@ const AuthFlow = () => {
               >
                 Send a new link
               </Button>
-              <Button
-                size="default"
+              <button
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
                 Back to log in <span className={styles.arrowRightIcon} />
-              </Button>
+              </button>
             </div>
           </div>
         );

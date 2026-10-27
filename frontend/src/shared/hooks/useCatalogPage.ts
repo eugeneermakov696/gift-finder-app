@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchFilteredGifts, setAllFilters, setFilter } from '../../store/filters/filtersSlice';
-import type { RootState } from '../../store/store';
+import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import type { GetGiftsParams } from '../../api/gift-service/gift.service';
+import type { RootState } from '../../store/store';
+import type { Product } from '../../api/gift-service/types/product.type';
 
 export const mockProduct = {
   id: 101,
@@ -25,6 +27,8 @@ export const mockProduct = {
 export const useCatalogData = () => {
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const requestRef = useRef<{ abort: () => void } | null>(null);
 
@@ -74,6 +78,16 @@ export const useCatalogData = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleToggleFavorite = (product: Product, isFavorite: boolean) => {
+    if (!product) return;
+
+    if (isFavorite) {
+      dispatch(removeGiftFromWishlist(product.id));
+    } else {
+      dispatch(addGiftToWishlist(product));
+    }
+  };
+
   return {
     gifts,
     isReduxLoading,
@@ -83,7 +97,9 @@ export const useCatalogData = () => {
     currentPage,
     totalPages,
     handlePageChange,
-    dispatch,
     cancelGeneration,
+    navigate,
+    location,
+    handleToggleFavorite,
   };
 };

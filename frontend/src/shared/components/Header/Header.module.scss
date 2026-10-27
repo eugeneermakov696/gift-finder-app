@@ -71,11 +71,59 @@
   padding: 10px 18px;
   border-radius: 12px;
   background-color: transparent;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
   }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 18px;
+    width: 0;
+    height: 1.5px;
+    background-color: var(--text-main);
+    transition: width 0.3s ease-out;
+  }
+
+  &.active {
+    background-color: transparent;
+    text-shadow: 0px 4px 8px rgba(47, 47, 44, 0.4); 
+    
+    &::after {
+      width: calc(100% - 36px); 
+    }
+  }
+}
+
+.activeIconLink {
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.5));
+
+  .iconWrapper {
+    background-color: transparent;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 4px; 
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0; 
+      height: 1.5px;
+      background-color: var(--text-main);
+      animation: expandIconLine 0.3s ease-out forwards;
+    }
+  }
+}
+
+@keyframes expandIconLine {
+  from { width: 0; }
+  to { width: 24px; }
 }
 
 .iconWrapper {

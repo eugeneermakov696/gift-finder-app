@@ -1,7 +1,7 @@
 import Cropper from 'react-easy-crop';
 import { useAvatarUpload } from '../../../../shared/hooks/useAvatarUpload';
+import { Button } from '../../../../shared/components/Button';
 import styles from './AvatarUploadModal.module.scss';
-
 interface AvatarUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -10,13 +10,16 @@ interface AvatarUploadModalProps {
 export const AvatarUploadModal = ({ isOpen, onClose }: AvatarUploadModalProps) => {
   const {
     imageSrc,
-    crop, setCrop,
-    zoom, setZoom,
+    crop,
+    setCrop,
+    zoom,
+    setZoom,
     isUploading,
     dropzone: { getRootProps, getInputProps, isDragActive },
     onCropComplete,
     handleSave,
     handleClose,
+    handleRemove,
   } = useAvatarUpload(onClose);
 
   if (!isOpen) return null;
@@ -27,29 +30,31 @@ export const AvatarUploadModal = ({ isOpen, onClose }: AvatarUploadModalProps) =
       onMouseDown={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
-        <button className={styles.closeBtn} onClick={handleClose}>
-          &times;
+        <button className={styles.closeBtn} onClick={handleClose} aria-label="Close modal">
+          <span className={styles.closeIcon} />
         </button>
 
         <div className={styles.header}>
-          <h2>Upload & Crop Avatar</h2>
-          <p>Drag and drop or upload an image, then adjust and crop</p>
+          <h2 className={styles.title}>Upload & Crop Avatar</h2>
+          <p className={styles.subtitle}>Drag and drop or upload an image, then adjust and crop</p>
         </div>
 
         <div className={styles.content}>
           {!imageSrc ? (
-            <div
-              {...getRootProps()}
-              className={`${styles.dropzone} ${isDragActive ? styles.activeDropzone : ''}`}
-            >
-              <input {...getInputProps()} />
-              <div className={styles.uploadIcon} />
-              <p>
-                {isDragActive
-                  ? 'Drop the file here...'
-                  : 'Drag and drop your image here, or click to browse.'}
+            <div className={styles.dropzoneWrapper}>
+              <div
+                {...getRootProps()}
+                className={`${styles.dropzone} ${isDragActive ? styles.activeDropzone : ''}`}
+              >
+                <input {...getInputProps()} />
+                <span className={styles.repeatIcon} />
+                <p className={styles.dropzoneText}>
+                  {isDragActive ? 'Drop the file here...' : 'Upload a profile photo'}
+                </p>
+              </div>
+              <p className={styles.supportedFormats}>
+                File formats supported: .jpeg, .jpg, .png, .webp
               </p>
-              <span className={styles.hint}>Supports JPG, PNG up to 5MB.</span>
             </div>
           ) : (
             <div className={styles.cropperWrapper}>
@@ -59,7 +64,7 @@ export const AvatarUploadModal = ({ isOpen, onClose }: AvatarUploadModalProps) =
                   crop={crop}
                   zoom={zoom}
                   aspect={1}
-                  cropShape="round"
+                  cropShape="rect"
                   showGrid={false}
                   onCropChange={setCrop}
                   onCropComplete={onCropComplete}
@@ -84,16 +89,24 @@ export const AvatarUploadModal = ({ isOpen, onClose }: AvatarUploadModalProps) =
         </div>
 
         <div className={styles.footer}>
-          <button className={styles.cancelBtn} onClick={handleClose} disabled={isUploading}>
-            Cancel
-          </button>
           <button
+            type="button"
+            className={styles.removeBtn}
+            onClick={handleRemove}
+            disabled={isUploading}
+          >
+            Remove avatar
+          </button>
+
+          <Button
+            size="default"
+            variant="select"
             className={styles.saveBtn}
             disabled={!imageSrc || isUploading}
             onClick={handleSave}
           >
-            {isUploading ? 'Saving...' : 'Upload & Save'}
-          </button>
+            {isUploading ? 'Updating...' : 'Save'}
+          </Button>
         </div>
       </div>
     </div>

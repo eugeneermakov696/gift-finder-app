@@ -124,6 +124,20 @@ export const uploadUserAvatar = createAsyncThunk(
   },
 );
 
+export const deleteAvatar = createAsyncThunk(
+  'user/deleteAvatar',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await authService.deleteAvatar();
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(error.response?.data?.detail || 'Error deleting avatar');
+      }
+      return rejectWithValue('Unknown error');
+    }
+  },
+);
+
 export const requestPasswordReset = createAsyncThunk(
   'auth/requestPasswordReset',
   async (email: string, { rejectWithValue }) => {
@@ -259,6 +273,21 @@ export const AuthSlice = createSlice({
           state.user.avatar = action.payload.avatar_url;
           state.user.image_url = action.payload.avatar_url;
         }
+      })
+      .addCase(deleteAvatar.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(deleteAvatar.fulfilled, (state) => {
+        state.isLoading = false;
+        if (state.user) {
+          state.user.avatar = null;
+          state.user.image_url = null;
+        }
+      })
+      .addCase(deleteAvatar.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
       })
       .addCase(verifyEmailCode.pending, (state) => {
         state.isLoading = true;

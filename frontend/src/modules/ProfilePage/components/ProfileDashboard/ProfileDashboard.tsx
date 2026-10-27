@@ -8,6 +8,7 @@ import { AvatarUploadModal } from '../AvatarUploadModal';
 import { fetchWishlist, removeGiftFromWishlist } from '../../../../store/wishlist/wishlistSlice';
 import { resendEmailCode } from '../../../../store/auth/authSlice';
 import { SkeletonCard } from '../../../../shared/components/SkeletonCard';
+import { VerifyEmailModal } from '../VerifyEmailModal';
 import type { User } from '../../../../api/auth-service/types/user.type';
 import type { RootState } from '../../../../store/store';
 import styles from './ProfileDashboard.module.scss';
@@ -21,7 +22,7 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAvatarOpen, setIsAvatarOpen] = useState(false);
   const [isSendingCode, setIsSendingCode] = useState(false);
-  const [verifyMessage, setVerifyMessage] = useState('');
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -32,26 +33,21 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
   const PREVIEW_COUNT = 4;
   const previewItems = savedItems.slice(0, PREVIEW_COUNT);
 
-  useEffect(() => {
-    dispatch(fetchWishlist());
-  }, [dispatch]);
-
-  const handleVerifyEmail = async () => {
+  const handleResendCode = async () => {
     setIsSendingCode(true);
-    setVerifyMessage('');
-
     try {
       await dispatch(resendEmailCode()).unwrap();
-      setVerifyMessage('A verification code has been sent to your email!');
-
-      // modal for code from email
-      // setIsVerifyModalOpen(true);
+      setIsVerifyModalOpen(true);
     } catch (error) {
-      setVerifyMessage(typeof error === 'string' ? error : 'Error sending code');
+      console.error('Failed to resend code:', error);
     } finally {
       setIsSendingCode(false);
     }
   };
+
+  useEffect(() => {
+    dispatch(fetchWishlist());
+  }, [dispatch]);
 
   return (
     <div className={styles.container}>
@@ -112,32 +108,30 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
               </div>
               <p className={styles.signedInText}>Signed in as {user.email || user.username}</p>
             </div>
+
+            {!user.email_is_confirmed && (
+              <div className={styles.unverifiedBlock}>
+                <div className={styles.unverifiedWarning}>
+                  <span className={styles.warningIcon}>!</span> Email not verified
+                </div>
+                <button
+                  className={styles.resendLink}
+                  onClick={handleResendCode}
+                  disabled={isSendingCode}
+                >
+                  {isSendingCode ? 'Sending...' : 'Resend verification email'}
+                </button>
+              </div>
+            )}
+
             <button onClick={onLogout} className={styles.logoutBtn}>
               Log out
             </button>
-
-            {!user.email_is_confirmed && (
-              <button
-                onClick={handleVerifyEmail}
-                disabled={isSendingCode}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: 'var(--color-primary-1)',
-                  color: '#fff',
-                  borderRadius: '8px',
-                  border: 'none',
-                  cursor: isSendingCode ? 'not-allowed' : 'pointer',
-                  opacity: isSendingCode ? 0.7 : 1,
-                }}
-              >
-                {isSendingCode ? 'Sending...' : 'Verify Email'}
-              </button>
-            )}
           </div>
         </div>
 
         <div className={`${styles.card} ${styles.personalInfoCard}`}>
-          <span className={styles.userOutlineIcon} />
+          <span className={styles.userOutlineIcon} onClick={() => setIsVerifyModalOpen(true)}/>
 
           <div className={styles.infoContainer}>
             <h2>Personal Information</h2>
@@ -179,7 +173,7 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
                 imageUrl={item.image_url ?? ''}
                 description={item.description ?? undefined}
                 amazonUrl={item.amazon_url}
-                price={Number(item.price)}
+                price={item.price}
                 isFavorite
                 onToggleFavorite={() => dispatch(removeGiftFromWishlist(item.id))}
               />
@@ -197,16 +191,12 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
       {isAvatarOpen && (
         <AvatarUploadModal isOpen={isAvatarOpen} onClose={() => setIsAvatarOpen(false)} />
       )}
-      {verifyMessage && (
-        <p
-          style={{
-            marginTop: '12px',
-            fontSize: '14px',
-            color: verifyMessage.includes('error') ? 'red' : 'green',
-          }}
-        >
-          {verifyMessage}
-        </p>
+      {isVerifyModalOpen && (
+        <VerifyEmailModal
+          email={user.email}
+          isOpen={isVerifyModalOpen}
+          onClose={() => setIsVerifyModalOpen(false)}
+        />
       )}
     </div>
   );

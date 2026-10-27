@@ -283,6 +283,16 @@
   &:hover {
     color: var(--color-primary-2);
   }
+
+  &.wishlistActive {
+    color: var(--color-primary-1);
+    opacity: 1;
+  }
+}
+
+.filledHeartIcon {
+  @include icon-mask('/icons/filledHeart.svg', 24px);
+  background-color: var(--color-primary-1);
 }
 
 .heartIcon {

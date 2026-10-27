@@ -1,0 +1,171 @@
+@use '../../../../styles/mixins' as *;
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  padding: 48px 40px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-main);
+  padding: 6px;
+  margin-top: -6px; 
+  margin-right: -8px;
+  border-radius: 50%;
+  
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  @include on-phone {
+    top: 20px;
+    right: 20px;
+  }
+}
+
+.closeIcon {
+  @include icon-mask('/icons/close.svg', 20px);
+  background-color: var(--text-main);
+}
+
+.iconWrapper {
+  margin-bottom: 24px;
+}
+
+.mailIcon {
+  @include icon-mask('/icons/Email.svg', 48px);
+  background-color: var(--color-primary-1);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--text-main);
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 32px;
+  line-height: 1.5;
+
+  .emailText {
+    text-decoration: underline;
+    color: var(--text-secondary);
+  }
+}
+
+.codeContainer {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.digitInput {
+  width: 54px;
+  height: 64px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: var(--color-primary-3);
+  font-size: 24px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--text-main);
+  transition: all 0.3s ease;
+  outline: none;
+
+  &:focus {
+    border-color: var(--color-primary-1);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(122, 78, 89, 0.1);
+  }
+
+  &.filled {
+    background-color: #fff;
+    border-color: var(--color-primary-3);
+  }
+}
+
+.errorMessage {
+  color: var(--color-danger-800);
+  font-size: 14px;
+  margin: -8px 0 16px;
+}
+
+.resendBlock {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 32px;
+
+  p {
+    margin: 0 0 4px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .resendBtn {
+    background: transparent;
+    border: none;
+    color: var(--color-info-800);
+    padding: 0;
+    font-size: 14px;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:disabled {
+      color: var(--text-muted);
+      cursor: not-allowed;
+      text-decoration: none;
+    }
+  }
+
+  .expiresText {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+}
+
+.verifyBtn {
+  height: 40px;
+  width: 100%;
+  max-width: 300px;
+}

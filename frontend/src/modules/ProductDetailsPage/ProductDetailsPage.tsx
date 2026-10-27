@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchGiftDetails, clearGiftDetails } from '../../store//giftDetails/giftDetailsSlice';
 import { ProductDetailsSkeleton } from '../../shared/components/ProductDetailsSkeleton';
+import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import styles from './ProductDetailsPage.module.scss';
 
 export const ProductDetailsPage = () => {
@@ -10,6 +11,10 @@ export const ProductDetailsPage = () => {
   const dispatch = useAppDispatch();
 
   const { gift: product, isLoading, error } = useAppSelector((state) => state.giftDetails);
+
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
+  const favoriteItem = wishlistItems.find((item) => item.asin === product?.asin);
+  const isFavorite = !!favoriteItem;
 
   useEffect(() => {
     if (asin) {
@@ -20,9 +25,17 @@ export const ProductDetailsPage = () => {
     };
   }, [asin, dispatch]);
 
-  if (isLoading) {
-    return <ProductDetailsSkeleton />;
-  }
+  const handleToggleWishlist = () => {
+    if (!product) return;
+
+    if (isFavorite && favoriteItem) {
+      dispatch(removeGiftFromWishlist(favoriteItem.id));
+    } else {
+      dispatch(addGiftToWishlist(product));
+    }
+  };
+
+  if (isLoading) return <ProductDetailsSkeleton />;
 
   if (error) {
     return (
@@ -40,7 +53,23 @@ export const ProductDetailsPage = () => {
     );
   }
 
-  const ratingValue = product.rating ? Math.floor(product.rating) : 5;
+  const rating = product.rating || 5;
+
+  const renderStars = (currentRating: number) => {
+    return Array.from({ length: 5 }).map((_, index) => {
+      const fillPercentage = Math.max(0, Math.min(100, (currentRating - index) * 100));
+
+      return (
+        <span
+          key={index}
+          className={styles.starIcon}
+          style={{
+            background: `linear-gradient(90deg, var(--color-warming-800) ${fillPercentage}%, var(--text-muted) ${fillPercentage}%)`,
+          }}
+        />
+      );
+    });
+  };
 
   return (
     <div className={styles.container}>
@@ -87,12 +116,9 @@ export const ProductDetailsPage = () => {
           <h2 className={styles.productTitle}>{product.title}</h2>
 
           <div className={styles.ratingRow}>
-            <div className={styles.stars}>
-              {Array.from({ length: ratingValue }).map((_, index) => (
-                <span key={index} className={styles.starIcon} />
-              ))}
-            </div>
+            <div className={styles.stars}>{renderStars(rating)}</div>
             {product.rating && <span className={styles.ratingNumber}>{product.rating}</span>}
+
             {product.reviews_count !== undefined && (
               <span className={styles.reviewsCount}>
                 ({product.reviews_count} review{product.reviews_count !== 1 ? 's' : ''})
@@ -107,8 +133,19 @@ export const ProductDetailsPage = () => {
                 <span className={styles.oldPrice}>${product.original_price}</span>
               )}
             </div>
-            <button className={styles.wishlistBtn}>
-              <span className={styles.heartIcon} /> Add to Wish List
+            <button
+              className={`${styles.wishlistBtn} ${isFavorite ? styles.wishlistActive : ''}`}
+              onClick={handleToggleWishlist}
+            >
+              {isFavorite ? (
+                <>
+                  <span className={styles.filledHeartIcon} /> Added to Wish List
+                </>
+              ) : (
+                <>
+                  <span className={styles.heartIcon} /> Add to Wish List
+                </>
+              )}
             </button>
           </div>
 

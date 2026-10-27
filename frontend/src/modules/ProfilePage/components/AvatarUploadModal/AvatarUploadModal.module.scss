@@ -6,7 +6,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,16 +15,15 @@
 }
 
 .modal {
-  background: #ffffff;
+  background: #fff;
   border-radius: 16px;
   width: 100%;
-  max-width: 500px;
-  padding: 32px;
+  max-width: 520px;
+  padding: 40px 32px 32px;
   position: relative;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 24px;
 }
 
 .closeBtn {
@@ -32,106 +31,128 @@
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 24px;
-  right: 24px;
+  top: 32px;
+  right: 32px;
   background: transparent;
   border: none;
+  font-size: 20px;
   cursor: pointer;
   color: var(--text-main);
   padding: 6px;
   margin-top: -6px; 
   margin-right: -8px;
   border-radius: 50%;
+  
   transition: background-color 0.3s ease;
   
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
   }
+
+  @include on-phone {
+    top: 20px;
+    right: 20px;
+  }
 }
 
 .closeIcon {
-  @include icon-mask('/icons/close.svg', 18px);
+  @include icon-mask('/icons/close.svg', 20px);
   background-color: var(--text-main);
 }
 
-.activeDropzone {
-  border-color: var(--color-info-800);
-  background-color: #eef2fb;
-}
-
 .header {
-  h2 {
+  margin-bottom: 32px;
+
+  .title {
     margin: 0 0 8px;
-    font-size: 24px;
-    color: #333;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-main);
   }
-  
-  p {
+
+  .subtitle {
     margin: 0;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 14px;
+    line-height: 1.4;
   }
 }
 
 .content {
-  min-height: 250px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
 }
 
 /* Dropzone */
+.dropzoneWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .dropzone {
-  flex: 1;
-  border: 2px dashed #ccc;
-  border-radius: 12px;
+  width: 260px;
+  height: 260px;
+  border: 2px dashed var(--color-primary-3);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 32px;
+  padding: 24px;
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.2s, background-color 0.2s;
-  background-color: #fafafa;
+  transition: all 0.3s ease;
+  background-color: transparent;
 
-  &:hover {
-    border-color: #888;
-    background-color: #f0f0f0;
+  &:hover,
+  &.activeDropzone {
+    border-color: var(--color-primary-1);
+    background-color: rgba(122, 78, 89, 0.03);
   }
+}
 
-  p {
-    margin: 16px 0 8px;
-    font-weight: 500;
-    color: #333;
-  }
+.repeatIcon {
+  @include icon-mask('/icons/repeat.svg', 24px);
+  background-color: var(--text-main);
+  margin-bottom: 12px;
+}
 
-  .hint {
-    font-size: 12px;
-    color: #999;
-  }
+.dropzoneText {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-main);
+}
+
+.supportedFormats {
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
 }
 
 /* Cropper */
 .cropperWrapper {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .cropperContainer {
   position: relative;
   width: 100%;
-  height: 300px;
-  background-color: #333;
+  height: 280px;
+  background-color: #000;
   border-radius: 12px;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
-  .placeholderText {
-    color: #fff;
-    opacity: 0.5;
+  :global(.reactCropper_crop-area) {
+    border-radius: 16px;
   }
 }
 
@@ -141,54 +162,107 @@
   gap: 16px;
 
   label {
+    font-size: 14px;
     font-weight: 500;
-    color: #555;
+    color: var(--text-main);
   }
 
   .slider {
-    flex: 1;
-    cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--color-primary-3);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+
+  /* === WebKit (Chrome, Safari, Edge) === */
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    background: var(--color-primary-3);
+    border-radius: 4px;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: var(--color-primary-1);
+    box-shadow: 0 2px 6px rgba(122, 78, 89, 0.3);
+    margin-top: -6px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      background-color: var(--color-primary-1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  /* === Firefox === */
+  &::-moz-range-track {
+    width: 100%;
+    height: 6px;
+    background: var(--color-primary-3);
+    border-radius: 4px;
+  }
+
+  &::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--color-primary-1);
+    box-shadow: 0 2px 6px rgba(122, 78, 89, 0.3);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+
+    &:hover {
+      transform: scale(1.15);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
   }
 }
+}
 
-/* Buttons */
+/* Footer Buttons */
 .footer {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 8px;
-
-  button {
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
-.cancelBtn {
+.removeBtn {
   background: transparent;
-  border: 1px solid #ccc;
-  color: #555;
+  border: none;
+  color: var(--color-primary-1);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-left: 50px;
+  transition: opacity 0.3s ease;
 
   &:hover {
-    background: #f5f5f5;
+    color: var(--color-primary-2);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
 .saveBtn {
-  background: #3b5998;
-  border: none;
-  color: white;
-
-  &:hover:not(:disabled) {
-    background: #2d4373;
-  }
-
-  &:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
+  height: 40px;
 }
