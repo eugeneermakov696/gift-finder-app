@@ -429,6 +429,28 @@ class AvatarUploadView(views.APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @swagger_auto_schema(
+        tags=["api/auth"],
+        operation_summary="Delete User Avatar",
+        operation_description="Deletes the current user's avatar and clears the avatar and image_url fields.",
+        responses={
+            200: openapi.Response("Avatar deleted successfully."),
+            401: ERROR_401_UNAUTHORIZED,
+        }
+    )
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        if user.avatar:
+            user.avatar.delete(save=False)
+        user.avatar = None
+        user.image_url = None
+        user.save()
+
+        return Response({
+            "detail": "Avatar deleted successfully.",
+            "avatar_url": None
+        }, status=status.HTTP_200_OK)
+
 
 class ContactFormView(views.APIView):
     permission_classes = [permissions.AllowAny]

@@ -202,6 +202,24 @@ class AuthenticationVerificationTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Invalid file format", response.data["detail"])
 
+    def test_avatar_delete_success(self):
+        self.user.image_url = "https://example.com/avatar.jpg"
+        self.user.save()
+
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete("/api/auth/avatar/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("avatar_url"), None)
+        self.assertIn("Avatar deleted successfully", response.data.get("detail", ""))
+
+        self.user.refresh_from_db()
+        self.assertIsNone(self.user.image_url)
+        self.assertFalse(bool(self.user.avatar))
+
+    def test_avatar_delete_unauthenticated_fails(self):
+        response = self.client.delete("/api/auth/avatar/")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class ContactFormAPITests(APITestCase):
 
