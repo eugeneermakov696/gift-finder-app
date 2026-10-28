@@ -110,6 +110,8 @@ class AuthService {
     full_name?: string;
     email?: string;
     password?: string;
+    old_password?: string;
+    new_password?: string;
   }): Promise<User> {
     const response = await this.api.patch('auth/me/', data);
     return response.data;

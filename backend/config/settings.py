@@ -99,6 +99,7 @@ CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS",
     default=[
         "http://localhost:3000",
+        "https://frontend-test-3fea.up.railway.app",
         "https://gift-finderfrontend-production.up.railway.app",
     ]
 )
@@ -113,12 +114,17 @@ CSRF_TRUSTED_ORIGINS = env.list(
     "CSRF_TRUSTED_ORIGINS",
     default=[
         "http://localhost:3000",
+        "https://frontend-test-3fea.up.railway.app",
         "https://gift-finderfrontend-production.up.railway.app",
         "https://*.railway.app",
         "https://*.up.railway.app",
     ]
 )
 CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
 
 AUTH_USER_MODEL = 'users.CustomUser'
 

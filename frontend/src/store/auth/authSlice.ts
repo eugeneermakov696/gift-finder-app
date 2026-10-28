@@ -102,7 +102,14 @@ export const updateProfile = createAsyncThunk(
       return response;
     } catch (error) {
       if (isAxiosError(error)) {
-        return thunkAPI.rejectWithValue(error.response?.data?.detail || 'Failed to update profile');
+        const data = error.response?.data;
+        let errorMessage = data?.detail;
+        if (!errorMessage && data && typeof data === 'object') {
+          const firstKey = Object.keys(data)[0];
+          const firstVal = data[firstKey];
+          errorMessage = Array.isArray(firstVal) ? firstVal[0] : (typeof firstVal === 'string' ? firstVal : null);
+        }
+        return thunkAPI.rejectWithValue(errorMessage || 'Failed to update profile');
       }
       return thunkAPI.rejectWithValue('An unexpected error occurred');
     }

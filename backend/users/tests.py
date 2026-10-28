@@ -180,6 +180,41 @@ class AuthenticationVerificationTests(APITestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password("NewSecretPassword2026!"))
 
+    def test_patch_me_old_and_new_password_success(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            "old_password": "SecureDevPassword2026!",
+            "new_password": "BrandNewSecretPassword2026!"
+        }
+        response = self.client.patch(self.me_url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("BrandNewSecretPassword2026!"))
+
+    def test_patch_me_old_password_incorrect_fails(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            "old_password": "WrongPassword2026!",
+            "new_password": "BrandNewSecretPassword2026!"
+        }
+        response = self.client.patch(self.me_url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("old_password", response.data)
+
+    def test_patch_me_email_resets_email_is_confirmed(self):
+        self.user.email_is_confirmed = True
+        self.user.save()
+
+        self.client.force_authenticate(user=self.user)
+        payload = {"email": "updated_dev@example.com"}
+        response = self.client.patch(self.me_url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, "updated_dev@example.com")
+        self.assertFalse(self.user.email_is_confirmed)
+
     def test_patch_me_unauthenticated_fails(self):
         payload = {"first_name": "Hacker"}
         response = self.client.patch(self.me_url, payload, format="json")

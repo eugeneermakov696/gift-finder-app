@@ -118,6 +118,12 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(write_only=True, required=False)
+    old_password = serializers.CharField(write_only=True, required=False)
+    new_password = serializers.CharField(
+        write_only=True,
+        required=False,
+        validators=[validate_password]
+    )
     password = serializers.CharField(
         write_only=True,
         required=False,
@@ -129,7 +135,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "id", "email", "username", "first_name", "last_name", "full_name",
-            "password", "image_url", "avatar", "role", "email_is_confirmed"
+            "password", "old_password", "new_password", "image_url", "avatar", "role", "email_is_confirmed"
         ]
         read_only_fields = ["id", "role", "email_is_confirmed"]
 
@@ -147,6 +153,37 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("User with this username already exists.")
         return normalized_username
 
+    def validate(self, attrs):
+        old_password = attrs.get("old_password")
+        new_password = attrs.get("new_password")
+
+        if old_password or new_password:
+            if not old_password:
+                raise serializers.ValidationError({
+                    "old_password": "Enter your current password.",
+                    "detail": "Enter your current password."
+                })
+            if not new_password:
+                raise serializers.ValidationError({
+                    "new_password": "Enter a new password.",
+                    "detail": "Enter a new password."
+                })
+
+            user = self.instance
+            if user and not user.check_password(old_password):
+                raise serializers.ValidationError({
+                    "old_password": "Old password is incorrect.",
+                    "detail": "Old password is incorrect."
+                })
+
+            if old_password == new_password:
+                raise serializers.ValidationError({
+                    "new_password": "New password must be different from the old one.",
+                    "detail": "New password must be different from the old one."
+                })
+
+        return attrs
+
     def update(self, instance, validated_data):
         full_name = validated_data.pop("full_name", None)
         if full_name is not None:
@@ -154,9 +191,17 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             instance.first_name = name_parts[0]
             instance.last_name = name_parts[1] if len(name_parts) > 1 else ""
 
+        old_password = validated_data.pop("old_password", None)
+        new_password = validated_data.pop("new_password", None)
         password = validated_data.pop("password", None)
-        if password:
-            instance.set_password(password)
+
+        effective_password = new_password or password
+        if effective_password:
+            instance.set_password(effective_password)
+
+        new_email = validated_data.get("email")
+        if new_email and new_email.lower() != instance.email.lower():
+            instance.email_is_confirmed = False
 
         if "avatar" in validated_data and not validated_data["avatar"]:
             if instance.avatar:

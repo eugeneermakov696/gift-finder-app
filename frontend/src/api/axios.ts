@@ -51,11 +51,17 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    const isAuthEndpoint =
-      originalRequest.url?.includes("auth/login/") ||
-      originalRequest.url?.includes("auth/refresh/") ||
-      originalRequest.url?.includes("auth/register/") ||
-      originalRequest.url?.includes("auth/logout/");
+    const authEndpoints = [
+      "auth/login/",
+      "auth/refresh/",
+      "auth/register/",
+      "auth/logout/",
+      "auth/resend-email-code/",
+    ];
+
+    const isAuthEndpoint = authEndpoints.some((endpoint) =>
+      originalRequest.url?.includes(endpoint)
+    );
 
     const hasSession = localStorage.getItem("has_session") === "true";
 

@@ -29,10 +29,10 @@ def send_mail_async(subject: str, message: str, recipient_list: list, from_email
                 message=message,
                 from_email=from_email,
                 recipient_list=recipient_list,
-                fail_silently=True,
+                fail_silently=False,
             )
         except Exception as exc:
-            logger.warning(f"Failed to dispatch async email to {recipient_list}: {exc}")
+            logger.error(f"Failed to dispatch async email to {recipient_list}: {exc}", exc_info=True)
 
     if is_testing:
         _deliver()

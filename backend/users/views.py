@@ -40,24 +40,20 @@ User = get_user_model()
 
 
 def set_auth_cookie(response, key, value, request, max_age):
-    is_secure = request.is_secure() or request.headers.get("x-forwarded-proto") == "https"
-    samesite = "None" if is_secure else "Lax"
     response.set_cookie(
         key,
         value,
         httponly=True,
-        secure=is_secure,
-        samesite=samesite,
+        secure=True,
+        samesite="None",
         max_age=max_age,
     )
 
 
 def delete_auth_cookie(response, key, request):
-    is_secure = request.is_secure() or request.headers.get("x-forwarded-proto") == "https"
-    samesite = "None" if is_secure else "Lax"
     response.delete_cookie(
         key,
-        samesite=samesite,
+        samesite="None",
     )
 
 
