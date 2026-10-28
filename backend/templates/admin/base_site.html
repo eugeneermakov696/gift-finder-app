@@ -7,6 +7,9 @@
 {% block branding %}
 <div id="site-name">
     <a href="{% url 'admin:index' %}" class="giftly-brand-link">
+        <span class="giftly-logo-badge">
+            <img src="{% static 'admin/img/favicon.svg' %}" alt="Giftly Logo" width="20" height="22" style="display: block;">
+        </span>
         <span class="giftly-brand-name">Giftly</span>
         <span class="giftly-brand-tag">ADMIN PANEL</span>
     </a>
@@ -25,6 +28,8 @@
 
 {% block extrahead %}
 {{ block.super }}
+<link rel="icon" type="image/svg+xml" href="{% static 'admin/img/favicon.svg' %}">
+<link rel="alternate icon" href="{% static 'admin/img/favicon.svg' %}">
 <script src="{% static 'admin/js/custom_admin.js' %}" defer></script>
 {% endblock %}
 
