@@ -57,9 +57,9 @@ export const RegisterModal = ({ isOpen, onClose }: RegisterModalProps) => {
           </p>
         </div>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={handleSubmit} noValidate>
           {/* Name */}
-          <div className={styles.inputWrapper}>
+          <div className={`${styles.inputWrapper} ${errors.fullName ? styles.hasError : ''}`}>
             <div className={styles.inputGroup}>
               <label className={styles.floatingLabel}>Name</label>
               <span className={`${styles.iconLeft} ${styles.userIcon}`} />
@@ -70,13 +70,14 @@ export const RegisterModal = ({ isOpen, onClose }: RegisterModalProps) => {
                 placeholder="Enter your name"
                 className={styles.withIconLeft}
                 required
+                disabled={isLoading}
               />
             </div>
             {errors.fullName && <span className={styles.errorMsg}>{errors.fullName}</span>}
           </div>
 
           {/* Email */}
-          <div className={styles.inputWrapper}>
+          <div className={`${styles.inputWrapper} ${errors.email ? styles.hasError : ''}`}>
             <div className={styles.inputGroup}>
               <label className={styles.floatingLabel}>Email</label>
               <span className={`${styles.iconLeft} ${styles.emailIcon}`} />
@@ -87,13 +88,14 @@ export const RegisterModal = ({ isOpen, onClose }: RegisterModalProps) => {
                 placeholder="Enter your Email"
                 className={styles.withIconLeft}
                 required
+                disabled={isLoading}
               />
             </div>
             {errors.email && <span className={styles.errorMsg}>{errors.email}</span>}
           </div>
 
           {/* Password */}
-          <div className={styles.inputWrapper}>
+          <div className={`${styles.inputWrapper} ${errors.password ? styles.hasError : ''}`}>
             <div className={styles.inputGroup}>
               <label className={styles.floatingLabel}>Password</label>
               <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
@@ -104,19 +106,23 @@ export const RegisterModal = ({ isOpen, onClose }: RegisterModalProps) => {
                 placeholder="Write your password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
                 required
+                disabled={isLoading}
               />
               <button
                 type="button"
-                className={`${styles.iconRight} ${styles.eyeIcon}`}
+                className={`${styles.iconRight} ${showPassword ? styles.eyeIcon : styles.eyeClosedIcon}`}
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label="Toggle password"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                disabled={isLoading}
               />
             </div>
             {errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
           </div>
 
           {/* Confirm Password */}
-          <div className={styles.inputWrapper}>
+          <div
+            className={`${styles.inputWrapper} ${errors.confirmPassword ? styles.hasError : ''}`}
+          >
             <div className={styles.inputGroup}>
               <label className={styles.floatingLabel}>Password</label>
               <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
@@ -127,12 +133,14 @@ export const RegisterModal = ({ isOpen, onClose }: RegisterModalProps) => {
                 placeholder="Confirmed Password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
                 required
+                disabled={isLoading}
               />
               <button
                 type="button"
-                className={`${styles.iconRight} ${styles.eyeIcon}`}
+                className={`${styles.iconRight} ${showConfirmPassword ? styles.eyeIcon : styles.eyeClosedIcon}`}
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                aria-label="Toggle confirm password"
+                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                disabled={isLoading}
               />
             </div>
             {errors.confirmPassword && (
@@ -140,7 +148,8 @@ export const RegisterModal = ({ isOpen, onClose }: RegisterModalProps) => {
             )}
           </div>
 
-          <div className={styles.inputWrapper}>
+          {/* Checkbox */}
+          <div className={`${styles.inputWrapper} ${errors.agreedToTerms ? styles.hasError : ''}`}>
             <label className={styles.checkboxLabel}>
               <input
                 type="checkbox"
@@ -148,6 +157,7 @@ export const RegisterModal = ({ isOpen, onClose }: RegisterModalProps) => {
                 ref={agreedToTermsRef}
                 className={styles.customCheckbox}
                 required
+                disabled={isLoading}
               />
               <span>
                 I agree to the <Link to="/terms&conditions">Terms & Conditions</Link> and{' '}
@@ -159,7 +169,11 @@ export const RegisterModal = ({ isOpen, onClose }: RegisterModalProps) => {
             )}
           </div>
 
-          {authError && <p className={styles.errorMessage}>{authError}</p>}
+          {authError && (
+            <p className={styles.errorMsg} style={{ position: 'relative' }}>
+              {authError}
+            </p>
+          )}
 
           <Button
             variant="secondary"

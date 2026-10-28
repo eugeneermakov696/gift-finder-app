@@ -10,11 +10,18 @@ import {
 import { Button } from '../../../../shared/components/Button';
 import type { RootState } from '../../../../store/store';
 import styles from './AuthFlow.module.scss';
+import { VerificationModal } from '../VerifyEmailModal';
 
 type AuthView =
-  'login' | 'forgot_request' | 'forgot_sent' | 'reset_password' | 'reset_success' | 'reset_expired';
+  | 'login'
+  | 'forgot_request'
+  | 'forgot_sent'
+  | 'code_verified'
+  | 'reset_password'
+  | 'reset_success'
+  | 'reset_expired';
 
-const AuthFlow = () => {
+export const AuthFlow = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [authView, setAuthView] = useState<AuthView>(() => {
@@ -28,12 +35,14 @@ const AuthFlow = () => {
 
   const [loginError, setLoginError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
 
   // Creating new password
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [submittedResetEmail, setSubmittedResetEmail] = useState('');
 
   const { isLoading } = useAppSelector((state: RootState) => state.auth);
   const dispatch = useAppDispatch();
@@ -75,6 +84,8 @@ const AuthFlow = () => {
 
     try {
       await dispatch(requestPasswordReset(resetEmail)).unwrap();
+      
+      setSubmittedResetEmail(resetEmail); 
       setAuthView('forgot_sent');
     } catch (error) {
       console.error(error);
@@ -110,7 +121,6 @@ const AuthFlow = () => {
       setTimeout(() => {
         loginEmailRef.current?.focus();
       }, 100);
-
       window.history.replaceState({}, document.title);
     }
   }, [authView, location.state]);
@@ -124,9 +134,10 @@ const AuthFlow = () => {
               <h2>Already have an account?</h2>
               <p>Welcome back! Log in to access your favorites, gift lists, and more.</p>
             </div>
-            <form className={styles.loginForm} onSubmit={handleLogin}>
-              <div className={styles.inputWrapper}>
+            <form className={styles.loginForm} onSubmit={handleLogin} noValidate>
+              <div className={`${styles.inputWrapper} ${loginError ? styles.hasError : ''}`}>
                 <label className={styles.floatingLabel}>Email</label>
+                <span className={styles.emailIcon} />
                 <input
                   type="email"
                   ref={loginEmailRef}
@@ -134,9 +145,11 @@ const AuthFlow = () => {
                   className={`${styles.inputField} ${styles.withIconLeft}`}
                   onChange={() => setLoginError('')}
                   required
+                  disabled={isLoading}
                 />
               </div>
-              <div className={styles.inputWrapper}>
+
+              <div className={`${styles.inputWrapper} ${loginError ? styles.hasError : ''}`}>
                 <label className={styles.floatingLabel}>Password</label>
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -145,24 +158,36 @@ const AuthFlow = () => {
                   className={`${styles.inputField} ${styles.withIconRight}`}
                   onChange={() => setLoginError('')}
                   required
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
-                  className={`${styles.eyeIcon} ${showPassword ? styles.eyeOpen : ''}`}
+                  className={`${styles.eyeIcon} ${showPassword ? styles.eyeIconOpen : styles.eyeIconClosed}`}
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  disabled={isLoading}
                 />
               </div>
-              {loginError && <div className={styles.errorMsg}>{loginError}</div>}
+
+              {loginError && (
+                <div
+                  className={styles.errorMsg}
+                  style={{ position: 'relative', marginTop: '-8px', marginBottom: '0' }}
+                >
+                  {loginError}
+                </div>
+              )}
 
               <div className={styles.formOptions}>
                 <label className={styles.checkboxLabel}>
-                  <input type="checkbox" className={styles.customCheckbox} />
+                  <input type="checkbox" className={styles.customCheckbox} disabled={isLoading} />
                   <span>Keep me signed in</span>
                 </label>
                 <button
                   type="button"
                   className={styles.forgotLink}
                   onClick={() => setAuthView('forgot_request')}
+                  disabled={isLoading}
                 >
                   Forgot password?
                 </button>
@@ -190,15 +215,17 @@ const AuthFlow = () => {
                 reset your password.
               </p>
             </div>
-            <form className={styles.loginForm} onSubmit={handleRequestReset}>
+            <form className={styles.loginForm} onSubmit={handleRequestReset} noValidate>
               <div className={styles.inputWrapper}>
                 <label className={styles.floatingLabel}>Email</label>
+                <span className={styles.emailIcon} />
                 <input
                   type="email"
                   ref={resetEmailRef}
                   placeholder="Enter your Email"
                   className={`${styles.inputField} ${styles.withIconLeft}`}
                   required
+                  disabled={isLoading}
                 />
               </div>
               <Button
@@ -211,6 +238,7 @@ const AuthFlow = () => {
                 {isLoading ? 'Sending...' : 'Send reset link'}
               </Button>
               <button
+                type="button"
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
@@ -231,6 +259,34 @@ const AuthFlow = () => {
               <p>We’ve sent a password reset link to your email.</p>
             </div>
             <div className={styles.loginForm}>
+              <Button variant="select" size="large" onClick={() => setIsVerifyModalOpen(true)}>
+                Enter verification code
+              </Button>
+              <button
+                type="button"
+                className={styles.backToLoginBtn}
+                onClick={() => setAuthView('login')}
+              >
+                Back to log in <span className={styles.arrowRightIcon} />
+              </button>
+            </div>
+          </div>
+        );
+
+      case 'code_verified':
+        return (
+          <div className={styles.resetFlowContainer}>
+            <div className={styles.iconGraphicWrapper}>
+              <div className={styles.successGraphic} />
+            </div>
+            <div className={styles.loginHeader}>
+              <h2>Code Verified!</h2>
+              <p>Your verification code was correct.</p>
+            </div>
+            <div className={styles.loginForm}>
+              <Button variant="select" size="large" onClick={() => setAuthView('reset_password')}>
+                Create new password
+              </Button>
               <button
                 type="button"
                 className={styles.backToLoginBtn}
@@ -248,7 +304,7 @@ const AuthFlow = () => {
             <div className={styles.loginHeader}>
               <h2>Create a new password</h2>
             </div>
-            <form className={styles.loginForm} onSubmit={handleResetPassword}>
+            <form className={styles.loginForm} onSubmit={handleResetPassword} noValidate>
               <div className={styles.inputWrapper}>
                 <label className={styles.floatingLabel}>Password</label>
                 <input
@@ -258,13 +314,17 @@ const AuthFlow = () => {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
-                  className={`${styles.eyeIcon} ${showNewPassword ? styles.eyeOpen : ''}`}
+                  className={`${styles.eyeIcon} ${showNewPassword ? styles.eyeIconOpen : styles.eyeIconClosed}`}
                   onClick={() => setShowNewPassword(!showNewPassword)}
+                  aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                  disabled={isLoading}
                 />
               </div>
+
               <div className={styles.passwordRules}>
                 <div className={styles.ruleItem}>
                   <span className={`${styles.ruleCheckbox} ${isLength ? styles.valid : ''}`} />
@@ -287,8 +347,9 @@ const AuthFlow = () => {
                   <span>One special character</span>
                 </div>
               </div>
+
               <div className={styles.inputWrapper}>
-                <label className={styles.floatingLabel}>Password</label>
+                <label className={styles.floatingLabel}>Confirm Password</label>
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="Confirm new password"
@@ -296,11 +357,16 @@ const AuthFlow = () => {
                   value={confirmNewPassword}
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
                   required
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
-                  className={`${styles.eyeIcon} ${showConfirmPassword ? styles.eyeOpen : ''}`}
+                  className={`${styles.eyeIcon} ${showConfirmPassword ? styles.eyeIconOpen : styles.eyeIconClosed}`}
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={
+                    showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'
+                  }
+                  disabled={isLoading}
                 />
               </div>
               <Button
@@ -308,11 +374,12 @@ const AuthFlow = () => {
                 size="large"
                 type="submit"
                 className={styles.submitBtn}
-                disabled={!isPasswordValid}
+                disabled={!isPasswordValid || isLoading}
               >
                 Reset password
               </Button>
               <button
+                type="button"
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
@@ -334,6 +401,7 @@ const AuthFlow = () => {
             </div>
             <div className={styles.loginForm}>
               <button
+                type="button"
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
@@ -362,6 +430,7 @@ const AuthFlow = () => {
                 Send a new link
               </Button>
               <button
+                type="button"
                 className={styles.backToLoginBtn}
                 onClick={() => setAuthView('login')}
               >
@@ -373,7 +442,27 @@ const AuthFlow = () => {
     }
   };
 
-  return <>{renderView()}</>;
+  return (
+    <>
+      {renderView()}
+
+      {isVerifyModalOpen && (
+        <VerificationModal 
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+        mode="password_reset"
+        email={submittedResetEmail}
+        onSuccess={(code) => { 
+          searchParams.set('reset_token', code);
+          setSearchParams(searchParams);
+
+          setIsVerifyModalOpen(false);
+          setAuthView('code_verified');
+        }} 
+      />
+      )}
+    </>
+  );
 };
 
 export default AuthFlow;

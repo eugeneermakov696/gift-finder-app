@@ -1,27 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAppDispatch } from '../../../../store/hooks';
-import { resendEmailCode, verifyEmailCode } from '../../../../store/auth/authSlice';
+import {
+  requestPasswordReset,
+  resendEmailCode,
+  verifyEmailCode,
+} from '../../../../store/auth/authSlice';
 import { Button } from '../../../../shared/components/Button';
-import styles from './VerifyEmailModal.module.scss';
+import styles from './VerificationModal.module.scss';
 
-interface VerifyEmailModalProps {
-  email: string;
+export interface VerificationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  email?: string;
+  mode: 'email_verify' | 'password_reset';
+  onSuccess?: (code: string) => void;
 }
 
-export const VerifyEmailModal = ({ email, isOpen, onClose }: VerifyEmailModalProps) => {
+export const VerificationModal = ({
+  isOpen,
+  onClose,
+  email,
+  mode,
+  onSuccess,
+}: VerificationModalProps) => {
   const [code, setCode] = useState<string[]>(Array(6).fill(''));
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(6).fill(null));
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (isOpen && inputRefs.current[0]) {
-      inputRefs.current[0].focus();
+      setTimeout(() => inputRefs.current[0]?.focus(), 100);
     }
   }, [isOpen]);
 
@@ -56,7 +68,7 @@ export const VerifyEmailModal = ({ email, isOpen, onClose }: VerifyEmailModalPro
       newCode[i] = char;
     });
     setCode(newCode);
-    
+
     const focusIndex = Math.min(pastedData.length, 5);
     inputRefs.current[focusIndex]?.focus();
   };
@@ -68,10 +80,18 @@ export const VerifyEmailModal = ({ email, isOpen, onClose }: VerifyEmailModalPro
     setIsVerifying(true);
     setError(null);
     try {
-      await dispatch(verifyEmailCode(fullCode)).unwrap();
-      onClose();
+      if (mode === 'email_verify') {
+        await dispatch(verifyEmailCode(fullCode)).unwrap();
+      }
+      if (onSuccess) {
+        onSuccess(fullCode);
+      }
+      
+      if (mode === 'email_verify') {
+        onClose();
+      }
     } catch (err: unknown) {
-      setError(typeof err === 'string' ? err : 'Invalid code');
+      setError(typeof err === 'string' ? err : 'Invalid code. Please try again.');
     } finally {
       setIsVerifying(false);
     }
@@ -81,7 +101,12 @@ export const VerifyEmailModal = ({ email, isOpen, onClose }: VerifyEmailModalPro
     setIsResending(true);
     setError(null);
     try {
-      await dispatch(resendEmailCode()).unwrap();
+      if (mode === 'email_verify') {
+        await dispatch(resendEmailCode()).unwrap();
+      } else if (mode === 'password_reset' && email) {
+        await dispatch(requestPasswordReset(email)).unwrap();
+      }
+
       setCode(Array(6).fill(''));
       inputRefs.current[0]?.focus();
     } catch (err: unknown) {
@@ -91,7 +116,14 @@ export const VerifyEmailModal = ({ email, isOpen, onClose }: VerifyEmailModalPro
     }
   };
 
-  const isComplete = code.every(char => char !== '');
+  const isComplete = code.every((char) => char !== '');
+
+  const titleText = mode === 'email_verify' ? 'Verify your email' : 'Enter Reset Code';
+  const btnText = isVerifying
+    ? 'Verifying...'
+    : mode === 'email_verify'
+      ? 'Verify email'
+      : 'Verify code';
 
   return (
     <div className={styles.overlay} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
@@ -104,23 +136,27 @@ export const VerifyEmailModal = ({ email, isOpen, onClose }: VerifyEmailModalPro
           <span className={styles.mailIcon} />
         </div>
 
-        <h2 className={styles.title}>Verify your email</h2>
+        <h2 className={styles.title}>{titleText}</h2>
         <p className={styles.subtitle}>
-          We sent a 6-digit verification code to <span className={styles.emailText}>{email}</span>
+          We sent a 6-digit verification code to{' '}
+          {email ? <span className={styles.emailText}>{email}</span> : 'your email'}.
         </p>
 
         <div className={styles.codeContainer} onPaste={handlePaste}>
           {code.map((digit, index) => (
             <input
               key={index}
-              ref={(el) => { inputRefs.current[index] = el; }}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
               type="text"
               inputMode="numeric"
               maxLength={1}
               value={digit}
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
-              className={`${styles.digitInput} ${digit ? styles.filled : ''}`}
+              className={`${styles.digitInput} ${digit ? styles.filled : ''} ${error ? styles.hasError : ''}`}
+              disabled={isVerifying}
             />
           ))}
         </div>
@@ -137,14 +173,14 @@ export const VerifyEmailModal = ({ email, isOpen, onClose }: VerifyEmailModalPro
           <p className={styles.expiresText}>Code expires in 15 minutes</p>
         </div>
 
-        <Button 
+        <Button
           size="large"
           variant="select"
-          className={styles.verifyBtn} 
+          className={styles.verifyBtn}
           disabled={!isComplete || isVerifying}
           onClick={handleVerify}
         >
-          {isVerifying ? 'Verifying...' : 'Verify email'}
+          {btnText}
         </Button>
       </div>
     </div>

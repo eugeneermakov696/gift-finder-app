@@ -22,6 +22,13 @@ class Validator {
     }
     return null;
   }
+
+  public validateMessage(message: string): string | null {
+    if (message.trim().length < 10) {
+      return 'Message must be at least 10 characters long.';
+    }
+    return null;
+  }
 }
 
 export const validator = new Validator();
