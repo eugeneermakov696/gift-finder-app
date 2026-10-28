@@ -137,34 +137,79 @@
     padding: 0 8px;
     font-size: 12px;
     font-weight: 400;
-    color: var(--text-secondary);
+    color: var(--color-primary-1);
     z-index: 1;
+    transition: color 0.2s ease;
   }
 
   input, textarea {
     width: 100%;
     padding: 16px;
-    border: 1px solid var(--color-primary-2);
+    border: 1px solid var(--color-primary-1);
     border-radius: 4px;
     font-size: 16px;
     letter-spacing: 0.5px;
     background: transparent;
     outline: none;
     font-family: inherit;
+    transition: all 0.2s ease;
 
     &::placeholder {
       color: var(--text-muted);
       font-weight: 300;
     }
 
-    &:focus {
-      border-color: var(--color-primary-2);
-      box-shadow: 0 0 0 1px var(--color-primary-2);
+    /* Hover */
+    &:hover:not(:disabled) {
+      border-color: var(--text-main);
+    }
+
+    /* Focus */
+    &:focus:not(:disabled) {
+      border-color: var(--text-main);
+      box-shadow: inset 0 0 0 0.5px var(--text-main);
+    }
+
+    /* Disabled стан */
+    &:disabled {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+      background-color: rgba(0, 0, 0, 0.02);
+      cursor: not-allowed;
+      opacity: 0.7;
     }
 
     @include on-phone {
       padding: 12px 14px;
       font-size: 14px;
+    }
+  }
+
+  /* Hover and Focus-within for label */
+  &:hover label,
+  &:focus-within label {
+    color: var(--text-main);
+  }
+
+  /* Disabled for label */
+  &:has(input:disabled, textarea:disabled) label {
+    color: var(--text-muted);
+  }
+
+  /* Error */
+  &.hasError {
+    label {
+      color: var(--color-danger-800);
+    }
+
+    input, textarea {
+      border-color: var(--color-danger-800);
+      box-shadow: inset 0 0 0 0.5px var(--color-danger-800);
+
+      &:focus {
+        border-color: var(--color-danger-800);
+        box-shadow: inset 0 0 0 0.5px var(--color-danger-800);
+      }
     }
   }
 
@@ -179,11 +224,23 @@
     }
   }
 
-  .helperText {
+  .helperText,
+  .errorText {
+    position: absolute;
+    top: 100%;
+    left: 16px;
+    margin-top: 4px;
     font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .helperText {
     color: var(--text-muted);
-    margin-top: 8px;
-    padding-left: 16px;
+  }
+
+  .errorText {
+    color: var(--color-danger-800);
   }
 }
 

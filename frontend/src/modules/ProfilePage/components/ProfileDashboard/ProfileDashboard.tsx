@@ -8,7 +8,7 @@ import { AvatarUploadModal } from '../AvatarUploadModal';
 import { fetchWishlist, removeGiftFromWishlist } from '../../../../store/wishlist/wishlistSlice';
 import { resendEmailCode } from '../../../../store/auth/authSlice';
 import { SkeletonCard } from '../../../../shared/components/SkeletonCard';
-import { VerifyEmailModal } from '../VerifyEmailModal';
+import { VerificationModal } from '../VerifyEmailModal';
 import type { User } from '../../../../api/auth-service/types/user.type';
 import type { RootState } from '../../../../store/store';
 import styles from './ProfileDashboard.module.scss';
@@ -131,7 +131,7 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
         </div>
 
         <div className={`${styles.card} ${styles.personalInfoCard}`}>
-          <span className={styles.userOutlineIcon} onClick={() => setIsVerifyModalOpen(true)}/>
+          <span className={styles.userOutlineIcon} onClick={() => setIsVerifyModalOpen(true)} />
 
           <div className={styles.infoContainer}>
             <h2>Personal Information</h2>
@@ -192,10 +192,11 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
         <AvatarUploadModal isOpen={isAvatarOpen} onClose={() => setIsAvatarOpen(false)} />
       )}
       {isVerifyModalOpen && (
-        <VerifyEmailModal
+        <VerificationModal
           email={user.email}
           isOpen={isVerifyModalOpen}
           onClose={() => setIsVerifyModalOpen(false)}
+          mode={'email_verify'}
         />
       )}
     </div>

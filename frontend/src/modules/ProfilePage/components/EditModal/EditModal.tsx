@@ -45,9 +45,10 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
           <p>Update your personal information and account details.</p>
         </div>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        {/* Додано noValidate */}
+        <form className={styles.form} onSubmit={handleSubmit} noValidate>
           {/* Name */}
-          <div className={styles.inputWrapper}>
+          <div className={`${styles.inputWrapper} ${errors.fullName ? styles.hasError : ''}`}>
             <div className={styles.inputGroup}>
               <label className={styles.floatingLabel}>Name</label>
               <span className={`${styles.iconLeft} ${styles.userIcon}`} />
@@ -59,13 +60,14 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
                 placeholder="Enter your name"
                 className={styles.withIconLeft}
                 required
+                disabled={isLoading}
               />
             </div>
             {errors.fullName && <span className={styles.errorMsg}>{errors.fullName}</span>}
           </div>
 
           {/* Email */}
-          <div className={styles.inputWrapper}>
+          <div className={`${styles.inputWrapper} ${errors.email ? styles.hasError : ''}`}>
             <div className={styles.inputGroup}>
               <label className={styles.floatingLabel}>Email</label>
               <span className={`${styles.iconLeft} ${styles.emailIcon}`} />
@@ -77,15 +79,16 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
                 placeholder="Enter your Email"
                 className={styles.withIconLeft}
                 required
+                disabled={isLoading}
               />
             </div>
             {errors.email && <span className={styles.errorMsg}>{errors.email}</span>}
           </div>
 
           {/* Old Password */}
-          <div className={styles.inputWrapper}>
+          <div className={`${styles.inputWrapper} ${errors.oldPassword ? styles.hasError : ''}`}>
             <div className={styles.inputGroup}>
-              <label className={styles.floatingLabel}>Password</label>
+              <label className={styles.floatingLabel}>Old Password</label>
               <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
               <input
                 type={showOldPassword ? 'text' : 'password'}
@@ -93,21 +96,23 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
                 ref={oldPasswordRef}
                 placeholder="Old password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
+                disabled={isLoading}
               />
               <button
                 type="button"
-                className={`${styles.iconRight} ${styles.eyeIcon}`}
+                className={`${styles.iconRight} ${styles.eyeIcon} ${showOldPassword ? styles.eyeIconOpen : styles.eyeIconClosed}`}
                 onClick={() => setShowOldPassword(!showOldPassword)}
-                aria-label="Toggle old password"
+                aria-label={showOldPassword ? "Hide old password" : "Show old password"}
+                disabled={isLoading}
               />
             </div>
             {errors.oldPassword && <span className={styles.errorMsg}>{errors.oldPassword}</span>}
           </div>
 
           {/* New Password */}
-          <div className={styles.inputWrapper}>
+          <div className={`${styles.inputWrapper} ${errors.newPassword ? styles.hasError : ''}`}>
             <div className={styles.inputGroup}>
-              <label className={styles.floatingLabel}>Password</label>
+              <label className={styles.floatingLabel}>New Password</label>
               <span className={`${styles.iconLeft} ${styles.lockIcon}`} />
               <input
                 type={showNewPassword ? 'text' : 'password'}
@@ -115,18 +120,21 @@ export const EditModal = ({ isOpen, onClose }: EditModalProps) => {
                 ref={newPasswordRef}
                 placeholder="New password"
                 className={`${styles.withIconLeft} ${styles.withIconRight}`}
+                disabled={isLoading}
               />
               <button
                 type="button"
-                className={`${styles.iconRight} ${styles.eyeIcon}`}
+                className={`${styles.iconRight} ${styles.eyeIcon} ${showNewPassword ? styles.eyeIconOpen : styles.eyeIconClosed}`}
                 onClick={() => setShowNewPassword(!showNewPassword)}
-                aria-label="Toggle new password"
+                aria-label={showNewPassword ? "Hide new password" : "Show new password"}
+                disabled={isLoading}
               />
             </div>
             {errors.newPassword && <span className={styles.errorMsg}>{errors.newPassword}</span>}
           </div>
 
-          {authError && <div className={styles.errorMsg}>{authError}</div>}
+          {/* Глобальна помилка вирівняна відносно потоку, щоб не накладалася на кнопку */}
+          {authError && <div className={styles.errorMsg} style={{ position: 'relative', marginTop: '0' }}>{authError}</div>}
 
           <Button
             variant="secondary"

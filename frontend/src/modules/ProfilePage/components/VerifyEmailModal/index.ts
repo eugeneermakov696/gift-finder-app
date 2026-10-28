@@ -1,1 +1,1 @@
-export * from './VerifyEmailModal';
+export * from './VerificationModal';
