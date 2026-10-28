@@ -235,12 +235,13 @@ class WishlistViewSet(viewsets.ModelViewSet):
         """List is owner-scoped; detail/actions use full queryset so object permissions can return 403."""
         if getattr(self, "swagger_fake_view", False):
             return Wishlist.objects.none()
+        base_qs = Wishlist.objects.select_related("user").prefetch_related("items")
         if self.action == "list":
             if self.request.user.is_authenticated:
                 if not Wishlist.objects.filter(user=self.request.user).exists():
                     Wishlist.objects.create(user=self.request.user, name="Liked Ideas")
-            return Wishlist.objects.filter(user=self.request.user)
-        return Wishlist.objects.all()
+            return base_qs.filter(user=self.request.user)
+        return base_qs.all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -265,7 +266,7 @@ class WishlistViewSet(viewsets.ModelViewSet):
 
         try:
             present = Present.objects.get(pk=present_id)
-        except Present.DoesNotExist:
+        except (Present.DoesNotExist, ValueError, TypeError):
             return Response(
                 {"status": "error", "message": "Product missing from database."},
                 status=status.HTTP_404_NOT_FOUND

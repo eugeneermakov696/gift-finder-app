@@ -10,8 +10,6 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_yasg.utils import swagger_auto_schema, no_body
 from drf_yasg import openapi
 
-logger = logging.getLogger(__name__)
-
 from config.swagger import (
     ERROR_400_BAD_REQUEST,
     ERROR_401_UNAUTHORIZED,
@@ -36,6 +34,7 @@ from users.services import (
     send_contact_form_notification
 )
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -420,7 +419,7 @@ class AvatarUploadView(views.APIView):
             logger.error("Failed to upload avatar to cloud storage: %s", exc, exc_info=True)
             return Response(
                 {
-                    "detail": f"Failed to upload avatar to cloud storage: {str(exc)}"
+                    "detail": "Failed to upload avatar to cloud storage. Please try again later."
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

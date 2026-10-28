@@ -268,3 +268,21 @@ class GiftFinderAPITestCase(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["name"], "Liked Ideas")
         self.assertEqual(Wishlist.objects.filter(user=new_user).count(), 1)
+
+    def test_manage_item_invalid_present_id_returns_404(self):
+        url = reverse("wishlist-manage-item", kwargs={"pk": self.wishlist.id})
+        # Test non-numeric string
+        response = self.client.post(url, data={"present_id": "invalid_str", "action": "add"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # Test None
+        response_none = self.client.post(url, data={"present_id": None, "action": "add"}, format="json")
+        self.assertEqual(response_none.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_wishlist_list_prefetch_efficiency(self):
+        self.wishlist.items.add(self.present)
+        # Verify listing wishlist with items succeeds with items populated
+        response = self.client.get(reverse("wishlist-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        first_list = response.data[0]
+        self.assertEqual(first_list["items_count"], 1)
+        self.assertEqual(first_list["items"][0]["asin"], self.present.asin)

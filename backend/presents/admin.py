@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from presents.models import Present
+from presents.models import Present, Wishlist
 
 
 @admin.register(Present)
@@ -50,5 +50,14 @@ class PresentAdmin(admin.ModelAdmin):
             '</div>'
         )
 
+@admin.register(Wishlist)
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ("name", "user", "items_count", "created_at", "updated_at")
+    search_fields = ("name", "user__username", "user__email")
+    list_filter = ("created_at", "updated_at")
+    filter_horizontal = ("items",)
+    readonly_fields = ("created_at", "updated_at")
 
-
+    @admin.display(description="Total Items")
+    def items_count(self, obj):
+        return obj.items.count()

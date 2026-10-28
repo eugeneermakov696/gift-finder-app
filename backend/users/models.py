@@ -34,12 +34,15 @@ class VerificationScenario(models.TextChoices):
     EMAIL_CONFIRMATION = "email_confirmation", "Email Confirmation"
 
 
+import secrets
+
+
 def get_expiry_time():
     return timezone.now() + settings.VERIFICATION_CODE_LIFETIME
 
 
 def generate_numeric_code():
-    return f"{random.randint(100000, 999999)}"
+    return f"{secrets.randbelow(900000) + 100000}"
 
 
 class UserVerificationCode(models.Model):
@@ -59,6 +62,10 @@ class UserVerificationCode(models.Model):
     class Meta:
         db_table = "user_verification_codes"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["user", "scenario"], name="user_verif_user_scen_idx"),
+            models.Index(fields=["code"], name="user_verif_code_idx"),
+        ]
 
     def is_expired(self) -> bool:
         return timezone.now() > self.expires_at

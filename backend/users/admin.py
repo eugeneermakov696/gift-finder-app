@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import TokenProxy
-from users.models import CustomUser, ContactMessage
+from users.models import CustomUser, ContactMessage, UserVerificationCode
 
 
 @admin.register(CustomUser)
@@ -22,6 +22,17 @@ class ContactMessageAdmin(admin.ModelAdmin):
     list_filter = ("is_resolved", "created_at")
     search_fields = ("name", "email", "message")
     readonly_fields = ("created_at",)
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(UserVerificationCode)
+class UserVerificationCodeAdmin(admin.ModelAdmin):
+    list_display = ("user", "scenario", "code", "created_at", "expires_at", "is_expired")
+    list_filter = ("scenario", "created_at")
+    search_fields = ("user__email", "user__username", "code")
+    readonly_fields = ("user", "code", "scenario", "created_at", "expires_at")
 
     def has_add_permission(self, request):
         return False
