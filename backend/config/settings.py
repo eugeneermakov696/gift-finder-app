@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'presents',
     'users',
     'storages',
+    'anymail',
 ]
 
 MIDDLEWARE = [
@@ -152,13 +153,18 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = env("EMAIL_HOST", default="smtp.resend.com")
-EMAIL_PORT = env.int("EMAIL_PORT", default=587)
-EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
-EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="resend")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@yourdomain.com")
+# Email Configuration (Brevo HTTP API)
+BREVO_API_KEY = env("BREVO_API_KEY", default="").strip().strip("\"'")
+
+if BREVO_API_KEY:
+    EMAIL_BACKEND = "anymail.backends.brevo.EmailBackend"
+    ANYMAIL = {
+        "BREVO_API_KEY": BREVO_API_KEY,
+    }
+else:
+    EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
+
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="GiftFinder <oleksandr.shtonda.dev@gmail.com>").strip().strip("\"'")
 
 VERIFICATION_CODE_LIFETIME = timedelta(minutes=15)
 WISHLIST_MAX_CAPACITY = env.int("WISHLIST_MAX_CAPACITY", default=50)

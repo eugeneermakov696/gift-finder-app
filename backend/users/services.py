@@ -24,6 +24,7 @@ def send_mail_async(subject: str, message: str, recipient_list: list, from_email
 
     def _deliver():
         try:
+            logger.info(f"Attempting to dispatch email to {recipient_list} via {getattr(settings, 'EMAIL_BACKEND', 'unknown')}...")
             send_mail(
                 subject=subject,
                 message=message,
@@ -31,6 +32,7 @@ def send_mail_async(subject: str, message: str, recipient_list: list, from_email
                 recipient_list=recipient_list,
                 fail_silently=False,
             )
+            logger.info(f"Successfully dispatched email to {recipient_list}")
         except Exception as exc:
             logger.error(f"Failed to dispatch async email to {recipient_list}: {exc}", exc_info=True)
 
