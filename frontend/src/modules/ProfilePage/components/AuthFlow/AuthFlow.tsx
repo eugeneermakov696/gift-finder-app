@@ -7,6 +7,7 @@ import {
   loginUser,
   requestPasswordReset,
 } from '../../../../store/auth/authSlice';
+import { mergeGuestWishlist } from '../../../../store/wishlist/wishlistSlice';
 import { Button } from '../../../../shared/components/Button';
 import type { RootState } from '../../../../store/store';
 import styles from './AuthFlow.module.scss';
@@ -73,6 +74,7 @@ export const AuthFlow = () => {
     try {
       await dispatch(loginUser({ email, password })).unwrap();
       await dispatch(fetchMe()).unwrap();
+      await dispatch(mergeGuestWishlist()).unwrap();
     } catch (error) {
       setLoginError(error as string);
     }
