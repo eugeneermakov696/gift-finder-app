@@ -12,7 +12,7 @@ import { WishlistPage } from './modules/WishlistPage';
 import { NotFoundPage } from './modules/NotFoundPage';
 import { FiltersPage } from './modules/FiltersPage';
 import { ReadyIdeasPage } from './modules/ReadyIdeasPage';
-import { CatalogPage } from './modules/CatalogPage.tsx';
+import { CatalogPage } from './modules/CatalogPage';
 import { RightsPage } from './modules/RightsPage/RightsPage.tsx';
 import { TermsPage } from './modules/TermsPage/TermsPage.tsx';
 

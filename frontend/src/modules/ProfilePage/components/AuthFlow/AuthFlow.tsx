@@ -2,11 +2,12 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import React, { useState, useRef, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
-  confirmPasswordReset,
+  changePasswordReset,
   fetchMe,
   loginUser,
   requestPasswordReset,
 } from '../../../../store/auth/authSlice';
+import { mergeGuestWishlist } from '../../../../store/wishlist/wishlistSlice';
 import { Button } from '../../../../shared/components/Button';
 import type { RootState } from '../../../../store/store';
 import styles from './AuthFlow.module.scss';
@@ -73,6 +74,7 @@ export const AuthFlow = () => {
     try {
       await dispatch(loginUser({ email, password })).unwrap();
       await dispatch(fetchMe()).unwrap();
+      await dispatch(mergeGuestWishlist()).unwrap();
     } catch (error) {
       setLoginError(error as string);
     }
@@ -96,15 +98,13 @@ export const AuthFlow = () => {
     e.preventDefault();
     if (!isPasswordValid) return;
 
-    const token = searchParams.get('reset_token');
-
-    if (!token) {
-      setAuthView('reset_expired');
-      return;
-    }
-
     try {
-      await dispatch(confirmPasswordReset({ token, password: newPassword })).unwrap();
+      await dispatch(
+        changePasswordReset({
+          newPassword,
+          confirmNewPassword,
+        }),
+      ).unwrap();
       setAuthView('reset_success');
       searchParams.delete('reset_token');
       setSearchParams(searchParams);
@@ -448,18 +448,15 @@ export const AuthFlow = () => {
 
       {isVerifyModalOpen && (
         <VerificationModal 
-        isOpen={isVerifyModalOpen}
-        onClose={() => setIsVerifyModalOpen(false)}
-        mode="password_reset"
-        email={submittedResetEmail}
-        onSuccess={(code) => { 
-          searchParams.set('reset_token', code);
-          setSearchParams(searchParams);
-
-          setIsVerifyModalOpen(false);
-          setAuthView('code_verified');
-        }} 
-      />
+          isOpen={isVerifyModalOpen}
+          onClose={() => setIsVerifyModalOpen(false)}
+          mode="password_reset"
+          email={submittedResetEmail}
+          onSuccess={() => { 
+            setIsVerifyModalOpen(false);
+            setAuthView('code_verified');
+          }} 
+        />
       )}
     </>
   );

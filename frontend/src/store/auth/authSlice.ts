@@ -159,6 +159,47 @@ export const requestPasswordReset = createAsyncThunk(
   },
 );
 
+export const checkPasswordResetCode = createAsyncThunk(
+  'auth/checkPasswordResetCode',
+  async (payload: { email: string; code: string }, { rejectWithValue }) => {
+    try {
+      return await authService.checkPasswordResetCode(payload.email, payload.code);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(error.response?.data?.detail || 'Invalid confirmation code.');
+      }
+      return rejectWithValue('Unknown error');
+    }
+  },
+);
+
+export const changePasswordReset = createAsyncThunk(
+  'auth/changePasswordReset',
+  async (
+    payload: { newPassword: string; confirmNewPassword: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      return await authService.changePasswordReset(
+        payload.newPassword,
+        payload.confirmNewPassword,
+      );
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const data = error.response?.data;
+        let msg = data?.detail;
+        if (!msg && data && typeof data === 'object') {
+          const firstKey = Object.keys(data)[0];
+          const firstVal = data[firstKey];
+          msg = Array.isArray(firstVal) ? firstVal[0] : (typeof firstVal === 'string' ? firstVal : null);
+        }
+        return rejectWithValue(msg || 'Failed to change password');
+      }
+      return rejectWithValue('Unknown error');
+    }
+  },
+);
+
 export const confirmPasswordReset = createAsyncThunk(
   'auth/confirmPasswordReset',
   async (data: { token: string; password: string }, { rejectWithValue }) => {
@@ -319,6 +360,29 @@ export const AuthSlice = createSlice({
         state.successMessage = 'Mail for restoration sent';
       })
       .addCase(requestPasswordReset.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(checkPasswordResetCode.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(checkPasswordResetCode.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(checkPasswordResetCode.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(changePasswordReset.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(changePasswordReset.fulfilled, (state) => {
+        state.isLoading = false;
+        state.successMessage = 'Password updated successfully';
+      })
+      .addCase(changePasswordReset.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

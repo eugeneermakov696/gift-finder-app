@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAppDispatch } from '../../../../store/hooks';
 import {
+  checkPasswordResetCode,
   requestPasswordReset,
   resendEmailCode,
   verifyEmailCode,
@@ -82,14 +83,18 @@ export const VerificationModal = ({
     try {
       if (mode === 'email_verify') {
         await dispatch(verifyEmailCode(fullCode)).unwrap();
+      } else if (mode === 'password_reset') {
+        if (!email) {
+          throw new Error('Email address is missing.');
+        }
+        await dispatch(checkPasswordResetCode({ email, code: fullCode })).unwrap();
       }
+
       if (onSuccess) {
         onSuccess(fullCode);
       }
-      
-      if (mode === 'email_verify') {
-        onClose();
-      }
+
+      onClose();
     } catch (err: unknown) {
       setError(typeof err === 'string' ? err : 'Invalid code. Please try again.');
     } finally {
