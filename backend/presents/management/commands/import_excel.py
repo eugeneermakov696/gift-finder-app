@@ -1,4 +1,6 @@
 import os
+import re
+import datetime
 import pandas as pd
 from django.core.management.base import BaseCommand
 from presents.models import Present
