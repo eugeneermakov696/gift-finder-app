@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../store/hooks';
 import { useSelector } from 'react-redux';
 import { registerUser, loginUser, fetchMe } from '../../store/auth/authSlice';
+import { mergeGuestWishlist } from '../../store/wishlist/wishlistSlice';
 import { validator } from '../utils/validator';
 import type { RootState } from '../../store/store';
 
@@ -71,6 +72,7 @@ export const useRegisterForm = ({ onClose }: UseRegisterFormProps) => {
 
       await dispatch(loginUser({ email, password })).unwrap();
       await dispatch(fetchMe()).unwrap();
+      await dispatch(mergeGuestWishlist()).unwrap();
 
       onClose();
       navigate('/profile');
