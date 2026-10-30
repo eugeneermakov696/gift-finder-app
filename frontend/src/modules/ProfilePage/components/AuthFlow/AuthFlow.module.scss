@@ -28,7 +28,7 @@
   align-items: stretch;
   gap: 16px;
   width: 100%;
-  max-width: 100%;
+  max-width: 360px;
 }
 
 .inputWrapper {
@@ -314,6 +314,7 @@
 
 /* images */
 .planeGraphic {
+  margin-left: 30px;
   width: 300px;
   height: 120px;
   background-image: url('/images/paper-plane.png');
