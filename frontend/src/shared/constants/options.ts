@@ -34,9 +34,9 @@ export const GIFT_CATEGORIES = [
       'Birthday',
       "Mother's Day",
       'Christmas',
-      'Retirement Gifts',
-      'Just Because',
+      'Halloween',
       'Housewarming Gifts',
+      'Thanksgiving ',
     ],
   },
   {
@@ -45,9 +45,9 @@ export const GIFT_CATEGORIES = [
       'Birthday',
       "Father's Day Gifts",
       'Christmas',
-      'Retirement Gifts',
-      'Just Because',
+      'Halloween',
       'Housewarming Gifts',
+      'Thanksgiving ',
     ],
   },
   {
@@ -72,7 +72,7 @@ export const GIFT_CATEGORIES = [
       'Engagement Gifts',
       'Graduation Gifts',
       "Mother's Day",
-      'Just Because',
+      'Thanksgiving ',
     ],
   },
   {
@@ -84,8 +84,8 @@ export const GIFT_CATEGORIES = [
       'Housewarming Gifts',
       "Father's Day",
       "Mother's Day",
-      'Retirement Gifts',
-      'Just Because',
+      'Halloween',
+      'Thanksgiving ',
     ],
   },
   {
@@ -97,8 +97,8 @@ export const GIFT_CATEGORIES = [
       'Housewarming Gifts',
       "Father's Day",
       "Mother's Day",
-      'Retirement Gifts',
-      'Just Because',
+      'Halloween',
+      'Thanksgiving ',
     ],
   },
   {
@@ -111,7 +111,7 @@ export const GIFT_CATEGORIES = [
       'Wedding Gifts',
       'Engagement Gifts',
       'Graduation Gifts',
-      'Just Because',
+      'Thanksgiving ',
     ],
   },
   {
