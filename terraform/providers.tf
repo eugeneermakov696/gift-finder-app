@@ -1,11 +1,11 @@
 provider "aws" {
-    region = var.aws_region
+  region = var.aws_region
 
-    default_tags {
-        tags = {
-            Project = "gift-finder"
-            Environment = var.environment
-            ManagedBy = "Terraform"
-        }
+  default_tags {
+    tags = {
+      Project     = "gift-finder"
+      Environment = var.environment
+      ManagedBy   = "Terraform"
     }
+  }
 }
