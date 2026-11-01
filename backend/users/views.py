@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 from django.contrib.auth import get_user_model
+from django.core import signing
 from rest_framework import views, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -22,6 +23,8 @@ from users.serializers import (
     CustomTokenObtainPairSerializer,
     VerifyEmailSerializer,
     PasswordResetRequestSerializer,
+    PasswordResetCheckCodeSerializer,
+    PasswordResetChangeSerializer,
     PasswordResetConfirmSerializer,
     UserProfileUpdateSerializer,
     ContactFormSerializer,
@@ -253,7 +256,7 @@ class VerifyEmailView(views.APIView):
             request.user.email_is_confirmed = True
             request.user.save()
             return Response({"detail": "Email verified successfully."}, status=status.HTTP_200_OK)
-        return Response({"detail": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "Invalid confirmation code."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ResendEmailCodeView(views.APIView):
@@ -299,6 +302,97 @@ class PasswordResetRequestView(views.APIView):
         request_password_reset_code(serializer.validated_data["email"].lower())
         return Response({"detail": "If the account exists, a reset code has been dispatched."},
                         status=status.HTTP_200_OK)
+
+
+class PasswordResetCheckCodeView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    @swagger_auto_schema(
+        tags=["api/auth"],
+        operation_summary="Verify Password Reset Code",
+        operation_description="Validates the 6-digit recovery code. If valid, issues a temporary "
+                              "signed authorization cookie allowing the client to submit a new password.",
+        request_body=PasswordResetCheckCodeSerializer,
+        responses={
+            200: openapi.Response(
+                "Code verified successfully. Password reset session cookie set.",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "detail": openapi.Schema(type=openapi.TYPE_STRING, example="Code verified successfully."),
+                        "canChangePassword": openapi.Schema(type=openapi.TYPE_BOOLEAN, example=True),
+                    }
+                )
+            ),
+            400: ERROR_400_BAD_REQUEST,
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = PasswordResetCheckCodeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = User.objects.filter(email__iexact=serializer.validated_data["email"].strip()).first()
+        if not user or not user.email_is_confirmed:
+            return Response({"detail": "Invalid confirmation code."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if verify_code(user, serializer.validated_data["code"], VerificationScenario.PASSWORD_RESET):
+            signer = signing.TimestampSigner(salt="password-reset")
+            token = signer.sign(str(user.id))
+
+            response = Response(
+                {"detail": "Code verified successfully.", "canChangePassword": True},
+                status=status.HTTP_200_OK
+            )
+            set_auth_cookie(response, "canChangePassword", token, request, max_age=60 * 10)
+            return response
+
+        return Response({"detail": "Invalid confirmation code."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordResetChangeView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    @swagger_auto_schema(
+        tags=["api/auth"],
+        operation_summary="Change Password",
+        operation_description="Commits the new user password if a valid password reset session cookie is present.",
+        request_body=PasswordResetChangeSerializer,
+        responses={
+            200: openapi.Response("Password updated successfully."),
+            400: ERROR_400_BAD_REQUEST,
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = PasswordResetChangeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        raw_token = request.COOKIES.get("canChangePassword") or request.COOKIES.get("can_change_password")
+        if not raw_token:
+            return Response(
+                {"detail": "Password reset session has expired or is invalid."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        signer = signing.TimestampSigner(salt="password-reset")
+        try:
+            user_id = signer.unsign(raw_token, max_age=600)  # 10 minutes maximum
+            user = User.objects.get(id=user_id)
+        except (signing.BadSignature, signing.SignatureExpired, User.DoesNotExist):
+            return Response(
+                {"detail": "Password reset session has expired or is invalid."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.set_password(serializer.validated_data["new_password"])
+        user.save()
+
+        response = Response(
+            {"detail": "Password updated successfully."},
+            status=status.HTTP_200_OK
+        )
+        delete_auth_cookie(response, "canChangePassword", request)
+        delete_auth_cookie(response, "can_change_password", request)
+        return response
 
 
 class PasswordResetConfirmView(views.APIView):

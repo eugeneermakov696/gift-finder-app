@@ -23,6 +23,8 @@ class AuthenticationVerificationTests(APITestCase):
         )
         self.verify_email_url = reverse("verify-email")
         self.password_reset_request_url = reverse("password-reset-request")
+        self.password_reset_check_code_url = reverse("password-reset-check-code")
+        self.password_reset_change_url = reverse("password-reset-change")
         self.password_reset_confirm_url = reverse("password-reset-confirm")
         self.me_url = reverse("auth-me")
 
@@ -67,6 +69,67 @@ class AuthenticationVerificationTests(APITestCase):
 
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password("NewSecretPassword2026!"))
+
+    def test_password_reset_split_flow_success(self):
+        self.user.email_is_confirmed = True
+        self.user.save()
+
+        code_entry = create_and_send_verification_code(self.user, VerificationScenario.PASSWORD_RESET)
+        check_payload = {
+            "email": self.user.email.upper(),
+            "code": code_entry.code,
+        }
+        check_resp = self.client.post(self.password_reset_check_code_url, check_payload, format="json")
+        self.assertEqual(check_resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(check_resp.data.get("canChangePassword"))
+        self.assertIn("canChangePassword", check_resp.cookies)
+
+        change_payload = {
+            "new_password": "SplitSecretPassword2026!",
+            "confirm_new_password": "SplitSecretPassword2026!"
+        }
+        change_resp = self.client.post(self.password_reset_change_url, change_payload, format="json")
+        self.assertEqual(change_resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(change_resp.data.get("detail"), "Password updated successfully.")
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("SplitSecretPassword2026!"))
+
+    def test_password_reset_check_code_invalid(self):
+        self.user.email_is_confirmed = True
+        self.user.save()
+
+        check_payload = {
+            "email": self.user.email,
+            "code": "999999",
+        }
+        response = self.client.post(self.password_reset_check_code_url, check_payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get("detail"), "Invalid confirmation code.")
+        self.assertNotIn("canChangePassword", response.cookies)
+
+    def test_password_reset_change_without_cookie_fails(self):
+        change_payload = {
+            "new_password": "SplitSecretPassword2026!",
+            "confirm_new_password": "SplitSecretPassword2026!"
+        }
+        response = self.client.post(self.password_reset_change_url, change_payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_password_reset_change_passwords_mismatch(self):
+        self.user.email_is_confirmed = True
+        self.user.save()
+
+        code_entry = create_and_send_verification_code(self.user, VerificationScenario.PASSWORD_RESET)
+        self.client.post(self.password_reset_check_code_url, {"email": self.user.email, "code": code_entry.code}, format="json")
+
+        change_payload = {
+            "new_password": "SplitSecretPassword2026!",
+            "confirm_new_password": "MismatchPassword2026!"
+        }
+        response = self.client.post(self.password_reset_change_url, change_payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("confirm_new_password", response.data)
 
     def test_unconfirmed_user_cannot_reset_password(self):
         self.user.email_is_confirmed = False

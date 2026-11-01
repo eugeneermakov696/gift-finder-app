@@ -126,6 +126,33 @@ class AuthService {
   }
 
   /**
+   * Check password reset code.
+   * If valid, backend sets an HttpOnly session cookie (canChangePassword).
+   */
+  public async checkPasswordResetCode(
+    email: string,
+    code: string,
+  ): Promise<{ detail: string; canChangePassword: boolean }> {
+    const response = await this.api.post('auth/password-reset-check-code/', { email, code });
+    return response.data;
+  }
+
+  /**
+   * Change password after code verification.
+   * Relies on the HttpOnly session cookie (canChangePassword).
+   */
+  public async changePasswordReset(
+    newPassword: string,
+    confirmNewPassword: string,
+  ): Promise<{ detail: string }> {
+    const response = await this.api.post('auth/password-reset-change/', {
+      new_password: newPassword,
+      confirm_new_password: confirmNewPassword,
+    });
+    return response.data;
+  }
+
+  /**
    * Reset password with token
    */
   public async resetPasswordConfirm(data: {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { fetchFilteredGifts, setAllFilters, setFilter } from '../../store/filters/filtersSlice';
+import { fetchFilteredGifts, setAllFilters } from '../../store/filters/filtersSlice';
 import { addGiftToWishlist, removeGiftFromWishlist } from '../../store/wishlist/wishlistSlice';
 import type { GetGiftsParams } from '../../api/gift-service/gift.service';
 import type { RootState } from '../../store/store';
@@ -26,7 +26,7 @@ export const mockProduct = {
 
 export const useCatalogData = () => {
   const dispatch = useAppDispatch();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -70,10 +70,7 @@ export const useCatalogData = () => {
     const currentParams = new URLSearchParams(searchParams.toString());
     currentParams.set('page', newPage.toString());
 
-    window.history.pushState({}, '', `?${currentParams.toString()}`);
-
-    dispatch(setFilter({ key: 'page', value: newPage }));
-    dispatch(fetchFilteredGifts({ ...filters, page: newPage }));
+    setSearchParams(currentParams);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
