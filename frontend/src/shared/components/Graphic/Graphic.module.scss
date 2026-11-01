@@ -1,0 +1,24 @@
+@use '../../../styles/mixins' as *;
+
+.graphic {
+  position: absolute;
+  pointer-events: none;
+  z-index: -5;
+  user-select: none;
+  
+  top: var(--top);
+  bottom: var(--bottom);
+  left: var(--left);
+  right: var(--right);
+  width: var(--width);
+  opacity: var(--opacity);
+
+  @include on-phone {
+    top: var(--m-top);
+    bottom: var(--m-bottom);
+    left: var(--m-left);
+    right: var(--m-right);
+    width: var(--m-width);
+    opacity: var(--m-opacity);
+  }
+}
