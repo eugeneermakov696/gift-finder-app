@@ -14,35 +14,6 @@
   }
 }
 
-.bgGiftDecoration {
-  position: absolute;
-  width: 300px;
-  height: auto;
-  aspect-ratio: 1;
-  background-image: url('/images/bg_present1.jpg');
-  background-size: contain;
-  background-repeat: no-repeat;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.85;
-  transition: transform 0.3s ease;
-
-  top: 1300px; 
-  right: 500px;
-
-  @media (max-width: 1400px) {
-    right: 10px;
-    width: 140px;
-  }
-
-  @include on-phone {
-    width: 90px;
-    top: 620px;
-    right: -10px;
-    opacity: 0.6;
-  }
-}
-
 .title {
   font-family: var(--font-primary);
   font-size: 16px;

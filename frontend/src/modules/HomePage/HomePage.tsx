@@ -14,8 +14,9 @@ import {
   MOBILE_ORDER,
   type FeatureCardProps,
 } from '../../shared/constants/homePage';
-import styles from './HomePage.module.scss';
 import { SkeletonCard } from '../../shared/components/SkeletonCard';
+import { Graphic } from '../../shared/components/Graphic';
+import styles from './HomePage.module.scss';
 
 const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -66,6 +67,11 @@ export const HomePage = () => {
 
   return (
     <div className={styles.container}>
+      <Graphic src="/images/present1.png" top="45%" left="85%" width="80px" mWidth="70px" />
+      <Graphic src="/images/present3.png" top="30%" left="30%" width="60px" mWidth="50px" />
+      <Graphic src="/images/leaf3.png" bottom="14%" left="20%" width="50px" />
+      <Graphic src="/images/star.png" top="60%" right="15%" width="50px" />
+
       <section className={styles.heroSection}>
         <div className={styles.animationWrapper}>
           <PixelDrift />

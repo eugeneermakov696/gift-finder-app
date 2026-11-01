@@ -116,16 +116,16 @@
   width: 100%;
   
   @include on-phone {
-    gap: 6px; /* Зменшуємо відступ, щоб точно влізло на вузьких екранах */
+    gap: 6px;
   }
 }
 
 .digitInput {
   flex: 1;
-  min-width: 0; /* МАГІЧНИЙ РЯДОК: дозволяє інпуту стискатися менше дефолтного розміру браузера */
+  min-width: 0;
   max-width: 54px;
-  aspect-ratio: 1 / 1.1; /* Автоматично рахує висоту відносно ширини */
-  height: auto; /* Скидаємо фіксовану висоту, якщо вона десь успадкувалася */
+  aspect-ratio: 1 / 1.1;
+  height: auto;
   border-radius: 8px;
   border: 1px solid transparent;
   background-color: var(--color-primary-3);
