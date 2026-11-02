@@ -78,6 +78,7 @@
 .giftsSection {
   scroll-margin-top: 120px;
   margin-bottom: 92px;
+  position: relative;
 
   @include on-phone {
     scroll-margin-top: 45px;

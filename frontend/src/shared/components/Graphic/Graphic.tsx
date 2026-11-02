@@ -9,18 +9,21 @@ interface GraphicProps {
   right?: string;
   width?: string;
   opacity?: number;
+  rotate?: string;
+  zIndex?: number;
   mTop?: string;
   mBottom?: string;
   mLeft?: string;
   mRight?: string;
   mWidth?: string;
   mOpacity?: number;
+  mRotate?: string;
 }
 
 export const Graphic = ({
   src,
-  top, bottom, left, right, width = '100px', opacity = 1,
-  mTop, mBottom, mLeft, mRight, mWidth, mOpacity
+  top, bottom, left, right, width = '100px', opacity = 1, rotate, zIndex = -5,
+  mTop, mBottom, mLeft, mRight, mWidth, mOpacity, mRotate,
 }: GraphicProps) => {
   
   const dynamicStyles = {
@@ -30,6 +33,8 @@ export const Graphic = ({
     '--right': right,
     '--width': width,
     '--opacity': opacity,
+    '--rotate': rotate,
+    '--z-index': zIndex,
     
     '--m-top': mTop || top,
     '--m-bottom': mBottom || bottom,
@@ -37,6 +42,7 @@ export const Graphic = ({
     '--m-right': mRight || right,
     '--m-width': mWidth || width,
     '--m-opacity': mOpacity || opacity,
+    '--m-rotate': mRotate || rotate,
   } as React.CSSProperties;
 
   return (

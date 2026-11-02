@@ -1,9 +1,27 @@
 import { Link } from 'react-router-dom';
+import { Graphic } from '../../shared/components/Graphic';
 import styles from './TermsPage.module.scss';
 
 export const TermsPage = () => {
   return (
     <div className={styles.container}>
+      <Graphic
+        src="/images/present8.png"
+        top="190%"
+        left="62%"
+        width="150px"
+        mWidth="100px"
+        rotate="-15deg"
+      />
+      <Graphic
+        src="/images/present7.png"
+        top="195dvh"
+        left="55%"
+        width="150px"
+        mWidth="100px"
+      />
+      <Graphic src="/images/leaf10.png" top="340%" left="50%" width="100px" mWidth="70px" />
+
       <h1 className={styles.pageTitle}>Terms of Service</h1>
 
       <div className={styles.metaInfo}>

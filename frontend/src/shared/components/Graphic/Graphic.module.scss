@@ -3,15 +3,16 @@
 .graphic {
   position: absolute;
   pointer-events: none;
-  z-index: -5;
+  z-index: var(--z-index);
   user-select: none;
-  
+
   top: var(--top);
   bottom: var(--bottom);
   left: var(--left);
   right: var(--right);
   width: var(--width);
   opacity: var(--opacity);
+  transform: rotate(var(--rotate));
 
   @include on-phone {
     top: var(--m-top);
@@ -20,5 +21,6 @@
     right: var(--m-right);
     width: var(--m-width);
     opacity: var(--m-opacity);
+    transform: rotate(var(--m-rotate));
   }
 }

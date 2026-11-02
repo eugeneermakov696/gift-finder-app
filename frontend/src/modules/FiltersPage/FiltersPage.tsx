@@ -3,13 +3,14 @@ import 'rc-slider/assets/index.css';
 import { Link } from 'react-router-dom';
 import { Button } from '../../shared/components/Button';
 import { useFiltersForm } from '../../shared/hooks/useFiltersPage';
-import styles from './FiltersPage.module.scss';
 import {
   AGE_OPTIONS,
   GENDER_OPTIONS,
   INTEREST_OPTIONS,
   RELATIONSHIP_OPTIONS,
 } from '../../shared/constants/options';
+import { Graphic } from '../../shared/components/Graphic';
+import styles from './FiltersPage.module.scss';
 
 export const FiltersPage = () => {
   const {
@@ -29,6 +30,8 @@ export const FiltersPage = () => {
 
   return (
     <div className={styles.container}>
+      <Graphic src="/images/present1.png" top="95dvh" left="80%" width="80px" mWidth="70px" rotate="-30deg" />
+      <Graphic src="/images/present3.png" top="103dvh" left="78%" width="60px" mWidth="50px" rotate="-45deg" />
       <header className={styles.header}>
         <h1 className={styles.pageTitle}>Gift search</h1>
         <Link to="/" className={styles.backLink}>
