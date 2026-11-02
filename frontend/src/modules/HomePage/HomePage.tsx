@@ -67,11 +67,6 @@ export const HomePage = () => {
 
   return (
     <div className={styles.container}>
-      <Graphic src="/images/present1.png" top="45%" left="85%" width="80px" mWidth="70px" />
-      <Graphic src="/images/present3.png" top="30%" left="30%" width="60px" mWidth="50px" />
-      <Graphic src="/images/leaf3.png" bottom="14%" left="20%" width="50px" />
-      <Graphic src="/images/star.png" top="60%" right="15%" width="50px" />
-
       <section className={styles.heroSection}>
         <div className={styles.animationWrapper}>
           <PixelDrift />
@@ -104,6 +99,7 @@ export const HomePage = () => {
       </section>
 
       <section className={styles.aboutSection} id="about">
+        <Graphic src="/images/present3.png" top="70%" left="45%" width="50px" mWidth="40px" />
         <h2 className={styles.title}>About</h2>
         <h3 className={styles.subtitle}>
           Why Giftly Is the Smarter Way to Discover Personalized Gifts
@@ -166,6 +162,7 @@ export const HomePage = () => {
       </section>
 
       <section className={styles.faqSection} id="faq">
+        <Graphic src="/images/present1.png" top="12dvh" left="65%" width="80px" mWidth="70px" />
         <h2 className={styles.title}>FAQ</h2>
         <h3 className={styles.subtitle}>
           Everything You Need to Know About Finding Gifts with Giftly
@@ -213,6 +210,8 @@ export const HomePage = () => {
       </section>
 
       <section className={styles.learnMoreSection} id="features">
+        <Graphic src="/images/star.png" top="1%" right="15%" width="50px" />
+        <Graphic src="/images/leaf3.png" bottom="14%" left="20%" width="50px" />
         <h2 className={styles.title}>Smart Features</h2>
         <h3 className={styles.subtitle}>How Gift Finder Works</h3>
         <p className={styles.description}>

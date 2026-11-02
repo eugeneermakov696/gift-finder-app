@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
+import { Graphic } from '../../shared/components/Graphic';
 import styles from './RightsPage.module.scss';
 
 export const RightsPage = () => {
   return (
     <div className={styles.container}>
+      <Graphic src="/images/present6.png" top="45%" left="65%" width="200px" mWidth="100px" />
+      <Graphic src="/images/leaf3.png" top="115%" left="18%" width="60px" mWidth="40px" />
       <h1 className={styles.pageTitle}>Privacy Policy</h1>
 
       <div className={styles.metaInfo}>

@@ -16,6 +16,7 @@
 }
 
 .modalContent {
+  position: relative;
   background-color: #fff;
   width: 100%;
   max-width: 900px;
@@ -170,6 +171,8 @@
   font-weight: 500;
   color: var(--text-main);
   margin: 0 0 24px 0;
+  position: relative;
+  z-index: 1;
 
   @include on-phone {
     font-size: 15px;
@@ -181,7 +184,9 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-  width: 100%; 
+  width: 100%;
+  position: relative;
+  z-index: 1;
 
   @include on-phone {
     gap: 8px;
