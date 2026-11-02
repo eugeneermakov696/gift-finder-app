@@ -216,7 +216,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             instance.first_name = name_parts[0]
             instance.last_name = name_parts[1] if len(name_parts) > 1 else ""
 
-        old_password = validated_data.pop("old_password", None)
+        validated_data.pop("old_password", None)
         new_password = validated_data.pop("new_password", None)
         password = validated_data.pop("password", None)
 
@@ -262,4 +262,3 @@ class ContactFormSerializer(serializers.ModelSerializer):
         if not cleaned:
             raise serializers.ValidationError("Message cannot be empty.")
         return cleaned
-

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.staticfiles.views import serve as staticfiles_serve
 from django.urls import path, re_path, include
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -35,9 +36,6 @@ admin.site.site_url = None
 admin.site.enable_nav_sidebar = False
 
 # Ensure static files (including custom admin CSS/JS) are always served in all environments
-from django.contrib.staticfiles.views import serve as staticfiles_serve
-
 urlpatterns += [
     re_path(r"^static/(?P<path>.*)$", staticfiles_serve, {"insecure": True}),
 ]
-

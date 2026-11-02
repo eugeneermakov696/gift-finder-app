@@ -556,7 +556,10 @@ class ContactFormView(views.APIView):
                 schema=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        "detail": openapi.Schema(type=openapi.TYPE_STRING, example="Your message has been sent successfully!")
+                        "detail": openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            example="Your message has been sent successfully!"
+                        )
                     }
                 )
             ),
@@ -598,4 +601,3 @@ class ContactFormView(views.APIView):
             {"detail": "Your message has been sent successfully!"},
             status=status.HTTP_201_CREATED
         )
-

@@ -50,6 +50,7 @@ class PresentAdmin(admin.ModelAdmin):
             '</div>'
         )
 
+
 @admin.register(Wishlist)
 class WishlistAdmin(admin.ModelAdmin):
     list_display = ("name", "user", "items_count", "created_at", "updated_at")

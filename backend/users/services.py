@@ -10,7 +10,12 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
-def send_mail_async(subject: str, message: str, recipient_list: list, from_email: str = None) -> threading.Thread | None:
+def send_mail_async(
+        subject: str,
+        message: str,
+        recipient_list: list,
+        from_email: str = None
+) -> threading.Thread | None:
     """
     Dispatches email asynchronously in a daemon thread so SMTP latency never blocks the HTTP request.
     In testing environments (locmem backend), executes synchronously for predictable outbox assertions.
@@ -24,7 +29,10 @@ def send_mail_async(subject: str, message: str, recipient_list: list, from_email
 
     def _deliver():
         try:
-            logger.info(f"Attempting to dispatch email to {recipient_list} via {getattr(settings, 'EMAIL_BACKEND', 'unknown')}...")
+            logger.info(
+                f"Attempting to dispatch email to {recipient_list} "
+                f"via {getattr(settings, 'EMAIL_BACKEND', 'unknown')}..."
+            )
             send_mail(
                 subject=subject,
                 message=message,
@@ -101,11 +109,14 @@ def send_contact_form_notification(contact_message: ContactMessage) -> None:
         f"Submitted at: {contact_message.created_at}\n\n"
         f"Message:\n{contact_message.message}\n"
     )
-    recipient = getattr(settings, "CONTACT_FORM_RECIPIENT_EMAIL", None) or getattr(settings, "DEFAULT_FROM_EMAIL", "admin@giftfinder.com")
+    recipient = getattr(settings, "CONTACT_FORM_RECIPIENT_EMAIL", None) or getattr(
+        settings,
+        "DEFAULT_FROM_EMAIL",
+        "admin@giftfinder.com"
+    )
     send_mail_async(
         subject=subject,
         message=body,
         recipient_list=[recipient],
         from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
     )
-

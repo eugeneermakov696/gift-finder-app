@@ -157,16 +157,23 @@ def filter_presents_queryset(queryset, query_params):
                         | Q(age_group__icontains="Kids")
                         | Q(recipient__icontains="Unisex")
                     )
-                elif any(k in rec_lower for k in ["boyfriend", "husband", "dad", "father", "brother", "son", "grandpa", "him"]):
+                elif any(
+                    k in rec_lower
+                    for k in ["boyfriend", "husband", "dad", "father", "brother", "son", "grandpa", "him"]
+                ):
                     rec_q |= Q(recipient__icontains="For Him") | Q(recipient__icontains="Unisex")
-                elif any(k in rec_lower for k in ["girlfriend", "wife", "mom", "mother", "sister", "daughter", "grandma", "her"]):
+                elif any(
+                    k in rec_lower
+                    for k in ["girlfriend", "wife", "mom", "mother", "sister", "daughter", "grandma", "her"]
+                ):
                     rec_q |= Q(recipient__icontains="For Her") | Q(recipient__icontains="Unisex")
                 else:
                     rec_q |= Q(recipient__icontains=rec)
             if rec_q:
                 queryset = queryset.filter(rec_q)
 
-    # 6. Interests (Catalog unique values: Toys, Fashion, Beauty, Sports, Home & Decor, Experiences, Travel, Crafts, Jewelry, Wellness, Tech, Outdoor, Gaming)
+    # 6. Interests (Catalog unique values: Toys, Fashion, Beauty, Sports, Home & Decor, Experiences, Travel, Crafts,
+    # Jewelry, Wellness, Tech, Outdoor, Gaming)
     if interests_param:
         raw_tokens = [t.strip() for t in interests_param.split(",") if t.strip()]
         if raw_tokens:
@@ -182,7 +189,8 @@ def filter_presents_queryset(queryset, query_params):
             if interest_q:
                 queryset = queryset.filter(interest_q)
 
-    # 7. Category / Gift Type (Catalog unique values: Toys, Fashion, Beauty, Sports, Home & Decor, Experiences, Travel, Crafts, Jewelry, Wellness, Tech, Outdoor, Gaming)
+    # 7. Category / Gift Type (Catalog unique values: Toys, Fashion, Beauty, Sports, Home & Decor, Experiences, Travel,
+    # Crafts, Jewelry, Wellness, Tech, Outdoor, Gaming)
     if category_param:
         raw_categories = [c.strip() for c in category_param.split(",") if c.strip()]
         if raw_categories:
@@ -198,7 +206,8 @@ def filter_presents_queryset(queryset, query_params):
             if cat_q:
                 queryset = queryset.filter(cat_q)
 
-    # 8. Occasion (Catalog unique values: Birthday, Christmas, Anniversary, Housewarming, mother_day, Thanksgiving, Father’s Day, father_day, wedding_or_engagement, Party, Halloween, Graduation, Retirement)
+    # 8. Occasion (Catalog unique values: Birthday, Christmas, Anniversary, Housewarming, mother_day, Thanksgiving,
+    # Father’s Day, father_day, wedding_or_engagement, Party, Halloween, Graduation, Retirement)
     if occasion_param:
         raw_occasions = [o.strip() for o in occasion_param.split(",") if o.strip()]
         if raw_occasions:
