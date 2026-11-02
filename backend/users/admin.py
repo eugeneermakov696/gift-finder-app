@@ -42,4 +42,3 @@ class UserVerificationCodeAdmin(admin.ModelAdmin):
 for model in (Group, TokenProxy):
     if admin.site.is_registered(model):
         admin.site.unregister(model)
-

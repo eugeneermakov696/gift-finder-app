@@ -121,7 +121,11 @@ class AuthenticationVerificationTests(APITestCase):
         self.user.save()
 
         code_entry = create_and_send_verification_code(self.user, VerificationScenario.PASSWORD_RESET)
-        self.client.post(self.password_reset_check_code_url, {"email": self.user.email, "code": code_entry.code}, format="json")
+        self.client.post(
+            self.password_reset_check_code_url,
+            {"email": self.user.email, "code": code_entry.code},
+            format="json"
+        )
 
         change_payload = {
             "new_password": "SplitSecretPassword2026!",
@@ -139,7 +143,10 @@ class AuthenticationVerificationTests(APITestCase):
         response = self.client.post(self.password_reset_request_url, {"email": self.user.email})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 0)
-        self.assertFalse(UserVerificationCode.objects.filter(user=self.user, scenario=VerificationScenario.PASSWORD_RESET).exists())
+        self.assertFalse(UserVerificationCode.objects.filter(
+            user=self.user,
+            scenario=VerificationScenario.PASSWORD_RESET
+        ).exists())
 
         # Direct confirm attempt should fail with 400
         payload = {
@@ -363,7 +370,11 @@ class ContactFormAPITests(APITestCase):
         self.assertIn("detail", response.data)
 
     def test_submit_contact_form_blank_strings(self):
-        response = self.client.post(self.url, {"name": "   ", "email": "jane@example.com", "message": "   "}, format="json")
+        response = self.client.post(
+            self.url,
+            {"name": "   ", "email": "jane@example.com", "message": "   "},
+            format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("detail", response.data)
 
@@ -459,4 +470,3 @@ class SwaggerDocumentationTests(APITestCase):
         self.assertIn("401", paths["/api/auth/me/"]["get"]["responses"])
         self.assertIn("404", paths["/api/gifts/{asin}/"]["get"]["responses"])
         self.assertIn("401", paths["/api/wishlists/"]["get"]["responses"])
-

@@ -1,4 +1,4 @@
-import random
+import secrets
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -32,9 +32,6 @@ def create_user_wishlist(sender, instance, created, **kwargs):
 class VerificationScenario(models.TextChoices):
     PASSWORD_RESET = "password_reset", "Password Reset"
     EMAIL_CONFIRMATION = "email_confirmation", "Email Confirmation"
-
-
-import secrets
 
 
 def get_expiry_time():
@@ -88,5 +85,5 @@ class ContactMessage(models.Model):
         verbose_name_plural = "Contact Messages"
 
     def __str__(self):
-        return f"Message from {self.name} ({self.email}) - {self.created_at.strftime('%Y-%m-%d %H:%M') if self.created_at else ''}"
-
+        created = self.created_at.strftime("%Y-%m-%d %H:%M") if self.created_at else ""
+        return f"Message from {self.name} ({self.email}) - {created}"

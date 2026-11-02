@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from presents.models import Present, Wishlist
 
-from users.serializers import UserSerializer
-
 
 class PresentSerializer(serializers.ModelSerializer):
     price = serializers.FloatField()

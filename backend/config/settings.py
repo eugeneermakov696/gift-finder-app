@@ -177,7 +177,10 @@ if BREVO_API_KEY:
 else:
     EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
 
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="GiftFinder <oleksandr.shtonda.dev@gmail.com>").strip().strip("\"'")
+DEFAULT_FROM_EMAIL = env(
+    "DEFAULT_FROM_EMAIL",
+    default="GiftFinder <oleksandr.shtonda.dev@gmail.com>"
+).strip().strip("\"'")
 
 VERIFICATION_CODE_LIFETIME = timedelta(minutes=15)
 WISHLIST_MAX_CAPACITY = env.int("WISHLIST_MAX_CAPACITY", default=50)
@@ -263,4 +266,3 @@ LOGGING = {
         },
     },
 }
-
