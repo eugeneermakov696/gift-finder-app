@@ -162,7 +162,7 @@ export const HomePage = () => {
       </section>
 
       <section className={styles.faqSection} id="faq">
-        <Graphic src="/images/present1.png" top="12dvh" left="65%" width="80px" mWidth="70px" />
+        <Graphic src="/images/present6.png" top="12dvh" left="65%" width="80px" mWidth="70px" />
         <h2 className={styles.title}>FAQ</h2>
         <h3 className={styles.subtitle}>
           Everything You Need to Know About Finding Gifts with Giftly
