@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/components/Button';
 import { useScrollLock } from '../../shared/hooks/useScrollLock';
 import { GIFT_CATEGORIES } from '../../shared/constants/options';
-import { Graphic } from '../../shared/components/Graphic';
 import styles from './ReadyIdeasWindow.module.scss';
 
 interface PopularGiftsModalProps {
@@ -32,7 +31,6 @@ export const ReadyIdeasWindow = ({ onClose }: PopularGiftsModalProps) => {
   return (
     <div className={styles.overlay} onMouseDown={handleOverlayClick}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <Graphic src="/images/present5.png" top="48%" left="5%" width="300px" mWidth="150px" zIndex={0} />
         <div className={styles.innerWrapper}>
           <div className={styles.header}>
             <div className={styles.headerTop}>
