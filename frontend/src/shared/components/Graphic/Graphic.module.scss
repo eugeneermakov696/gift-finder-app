@@ -24,3 +24,9 @@
     transform: rotate(var(--m-rotate));
   }
 }
+
+.hiddenMobile {
+  @include on-phone {
+    display: none;
+  }
+}

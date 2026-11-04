@@ -11,6 +11,8 @@ interface GraphicProps {
   opacity?: number;
   rotate?: string;
   zIndex?: number;
+  hideOnMobile?: boolean;
+  className?: string;
   mTop?: string;
   mBottom?: string;
   mLeft?: string;
@@ -22,10 +24,24 @@ interface GraphicProps {
 
 export const Graphic = ({
   src,
-  top, bottom, left, right, width = '100px', opacity = 1, rotate, zIndex = -5,
-  mTop, mBottom, mLeft, mRight, mWidth, mOpacity, mRotate,
+  top,
+  bottom,
+  left,
+  right,
+  width = '100px',
+  opacity = 1,
+  rotate,
+  zIndex = -5,
+  hideOnMobile = false,
+  className,
+  mTop,
+  mBottom,
+  mLeft,
+  mRight,
+  mWidth,
+  mOpacity,
+  mRotate,
 }: GraphicProps) => {
-  
   const dynamicStyles = {
     '--top': top,
     '--bottom': bottom,
@@ -35,7 +51,7 @@ export const Graphic = ({
     '--opacity': opacity,
     '--rotate': rotate,
     '--z-index': zIndex,
-    
+
     '--m-top': mTop || top,
     '--m-bottom': mBottom || bottom,
     '--m-left': mLeft || left,
@@ -48,9 +64,9 @@ export const Graphic = ({
   return (
     <img
       src={src}
+      className={`${styles.graphic} ${hideOnMobile ? styles.hiddenMobile : ''} ${className || ''}`}
       alt=""
       aria-hidden="true"
-      className={styles.graphic}
       style={dynamicStyles}
     />
   );

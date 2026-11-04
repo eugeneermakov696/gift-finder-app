@@ -189,6 +189,7 @@
   @include on-phone {
     flex-direction: column;
     gap: 16px;
+    padding: 12px;
 
     .imageWrapper {
       width: 100%;
