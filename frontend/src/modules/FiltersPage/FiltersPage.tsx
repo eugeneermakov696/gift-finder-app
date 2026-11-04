@@ -30,8 +30,24 @@ export const FiltersPage = () => {
 
   return (
     <div className={styles.container}>
-      <Graphic src="/images/present6.png" top="95dvh" left="80%" width="80px" mWidth="70px" rotate="-30deg" />
-      <Graphic src="/images/present7.png" top="103dvh" left="78%" width="60px" mWidth="50px" rotate="-45deg" />
+      <Graphic
+        src="/images/present6.png"
+        top="95dvh"
+        left="80%"
+        width="80px"
+        mWidth="70px"
+        rotate="-30deg"
+        hideOnMobile
+      />
+      <Graphic
+        src="/images/present7.png"
+        top="103dvh"
+        left="78%"
+        width="60px"
+        mWidth="50px"
+        rotate="-45deg"
+        hideOnMobile
+      />
       <header className={styles.header}>
         <h1 className={styles.pageTitle}>Gift search</h1>
         <Link to="/" className={styles.backLink}>
@@ -125,7 +141,7 @@ export const FiltersPage = () => {
           <div className={styles.sliderWrapper}>
             <Slider
               min={5}
-              max={1000}
+              max={200}
               step={5}
               value={budget}
               onChange={(val) => setBudget(val as number)}
