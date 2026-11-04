@@ -99,7 +99,7 @@ export const HomePage = () => {
       </section>
 
       <section className={styles.aboutSection} id="about">
-        <Graphic src="/images/present3.png" top="70%" left="45%" width="50px" mWidth="40px" />
+        <Graphic src="/images/present7.png" top="70%" left="45%" width="50px" mWidth="40px" />
         <h2 className={styles.title}>About</h2>
         <h3 className={styles.subtitle}>
           Why Giftly Is the Smarter Way to Discover Personalized Gifts
