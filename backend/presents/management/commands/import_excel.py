@@ -1,5 +1,6 @@
 import os
 import re
+import math
 import datetime
 import pandas as pd
 from django.core.management.base import BaseCommand
@@ -84,9 +85,17 @@ class Command(BaseCommand):
                     except (ValueError, TypeError):
                         return default
 
-                # Safely parse price, which is mandatory
+                # Safely parse price, which is mandatory (fallback to original_price if empty/NaN)
+                raw_price = row.get('price')
+                if pd.isna(raw_price) or not str(raw_price).strip():
+                    raw_price = row.get('original_price')
+
                 try:
-                    price_val = float(row['price'])
+                    price_val = float(raw_price)
+                    if math.isnan(price_val):
+                        price_val = 0.0
+                    else:
+                        price_val = round(price_val, 2)
                 except (ValueError, TypeError):
                     price_val = 0.0
 
