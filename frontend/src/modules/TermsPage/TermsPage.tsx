@@ -20,7 +20,7 @@ export const TermsPage = () => {
         width="150px"
         mWidth="100px"
       />
-      <Graphic src="/images/leaf10.png" top="340%" left="50%" width="100px" mWidth="70px" />
+      <Graphic src="/images/leaf3.png" top="340%" left="50%" width="100px" mWidth="70px" />
 
       <h1 className={styles.pageTitle}>Terms of Service</h1>
 
