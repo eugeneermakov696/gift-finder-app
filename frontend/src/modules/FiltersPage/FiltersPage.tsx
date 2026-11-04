@@ -125,7 +125,7 @@ export const FiltersPage = () => {
           <div className={styles.sliderWrapper}>
             <Slider
               min={5}
-              max={1000}
+              max={200}
               step={5}
               value={budget}
               onChange={(val) => setBudget(val as number)}

@@ -7,7 +7,7 @@ export const useFiltersForm = () => {
   const [relationship, setRelationship] = useState('');
   const [interests, setInterests] = useState<string[]>([]);
   const [giftTypes, setGiftTypes] = useState<string[]>([]);
-  const [budget, setBudget] = useState(450);
+  const [budget, setBudget] = useState(100);
 
   const navigate = useNavigate();
 
