@@ -12,10 +12,22 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
-    allowedHosts: ['.railway.app', '.up.railway.app'],
+    allowedHosts: [
+      '.railway.app',
+      '.up.railway.app',
+      '.giftly.cloud',
+      'giftly.cloud',
+      'www.giftly.cloud',
+    ],
   },
   preview: {
     port: 3000,
-    allowedHosts: ['.railway.app', '.up.railway.app'],
+    allowedHosts: [
+      '.railway.app',
+      '.up.railway.app',
+      '.giftly.cloud',
+      'giftly.cloud',
+      'www.giftly.cloud',
+    ],
   },
 })
