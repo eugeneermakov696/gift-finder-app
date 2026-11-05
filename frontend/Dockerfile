@@ -6,7 +6,7 @@ FROM node:22-alpine
 WORKDIR /app/frontend
 COPY --from=base /app/frontend .
 # ARG VITE_BACKEND_URL
-ENV VITE_BACKEND_URL=https://backend-test-01cb.up.railway.app/api
+ENV VITE_BACKEND_URL=https://api.giftly.cloud/api
 EXPOSE 3000
 RUN rm -rf package-lock.json node_modules && npm install
 RUN npm run build
