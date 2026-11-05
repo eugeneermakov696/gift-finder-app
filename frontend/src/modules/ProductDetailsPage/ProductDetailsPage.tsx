@@ -129,7 +129,8 @@ export const ProductDetailsPage = () => {
           <div className={styles.priceRow}>
             <div className={styles.prices}>
               <span className={styles.currentPrice}>${product.price}</span>
-              {product.original_price && (
+
+              {product.original_price && product.original_price !== product.price && (
                 <span className={styles.oldPrice}>${product.original_price}</span>
               )}
             </div>
