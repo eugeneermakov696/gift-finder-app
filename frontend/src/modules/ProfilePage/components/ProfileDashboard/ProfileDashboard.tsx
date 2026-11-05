@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { AvatarUploadModal } from '../AvatarUploadModal';
 import { fetchWishlist, removeGiftFromWishlist } from '../../../../store/wishlist/wishlistSlice';
 import { resendEmailCode } from '../../../../store/auth/authSlice';
-import { SkeletonCard } from '../../../../shared/components/SkeletonCard';
 import { VerificationModal } from '../VerifyEmailModal';
 import type { User } from '../../../../api/auth-service/types/user.type';
 import type { RootState } from '../../../../store/store';
@@ -26,7 +25,7 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
 
   const dispatch = useAppDispatch();
 
-  const { items: savedItems, isLoading: isWishlistLoading } = useAppSelector(
+  const { items: savedItems} = useAppSelector(
     (state: RootState) => state.wishlist,
   );
 
@@ -154,11 +153,7 @@ export const ProfileDashboard = ({ onLogout, user }: ProfileDashboardProps) => {
       <div className={`${styles.card} ${styles.favoritesCard}`}>
         <h2 className={styles.favoritesTitle}>My Favourites</h2>
 
-        {isWishlistLoading ? (
-          Array.from({ length: 4 }).map((_, index) => (
-            <SkeletonCard key={index} variant="profile" />
-          ))
-        ) : savedItems.length === 0 ? (
+        {savedItems.length === 0 ? (
           <p className={styles.emptyState}>
             You haven't saved any gifts yet. Browse the catalog and tap the heart to add some!
           </p>

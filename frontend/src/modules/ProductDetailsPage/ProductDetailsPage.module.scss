@@ -7,7 +7,7 @@
   padding: 40px 80px 100px;
 
   @include on-phone {
-    padding: 24px 16px;
+    padding: 24px 16px 64px;
   }
 }
 
@@ -24,7 +24,7 @@
 }
 
 .errorMessage {
-  color: var(--color-danger-800, #d32f2f);
+  color: var(--color-danger-800);
 }
 
 /* Header */
@@ -96,7 +96,6 @@
       align-self: flex-start;
       padding: 0;
       gap: 6px;
-      font-size: 14px;
     }
   }
 
