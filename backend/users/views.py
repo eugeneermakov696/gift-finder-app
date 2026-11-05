@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.core import signing
 from rest_framework import views, status, permissions
 from rest_framework.response import Response
@@ -42,20 +43,27 @@ User = get_user_model()
 
 
 def set_auth_cookie(response, key, value, request, max_age):
+    cookie_domain = getattr(settings, "AUTH_COOKIE_DOMAIN", None)
+    cookie_samesite = getattr(settings, "AUTH_COOKIE_SAMESITE", "None")
+    cookie_secure = getattr(settings, "AUTH_COOKIE_SECURE", True)
     response.set_cookie(
         key,
         value,
         httponly=True,
-        secure=True,
-        samesite="None",
+        secure=cookie_secure,
+        samesite=cookie_samesite,
+        domain=cookie_domain,
         max_age=max_age,
     )
 
 
 def delete_auth_cookie(response, key, request):
+    cookie_domain = getattr(settings, "AUTH_COOKIE_DOMAIN", None)
+    cookie_samesite = getattr(settings, "AUTH_COOKIE_SAMESITE", "None")
     response.delete_cookie(
         key,
-        samesite="None",
+        domain=cookie_domain,
+        samesite=cookie_samesite,
     )
 
 

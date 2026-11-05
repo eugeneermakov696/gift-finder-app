@@ -28,6 +28,8 @@ ALLOWED_HOSTS = env.list(
         ".localhost",
         ".railway.app",
         ".up.railway.app",
+        ".giftly.cloud",
+        "giftly.cloud",
     ]
 )
 
@@ -101,11 +103,14 @@ CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS",
     default=[
         "http://localhost:3000",
+        "https://giftly.cloud",
+        "https://www.giftly.cloud",
         "https://frontend-test-3fea.up.railway.app",
         "https://gift-finderfrontend-production.up.railway.app",
     ]
 )
 CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.giftly\.cloud$",
     r"^https://.*\.railway\.app$",
     r"^https://.*\.up\.railway\.app$",
     r"^http://localhost:[0-9]+$",
@@ -116,6 +121,10 @@ CSRF_TRUSTED_ORIGINS = env.list(
     "CSRF_TRUSTED_ORIGINS",
     default=[
         "http://localhost:3000",
+        "https://giftly.cloud",
+        "https://www.giftly.cloud",
+        "https://api.giftly.cloud",
+        "https://*.giftly.cloud",
         "https://frontend-test-3fea.up.railway.app",
         "https://gift-finderfrontend-production.up.railway.app",
         "https://*.railway.app",
@@ -127,6 +136,16 @@ SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
+
+# Custom Domain & Cross-Subdomain Authentication Cookie Configuration
+COOKIE_DOMAIN = env("COOKIE_DOMAIN", default=None)
+if COOKIE_DOMAIN:
+    SESSION_COOKIE_DOMAIN = COOKIE_DOMAIN
+    CSRF_COOKIE_DOMAIN = COOKIE_DOMAIN
+
+AUTH_COOKIE_DOMAIN = env("AUTH_COOKIE_DOMAIN", default=COOKIE_DOMAIN)
+AUTH_COOKIE_SAMESITE = env("AUTH_COOKIE_SAMESITE", default="Lax" if COOKIE_DOMAIN else "None")
+AUTH_COOKIE_SECURE = env.bool("AUTH_COOKIE_SECURE", default=True)
 
 # Security Headers Hardening
 SECURE_CONTENT_TYPE_NOSNIFF = True

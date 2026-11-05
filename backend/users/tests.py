@@ -470,3 +470,34 @@ class SwaggerDocumentationTests(APITestCase):
         self.assertIn("401", paths["/api/auth/me/"]["get"]["responses"])
         self.assertIn("404", paths["/api/gifts/{asin}/"]["get"]["responses"])
         self.assertIn("401", paths["/api/wishlists/"]["get"]["responses"])
+
+    def test_api_host_routing(self):
+        # api.giftly.cloud resolves api health check
+        response_api = self.client.get('/api/', HTTP_HOST='api.giftly.cloud')
+        self.assertEqual(response_api.status_code, status.HTTP_200_OK)
+
+        # api.giftly.cloud/admin/ reaches admin panel (redirects to login when unauthenticated)
+        response_admin = self.client.get('/admin/', HTTP_HOST='api.giftly.cloud')
+        self.assertIn(response_admin.status_code, [status.HTTP_200_OK, status.HTTP_302_FOUND])
+
+    def test_auth_cookie_custom_domain(self):
+        from django.test import override_settings
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        User.objects.create_user(
+            username="domain_tester",
+            email="domaintester@giftly.cloud",
+            password="Password123!",
+            email_is_confirmed=True
+        )
+        with override_settings(AUTH_COOKIE_DOMAIN=".giftly.cloud", AUTH_COOKIE_SAMESITE="Lax"):
+            response = self.client.post(
+                "/api/auth/login/",
+                {"email": "domaintester@giftly.cloud", "password": "Password123!"},
+                HTTP_HOST="api.giftly.cloud"
+            )
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            access_cookie = response.cookies.get("access_token")
+            self.assertIsNotNone(access_cookie)
+            self.assertEqual(access_cookie["domain"], ".giftly.cloud")
+            self.assertEqual(access_cookie["samesite"], "Lax")
