@@ -4,25 +4,6 @@ The application architecture is divided into four logical layers, moving from bu
 
 ## 📐 High-Level Architecture Diagram
 
-```mermaid
-flowchart TD
-    User([👤 User]) -->|Interactive Quiz| FE[Frontend SPA<br/>Node Alpine]
-    FE <-->|REST API + JWT HTTP-only Cookies| BE[Backend REST API<br/>Django / Python Slim]
-    FE -.->|Loads Avatars Directly| R2[(Cloudflare R2<br/>Object Storage)]
-
-    subgraph K8s [Kubernetes Cluster]
-        FE
-        BE
-        DB[(PostgreSQL 15<br/>CustomUser · Wishlist · Present)]
-    end
-
-    BE <-->|Queries & Transactions| DB
-    BE -->|Saves Avatars| R2
-    BE -->|Transactional Emails| Brevo[Brevo Anymail]
-```
-
----
-
 <img width="1280" height="761" alt="photo_6008015337477050346_y" src="https://github.com/user-attachments/assets/e1bf7f41-8b0c-4f02-989d-6cc1371d838f" />
 
 ## 🧱 Architectural Layers
