@@ -1,7 +1,7 @@
 # 🎁 Giftly — Personalized Gift Discovery Platform
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Open_App-2ea44f?style=for-the-badge&logo=vercel)](https://www.giftly.cloud)
-https://www.giftly.cloud
+
 **Giftly** is a full-stack web service designed to save users from the never-ending headache of choosing the right gift. Instead of spending hours browsing dozens of online stores, users answer a few targeted questions about the recipient and budget to immediately receive tailored gift recommendations with direct purchase links.
 
 ## ✨ Core Functionality
