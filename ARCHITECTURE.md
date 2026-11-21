@@ -23,6 +23,8 @@ flowchart TD
 
 ---
 
+<img width="1280" height="761" alt="photo_6008015337477050346_y" src="https://github.com/user-attachments/assets/e1bf7f41-8b0c-4f02-989d-6cc1371d838f" />
+
 ## 🧱 Architectural Layers
 
 ### 1. Motivation & Business Layer
