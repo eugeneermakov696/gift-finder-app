@@ -1,5 +1,9 @@
 # 🎨 Giftly — Frontend Documentation
 
+## 🌐 Live Demo
+
+👉 **[Launch Giftly Web App](https://www.giftly.cloud)**
+
 This directory contains the client-side Single Page Application (SPA) for **Giftly**, built from scratch using **React**, **TypeScript**, **Vite**, and **Redux Toolkit**.
 
 ## 🛠 Prerequisites
