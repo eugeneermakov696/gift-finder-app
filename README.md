@@ -26,7 +26,7 @@ For detailed technical documentation, please refer to the specific guides below:
 
 - 🏛 **[System Architecture](./ARCHITECTURE.md)** — High-level system design, client-server interaction, and infrastructure overview.
 - 🎨 **[Frontend Documentation](./frontend/README.md)** — Client-side architecture, state management, directory structure, and local setup.
-- ⚙️ **[Backend Documentation](./backend/README.md)** — Server architecture, API endpoints, and database setup.
+- ⚙️ **[Backend Documentation](./backend/INSTRUCTION-backend.md)** — Server architecture, API endpoints, and database setup.
 
 ## 🚀 Quick Start (Docker)
 
